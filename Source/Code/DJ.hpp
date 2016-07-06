@@ -29,5 +29,6 @@ namespace ASCIIPlayer
     Playlist playlist_;       //Contains the AudioFile objects.
     AudioSystem audioSystem_; //The sound system to play the audio files.
     Visualizer *visualizer_;  //The visualizer to display the playing data.
+    DJConfig config_;         //The proivded config for the DJ.
   };
 }
