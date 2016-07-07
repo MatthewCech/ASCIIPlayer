@@ -9,15 +9,15 @@ namespace ASCIIPlayer
   class Visualizer
   {
   public:
-    //Constructor
+    // Constructor
     Visualizer();
     virtual ~Visualizer();
 
-    //Member Functions
+    // Member Functions
     virtual bool Update(float* data, AudioDataSize size);
 
   private:
-    //Variables
+    // Variables
     static unsigned long long visualizerUniqueID_;
   };
 

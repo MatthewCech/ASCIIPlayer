@@ -1,4 +1,4 @@
-//Handles the backend, playing, loading, and unloading files.
+// Handles the backend, playing, loading, and unloading files.
 #pragma once
 #include "AudioFile.hpp"
 #include <unordered_map>
@@ -11,19 +11,19 @@ namespace ASCIIPlayer
   class AudioSystem
   {
   public:
-    //Constructor
+    // Constructor
     AudioSystem(int numChannels = 10);
     ~AudioSystem();
 
-    //Member Functions
-    //General Upkeep
+    // Member Functions
+    // General Upkeep
     bool Update();
 
-    //Loading
+    // Loading
     void PreloadFile(const AudioFile &audioFile);
     void UnloadFile(const AudioFile &audioFile);
 
-    //Basic Play/Pause
+    // Basic Play/Pause
     void PlayFile(const AudioFile &audioFile);
     void PauseFile(const AudioFile &audioFile);
     void StopFile(const AudioFile &audioFile);

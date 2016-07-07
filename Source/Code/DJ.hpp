@@ -14,10 +14,10 @@ namespace ASCIIPlayer
   class DJ
   {
   public:
-    //Constructor
+    // Constructor
     DJ(DJConfig config);
     
-    //Member Functons
+    // Member Functons
     bool Update();
     void Shutdown();
     void ShufflePlaylist();
@@ -25,10 +25,10 @@ namespace ASCIIPlayer
     void FillSongSpecturm(float* toFill, AudioDataSize size);
 
   private:
-    //Variables
-    Playlist playlist_;       //Contains the AudioFile objects.
-    AudioSystem audioSystem_; //The sound system to play the audio files.
-    Visualizer *visualizer_;  //The visualizer to display the playing data.
-    DJConfig config_;         //The proivded config for the DJ.
+    // Variables
+    Playlist playlist_;       // Contains the AudioFile objects.
+    AudioSystem audioSystem_; // The sound system to play the audio files.
+    Visualizer *visualizer_;  // The visualizer to display the playing data.
+    DJConfig config_;         // The proivded config for the DJ.
   };
 }

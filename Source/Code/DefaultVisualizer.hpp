@@ -1,4 +1,4 @@
-//Default vizualizer if nothing else is defined.
+// Default vizualizer if nothing else is defined.
 #pragma once
 #include "CustomDefines.hpp"
 #include "Visualizer.hpp"
@@ -10,15 +10,15 @@ namespace ASCIIPlayer
   class DefaultVisualizer : public Visualizer
   {
   public:
-    //Constructor
+    // Constructor
     DefaultVisualizer();
     virtual ~DefaultVisualizer();
 
-    //DrawBars
+    // DrawBars
     bool Update(float* data, AudioDataSize size);
 
   private:
-    //Variables
+    // Variables
     char oddChar;
     char evenChar;
   };
