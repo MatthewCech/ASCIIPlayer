@@ -1,3 +1,4 @@
+#pragma once
 /*!***************************************************************************
 @file    RTest.hpp
 @author  Reverie Wisp
@@ -29,7 +30,7 @@ smashed the implementation into the header.
 
 
 
-
+#pragma once
 
 //Prototypes:
 namespace RTest
@@ -73,15 +74,9 @@ namespace RTest
     unsigned int Line;
     std::string Message;
   };
-  //Redefine macro for the exception
-  #define RException(a) RException(__FILE__, __LINE__, a)
 }
 
-
-
-
-
-
+#pragma once
 //Implementation:
 namespace RTest
 {
@@ -163,9 +158,6 @@ namespace RTest
     //////////////
    //RException//
   //////////////
-  //Undefine the RException macro to prevent it expanding here.
-  #undef RException
-
   //Handle constructor
   RException::RException(std::string file, unsigned int line, std::string message)
   : File(file)

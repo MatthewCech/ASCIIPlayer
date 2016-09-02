@@ -154,31 +154,18 @@ workspace "ASCII_Player"                   -- Solution Name
     
     -- OS-specific Libraries - Dynamic libs will need to be copied to output
 
-    --[[
+    
     filter { "system:windows" }  -- Currently all static libs; No copying
       links
       {
-        "glew32s",               -- static lib
-        "glu32",                 -- Windows-specific for GLEW
-        "glfw3",                 -- static lib
-        "opengl32",
+      	"fmodex_vc"
       }
     filter { "system:macosx" }   -- Currently all dylibs; Copy in postbuild
       links
       {
-        "GLEW",
-        "glfw3",
-        "X11.6",                 -- Mac-specific for GLFW
-        "pthread",               -- Mac-specific for GLFW
-        "Xrandr.2",              -- Mac-specific for GLFW
-        "Xi.6",                  -- Mac-specific for GLFW
-        "Cocoa.framework",       -- Mac-specific for GLFW
-        "IOKit.framework",       -- Mac-specific for GLFW
-        "CoreVideo.framework",   -- Mac-specific for GLFW
-        "OpenGL.framework",
+        "libfmodex"
       }
     filter {}
-	--]]
 
 -----------------------------------
 -- POST-BUILD CONFIGURATIONS
