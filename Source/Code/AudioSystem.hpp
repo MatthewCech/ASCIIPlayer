@@ -1,7 +1,7 @@
 // Handles the backend, playing, loading, and unloading files.
 #pragma once
-#include "AudioFile.hpp"
 #include <unordered_map>
+#include "AudioFile.hpp"
 #include "CustomDefines.hpp"
 
 
@@ -20,25 +20,44 @@ namespace ASCIIPlayer
     bool Update();
 
     // Loading
-    void PreloadFile(const AudioFile &audioFile);
-    void UnloadFile(const AudioFile &audioFile);
+    void PreloadFile(AudioFile &audioFile);
+    void UnloadFile(AudioFile &audioFile);
 
     // Basic Play/Pause
-    void PlayFile(const AudioFile &audioFile);
-    void PauseFile(const AudioFile &audioFile);
-    void StopFile(const AudioFile &audioFile);
+    AudioFile *AudioSystem::PreloadFile(const std::string filepath);
+    void PlayFile(AudioFile &audioFile);
+    void TogglePause(AudioFile &audioFile);
+    void StopFile(AudioFile &audioFile);
     void SetMasterVolume(float f);
-    float GetMasterVolume();
+    float GetMasterVolume() const;
 
-    //Info about song
-    unsigned long long GetLength(const AudioFile &audioFile);
-    unsigned long long GetCurrentPosition(const AudioFile &audioFile);
-    std::string GetFilename(const AudioFile &audioFile);
-    std::string GetFilepath(const AudioFile &audioFile);
+    // Info about song
+    unsigned int GetLength(const AudioFile &audioFile) const;
+    unsigned int GetCurrentPosition(const AudioFile &audioFile);
+    std::string GetFilename(const AudioFile &audioFile) const;
+    std::string GetFilepath(const AudioFile &audioFile) const;
 
   private:
-    //Active Handles map:
-    std::unordered_map<unsigned long long, ChannelHandle> handles_;
-    Channelgroup masterChannel_;
+      //////////////////////////
+     // Private member funcs //
+    //////////////////////////
+    void FCheck(const FMOD_RESULT &res) const;
+
+      ///////////////
+     // Variables //
+    ///////////////
+    // Audio System
+    FMOD::System *fmodSystem_;   // Handle to the system we use to initialize and play sounds.
+    Channelgroup *masterChannel_; // Master channel to shove things into for volume reasons.
+
+    // Additional FMOD info
+    int              numdrivers_;  // Number of drivers in the system (audio cards)
+    char             name_[256];   // The name of the driver.
+    FMOD_CAPS        caps_;        // The capabilities of the soundcard.
+    unsigned int     version_;     // Version number.
+    FMOD_SPEAKERMODE speakermode_; // The speaker mode- 5.1, 7.1, etc.
+
+    // Active Handles map:
+    std::unordered_map<std::size_t, ChannelHandle> channelHandles_;
   };
 }

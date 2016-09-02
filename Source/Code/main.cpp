@@ -1,10 +1,15 @@
 #include <iostream>
-#include "RTest.hpp"
+#include <FileIO.hpp>
+#include "DJ.hpp"
 
 
 
 int main(int argc, char** argv) try
 {
+  ASCIIPlayer::AudioSystem a(10);
+  ASCIIPlayer::AudioFile *af = a.PreloadFile("Test_Audio.mp3");
+  a.PlayFile(*af);
+  while (a.Update()) { }
   // Parse command line. This will have both song names and flags to be interpreted. Consider getopt or similar for cross-platform stuff.
   // Parse config file. Just reinterpret_cast the data to the DJConfig structure.
   // Construct DJ object. One-liner.
@@ -18,9 +23,9 @@ int main(int argc, char** argv) try
   return 0;
 }
 //Catch and dump any errors.
-catch (RTest::RException e)
+catch (std::exception &e)
 {
-  std::cerr << e << std::endl;
-  std::cout << e << std::endl;
+  std::cerr << e.what() << std::endl;
+  std::cout << e.what() << std::endl;
   throw e;
 }

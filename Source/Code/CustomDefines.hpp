@@ -1,9 +1,12 @@
 #pragma once
+#include "FMOD/fmod.hpp"
 
-// Temp Defines
-#define ChannelHandle int* // Channel handle for FMOD -- PLACEHOLDER
-#define AudioHandle  int*  // Sound object handle for FMOD -- PLACEHOLDER
-#define Channelgroup int   // Channel object handle for FMOD -- PLACEHOLDER
+
+// Defines
+using ChannelHandle = FMOD::Channel*;      // Channel handle for FMOD
+using AudioHandle   = FMOD::Sound;        // Sound object handle for FMOD
+using Channelgroup  = FMOD::ChannelGroup; // Channel object handle for FMOD
+
 
 // The size of the spectrum to get- confines it to custom size.
 enum AudioDataSize 

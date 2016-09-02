@@ -1,7 +1,7 @@
 //The main program loop, for configuring the DJ. Low-usage blocking IO.
 #pragma once
-#include "DJConfig"
-#include "DJ"
+#include "DJConfig.hpp"
+#include "DJ.hpp"
 #include <string>
 
 

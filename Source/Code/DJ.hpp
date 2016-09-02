@@ -22,13 +22,13 @@ namespace ASCIIPlayer
     void Shutdown();
     void ShufflePlaylist();
     void AddSong(AudioFile toAdd);
-    void FillSongSpecturm(float* toFill, AudioDataSize size);
+    void FillSongSpectrum(float* toFill, AudioDataSize size);
 
   private:
     // Variables
-    Playlist playlist_;       // Contains the AudioFile objects.
-    AudioSystem audioSystem_; // The sound system to play the audio files.
-    Visualizer *visualizer_;  // The visualizer to display the playing data.
-    DJConfig config_;         // The proivded config for the DJ.
+    Playlist playlist_;             // Contains the AudioFile objects.
+    AudioSystem audioSystem_;       // The sound system to play the audio files.
+    Visualizer *visualizer_;        // The visualizer to display the playing data.
+    DJConfig config_;               // The proivded config for the DJ.
   };
 }
