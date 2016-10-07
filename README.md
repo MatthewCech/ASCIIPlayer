@@ -1,0 +1,1 @@
+A lightweight command-line audio visualizer.
