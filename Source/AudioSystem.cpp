@@ -1,7 +1,7 @@
 #include "AudioSystem.hpp"
-#include "FMOD\fmod_errors.h"
-#include "Console-Utils.hpp"
-#include "RTest.hpp"
+#include <FMOD\fmod_errors.h>
+#include <ConsoleUtils\console-utils.hpp>
+#include <RTest\RTest.hpp>
 
 
 namespace ASCIIPlayer

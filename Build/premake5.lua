@@ -9,28 +9,28 @@ local ROOT = "../"   -- Path to project root
 ---------------------------------
 -- [ WORKSPACE CONFIGURATION   --
 ---------------------------------
-workspace "ASCII_Player"                   -- Solution Name
-	configurations { "Debug", "Release"}     -- Optimization/General config mode in VS
-	platforms { "x64", "x86"}                -- Dropdown platforms section in VS
-	location (ROOT .. "project_" .. _ACTION) -- Note: _ACTION is the argument passed to premake.
+workspace "ASCII_Player"                     -- Solution Name
+    configurations { "Debug", "Release"}     -- Optimization/General config mode in VS
+    platforms { "x64", "x86"}                -- Dropdown platforms section in VS
+    location (ROOT .. "project_" .. _ACTION) -- Note: _ACTION is the argument passed to premake.
 
-	-------------------------------
-	-- [ PROJECT CONFIGURATION ] --
-	------------------------------- 
-	project "ASCIIPlayer"        -- Project name
-		targetname "ascii_player"  -- Executable name
-		kind "ConsoleApp"          -- Style of app in project- WindowedApp, ConsoleApp, etc.
-		language "C++"
+    -------------------------------
+    -- [ PROJECT CONFIGURATION ] --
+    ------------------------------- 
+    project "ASCIIPlayer"          -- Project name
+        targetname "ascii_player"  -- Executable name
+        kind "ConsoleApp"          -- Style of app in project- WindowedApp, ConsoleApp, etc.
+        language "C++"
 
-	-------------------------------
-	-- [ COMPILER/LINKER CONFIG] --
-	-------------------------------
-	
-	-- Set compiler flags
-	flags "FatalWarnings"  -- Warnings to 11! (all warnings on)
+    -------------------------------
+    -- [ COMPILER/LINKER CONFIG] --
+    -------------------------------
+    
+    -- Set compiler flags
+    flags "FatalWarnings"  -- Warnings to 11! (all warnings on)
 
     -- Generate filters with info provided, VS
-	filter { "platforms:*86" }
+    filter { "platforms:*86" }
       architecture "x86"
     filter { "platforms:*64" }
       architecture "x64"
@@ -46,10 +46,9 @@ workspace "ASCII_Player"                   -- Solution Name
     -- Reset filter.
     filter {}
 
-
-	------------------------------
-	-- [ BUILD CONFIGURATIONS ] --
-	------------------------------
+    ------------------------------
+    -- [ BUILD CONFIGURATIONS ] --
+    ------------------------------
     local cur_toolset = "default" -- workaround for premake issue #257
 
     filter {"system:macosx" }           -- Mac uses clang.
@@ -61,18 +60,14 @@ workspace "ASCII_Player"                   -- Solution Name
 
     -- Set the rpath on the executable, to allow for relative path for dynamic lib
     filter { "system:macosx" }
-      if cur_toolset == "clang" or cur_toolset == "gcc" then  -- issue #257
+      if cur_toolset == "clang" or cur_toolset == "gcc" then  
         linkoptions { "-rpath @executable_path/lib" }
       end
     
     filter {"system:windows", "action:vs*"}
       linkoptions   { "/ignore:4099" }      -- Ignore library pdb warnings when running in debug
 
-    filter {} -- clear filter 	
-
-
-
-
+    filter {} -- clear filter   
 
 
 
@@ -87,56 +82,60 @@ workspace "ASCII_Player"                   -- Solution Name
     local output_dir_lib          = output_dir_root .. "/libs" -- Mac Specific
 
     local source_dir_root         = ROOT .. "Source"
-    local source_dir_engine       = source_dir_root .. "/Code"
-    local source_dir_dependencies = source_dir_root .. "/Dependencies"
+    local source_dir_dependencies = ROOT .. "External"
 
+
+    -- Includes and associated information directories 
     local source_dir_includes     = source_dir_dependencies .. "/**/Includes"
     local source_dir_libs         = source_dir_dependencies .. "/**/" .. "Libs_" .. os.get()
     -- optional for libs that are 32 or 64 bit specific
     local source_dir_libs32       = source_dir_libs .. "/lib_x32"
     local source_dir_libs64       = source_dir_libs .. "/lib_x64"
-
+    -- additional asset locations
+    local resources_dir           = ROOT .. "Resources"
 
     -- Files to be compiled (cpp) or added to project (visual studio)
     files
     {
-      source_dir_engine .. "/**.cpp",
-      source_dir_engine .. "/**.hpp",
-      source_dir_engine .. "/**.tpp",
+      source_dir_root .. "/**.cpp",
+      source_dir_root .. "/**.hpp",
+      source_dir_root .. "/**.tpp",
     }
 
+    -- NO TEMPLATES FOR YOU!
     filter { "files:**.tpp" }
       flags {"ExcludeFromBuild"}
     filter {}
 
     -- Ignore files for other operating systems (not necessary in this project)
-    filter { "system:macosx" } removefiles { source_dir_engine .. "/**_windows.*" }
-    filter { "system:windows" } removefiles { source_dir_engine .. "/**_macosx.*"  }
+    filter { "system:macosx" } removefiles { source_dir_root .. "/**_windows.*" }
+    filter { "system:windows" } removefiles { source_dir_root .. "/**_macosx.*"  }
     filter {} -- reset filter
 
-
-    -- TODO: add 'vpaths' to organize filters in visual studio.
-
+    -- Organize VS filters
     vpaths {
       ["Headers"] = 
           { 
-            source_dir_engine .. "**.h", 
-            source_dir_engine .. "**.hpp"
+            source_dir_root .. "**.h", 
+            source_dir_root .. "**.hpp"
           },
       ["Sources/*"] = 
         {
-          source_dir_engine .. "**.c", 
-          source_dir_engine .. "**.cpp", 
-          source_dir_engine .. "**.tpp"
+          source_dir_root .. "**.c", 
+          source_dir_root .. "**.cpp", 
+          source_dir_root .. "**.tpp"
         },
       ["Docs"] = "**.txt"
     }
 
     -- Where compiler should look for library includes
     -- NOTE: for library headers always use  '#include <LIB/lib.hpp>' not quotes
+    -- Tge LIB folder is an additional step to be added manually, creating an effective namespace.
+    -- This prevents silly name overlapt, which we don't want to happen.
     includedirs
     {
-      source_dir_includes
+      source_dir_includes,
+      source_dir_root
     }
     
 
@@ -151,24 +150,47 @@ workspace "ASCII_Player"                   -- Solution Name
       source_dir_libs .. "/lib_%{cfg.platform}/%{cfg.buildcfg}"  -- libs with BOTH x32/x64 AND Release/Debug versions (order reversed)
     }
 
-    
     -- OS-specific Libraries - Dynamic libs will need to be copied to output
+    -- WINDOWS INCLUDES, 32 THEN 64 BIT, EACH BEING DEBUG AND RELEASE
+    filter { "system:windows", "platforms:*32" , "configurations:Debug" }   
+      links 
+      { 
+        "fmodexL_vc" 
+      }
+    filter { "system:windows", "platforms:*32" , "configurations:Release" } 
+      links 
+      { 
+        "fmodex_vc" 
+      }
+    filter { "system:windows", "platforms:*64" , "configurations:Debug" }   
+      links 
+      { 
+        "fmodexL64_vc" 
+      }
+    filter { "system:windows", "platforms:*64" , "configurations:Release" } 
+      links 
+      { 
+        "fmodex64_vc" 
+      }
 
-    
-    filter { "system:windows" }  -- Currently all static libs; No copying
-      links
-      {
-      	"fmodex_vc"
+
+      -- MAC INCLUDES, BEING DEBUG AND RELEASE. RECALL MAC IS ONLY 64-BIT
+    filter { "system:macosx", "configurations:Debug" }   
+      links 
+      { 
+        "libfmodexL" 
       }
-    filter { "system:macosx" }   -- Currently all dylibs; Copy in postbuild
-      links
-      {
-        "libfmodex"
+    filter { "system:macosx", "configurations:Release" } 
+      links 
+      { 
+        "libfmodex" 
       }
+
+
     filter {}
 
 -----------------------------------
--- POST-BUILD CONFIGURATIONS
+-- POST-BUILD CONFIGURATIONS, RIPPED DIRECTLY FROM GLFW DEMO
 -----------------------------------
     -- Setting up cross-platform file manipulation commands
     -- NOTE: this is what premake5's tokens -should- before, but see issue #280
@@ -179,13 +201,14 @@ workspace "ASCII_Player"                   -- Solution Name
     local SEPARATOR = "/"
 
     if(os.get() == "windows") then
-      CWD      = "chdir " .. os.getcwd() .. " && "
+      CWD       = "chdir " .. os.getcwd() .. " && "
       MKDIR     = "mkdir "
       COPY      = "xcopy /Q /E /Y /I "
       SEPARATOR = "\\"
     end
 
     -- mac copies dylibs to output dir
+    -- Additonally, copies resources.
     filter { "system:macosx" }
       postbuildcommands
       {
@@ -194,15 +217,18 @@ workspace "ASCII_Player"                   -- Solution Name
       }
 
     -- windows copies dll's to output dir (currently not used)
+    -- Additoonally, copies resources.
     filter { "system:windows" }
       postbuildcommands
       {
-	    -- TODO: need  to re-write for wildcard file selection on windows...
-        -- path.translate ( CWD .. COPY .. source_dir_dependencies .. "/*/Libs_windows/*.dll " .. output_dir_root , SEPARATOR )
+        path.translate ( CWD .. COPY .. source_dir_dependencies .. "/*/Libs_windows/*.dll " .. output_dir_root , SEPARATOR )
       }
 
+
     -- Copying resource files to output dir (currently not used)
-    -- postbuildcommands
-    -- {
-    --   path.translate ( CWD .. COPY .. <RESOURCE_PATH> .. "/* " .. output_dir_root , SEPARATOR )
-    -- }
+    filter {}
+    postbuildcommands
+    {
+      --path.translate ( CWD .. COPY .. <RESOURCE_PATH> .. "/* " .. output_dir_root , SEPARATOR )
+      path.translate ( CWD .. COPY .. resources_dir .. "/*" .. output_dir_root, SEPARATOR )
+    }
