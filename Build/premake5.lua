@@ -149,15 +149,16 @@ workspace "ASCII_Player"                     -- Solution Name
       source_dir_libs .. "/%{cfg.buildcfg}/lib_%{cfg.platform}", -- libs with BOTH Release/Debug AND x32/x64 versions
       source_dir_libs .. "/lib_%{cfg.platform}/%{cfg.buildcfg}"  -- libs with BOTH x32/x64 AND Release/Debug versions (order reversed)
     }
-
+    
+  
     -- OS-specific Libraries - Dynamic libs will need to be copied to output
     -- WINDOWS INCLUDES, 32 THEN 64 BIT, EACH BEING DEBUG AND RELEASE
-    filter { "system:windows", "platforms:*32" , "configurations:Debug" }   
+    filter { "system:windows", "platforms:*86" , "configurations:Debug" }   
       links 
       { 
         "fmodexL_vc" 
       }
-    filter { "system:windows", "platforms:*32" , "configurations:Release" } 
+    filter { "system:windows", "platforms:*86" , "configurations:Release" } 
       links 
       { 
         "fmodex_vc" 
@@ -173,7 +174,7 @@ workspace "ASCII_Player"                     -- Solution Name
         "fmodex64_vc" 
       }
 
-
+  
       -- MAC INCLUDES, BEING DEBUG AND RELEASE. RECALL MAC IS ONLY 64-BIT
     filter { "system:macosx", "configurations:Debug" }   
       links 
@@ -186,9 +187,12 @@ workspace "ASCII_Player"                     -- Solution Name
         "libfmodex" 
       }
 
-
     filter {}
 
+
+-- Automagical path translating
+
+--[[
 -----------------------------------
 -- POST-BUILD CONFIGURATIONS, RIPPED DIRECTLY FROM GLFW DEMO
 -----------------------------------
@@ -201,7 +205,7 @@ workspace "ASCII_Player"                     -- Solution Name
     local SEPARATOR = "/"
 
     if(os.get() == "windows") then
-      CWD       = "chdir " .. os.getcwd() .. " && "
+      CWD       = "chdir " .. os.getcwd() .. "\\.." .. " && "
       MKDIR     = "mkdir "
       COPY      = "xcopy /Q /E /Y /I "
       SEPARATOR = "\\"
@@ -212,8 +216,8 @@ workspace "ASCII_Player"                     -- Solution Name
     filter { "system:macosx" }
       postbuildcommands
       {
-        path.translate ( CWD .. MKDIR .. output_dir_lib, SEPARATOR ),
-        path.translate ( CWD .. COPY .. source_dir_dependencies .. "/*/Libs_macosx/*.dylib " .. output_dir_lib, SEPARATOR )
+        --path.translate ( CWD .. MKDIR .. output_dir_lib, SEPARATOR ),
+      --  path.translate ( CWD .. COPY .. source_dir_dependencies .. "/*/Libs_macosx/*.dylib " .. output_dir_lib, SEPARATOR )
       }
 
     -- windows copies dll's to output dir (currently not used)
@@ -221,14 +225,22 @@ workspace "ASCII_Player"                     -- Solution Name
     filter { "system:windows" }
       postbuildcommands
       {
-        path.translate ( CWD .. COPY .. source_dir_dependencies .. "/*/Libs_windows/*.dll " .. output_dir_root , SEPARATOR )
+      -- Janky garbage for moving resources folder over into regular stuff folder. This is pretty crap as far as automated building goes.
+       -- path.translate ( CWD .. COPY .. source_dir_dependencies .. "/*/Libs_windows/*.dll " .. output_dir_root , SEPARATOR )
       }
 
 
     -- Copying resource files to output dir (currently not used)
     filter {}
     postbuildcommands
-    {
+    { 
+      --path.translate("chdir " .. os.getcwd() .. "\\.."),
+      --path.translate("xcopy" .. resources_dir .. " " .. output_dir_root)
+
+       
       --path.translate ( CWD .. COPY .. <RESOURCE_PATH> .. "/* " .. output_dir_root , SEPARATOR )
-      path.translate ( CWD .. COPY .. resources_dir .. "/*" .. output_dir_root, SEPARATOR )
+      --path.translate ( CWD .. COPY .. resources_dir .. "/*" .. output_dir_root, SEPARATOR )
     }
+
+
+]]
