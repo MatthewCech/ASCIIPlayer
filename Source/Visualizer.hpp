@@ -20,5 +20,4 @@ namespace ASCIIPlayer
     // Variables
     static unsigned long long visualizerUniqueID_;
   };
-
 }
