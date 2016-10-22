@@ -36,6 +36,7 @@ namespace ASCIIPlayer
     unsigned int GetCurrentPosition(const AudioFile &audioFile);
     std::string GetFilename(const AudioFile &audioFile) const;
     std::string GetFilepath(const AudioFile &audioFile) const;
+    void FillSpectrum(float *arr, int numVals, int channelOffset, FMOD_DSP_FFT_WINDOW window);
 
   private:
       //////////////////////////

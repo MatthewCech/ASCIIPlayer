@@ -1,7 +1,7 @@
 #include "AudioSystem.hpp"
-#include <FMOD\fmod_errors.h>
-#include <ConsoleUtils\console-utils.hpp>
-#include <RTest\RTest.hpp>
+#include <FMOD/fmod_errors.h>
+#include <ConsoleUtils/ConsoleUtils.hpp>
+#include <RTest/RTest.hpp>
 
 
 namespace ASCIIPlayer
@@ -164,6 +164,13 @@ namespace ASCIIPlayer
     float vol;
     FCheck(masterChannel_->getVolume(&vol));
     return vol;
+  }
+
+
+  // Fills a provided array of floats with the spectrum in question.
+  void AudioSystem::FillSpectrum(float *arr, int numVals, int channelOffset, FMOD_DSP_FFT_WINDOW window)
+  {
+    FCheck(fmodSystem_->getSpectrum(arr, numVals, channelOffset, window));
   }
 
 
