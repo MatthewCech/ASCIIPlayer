@@ -1,16 +1,28 @@
 #include <iostream>
 #include <FileIO/FileIO.hpp>
-#include "DJ.hpp"
+#include <ArgParser/ArgParser.hpp>
+#include "Lobby.hpp"
 
 
 
 int main(int argc, char** argv) try
 {
-  
-  ASCIIPlayer::AudioSystem a(10);
-  ASCIIPlayer::AudioFile *af = a.PreloadFile("Test_Audio.mp3");
-  a.PlayFile(*af);
-  while (a.Update()) { }
+  // === Audio System Test ===
+  //ASCIIPlayer::AudioSystem a(10);
+  //ASCIIPlayer::AudioFile *af = a.PreloadFile("Test_Audio.mp3");
+  //a.PlayFile(*af);
+  //while (a.Update()) { }
+
+  // === DJ Test ===
+  //ASCIIPlayer::DJ Dj;
+  //ASCIIPlayer::AudioFile *test1 = new ASCIIPlayer::AudioFile("Test_Audio.mp3");
+  //Dj.AddSong(test1);
+  //while (Dj.Update()) { } 
+
+  ASCIIPlayer::Lobby dergLounge(argc, argv);
+  dergLounge.StartDJ();
+  dergLounge.Run();
+
   // Parse command line. This will have both song names and flags to be interpreted. Consider getopt or similar for cross-platform stuff.
   // Parse config file. Just reinterpret_cast the data to the DJConfig structure.
   // Construct DJ object. One-liner.
