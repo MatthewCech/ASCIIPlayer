@@ -1,6 +1,6 @@
 // Default vizualizer if nothing else is defined.
 #pragma once
-#include "CustomDefines.hpp"
+#include "Defines.hpp"
 #include "Visualizer.hpp"
 
 
