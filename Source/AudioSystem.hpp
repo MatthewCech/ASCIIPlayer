@@ -2,7 +2,7 @@
 #pragma once
 #include <unordered_map>
 #include "AudioFile.hpp"
-#include "CustomDefines.hpp"
+#include "Defines.hpp"
 
 
 
@@ -59,6 +59,6 @@ namespace ASCIIPlayer
     FMOD_SPEAKERMODE speakermode_; // The speaker mode- 5.1, 7.1, etc.
 
     // Active Handles map:
-    std::unordered_map<std::size_t, ChannelHandle> channelHandles_;
+    std::unordered_map<unsigned long long, ChannelHandle> channelHandles_;
   };
 }

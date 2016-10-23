@@ -4,7 +4,7 @@
 namespace ASCIIPlayer
 {
   // Static init.
-  std::size_t AudioFile::uniqueID_ = 0; // ID for lookup in the audio system
+  unsigned long long AudioFile::uniqueID_ = 0; // ID for lookup in the audio system
 
 
   // Constructor and Destructor
@@ -18,4 +18,13 @@ namespace ASCIIPlayer
   // Destructor
   AudioFile::~AudioFile()
   {  }
+
+
+  // Operator == overload
+  bool AudioFile::operator==(const AudioFile &rhs)
+  {
+    if (fileID_ == rhs.fileID_)
+      return true;
+    return false;
+  }
 }

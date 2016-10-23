@@ -1,7 +1,7 @@
 // Audio file object for path and associated data required for streaming.
 #pragma once
 #include <string>
-#include "CustomDefines.hpp"
+#include "Defines.hpp"
 
 
 
@@ -11,20 +11,23 @@ namespace ASCIIPlayer
 	class AudioFile
 	{
     // Mark as friend to manage handles.
-    friend AudioSystem;
+    friend class AudioSystem;
 
 	public:
     // Constructor and Destructor
     AudioFile(std::string Path);
     ~AudioFile();
 
+    // Operator overloads
+    bool operator==(const AudioFile &rhs);
+
 	private:
     // Variables
     std::string path_;          // Filepath of actual song
-    std::size_t fileID_;        // Unique song ID.
+    unsigned long long fileID_; // Unique song ID.
     AudioHandle *loadedObject_; // Handle to the loaded object.
 
     // Static Variables
-    static std::size_t uniqueID_; // ID for lookup in the audio system
+    static unsigned long long uniqueID_; // ID for lookup in the audio system
 	};
 }

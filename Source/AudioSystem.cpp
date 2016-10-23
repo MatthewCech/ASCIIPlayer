@@ -96,8 +96,11 @@ namespace ASCIIPlayer
   // Loads into memory the audiofile in question.
   void AudioSystem::PreloadFile(AudioFile &audioFile)
   {
-    FCheck(fmodSystem_->createStream(
-      audioFile.path_.c_str(), FMOD_DEFAULT, 0, &audioFile.loadedObject_));
+    if (!audioFile.loadedObject_)
+    {
+      FCheck(fmodSystem_->createStream(
+        audioFile.path_.c_str(), FMOD_DEFAULT, 0, &audioFile.loadedObject_));
+    }
   }
 
 
