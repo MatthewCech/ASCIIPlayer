@@ -12,7 +12,7 @@ namespace ASCIIPlayer
   {
   public:
     //Constructor and Destructor
-    Lobby();
+    Lobby(int argc, char** argv);
     ~Lobby();
 
     //Member Functions
@@ -21,9 +21,9 @@ namespace ASCIIPlayer
     void StopDj();
     void RetartDJ();
     void ReloadDJ();
-    std::string cleanCommand(std::string input);
-    bool ParseCommand(std::string command); //Returns if it was a valid command. If not, display error message.
-
+    std::string CleanCommand(std::string input);
+    bool ParseCommand(std::string command); //Returns if it was a valid command after executing. If not, display error message.
+    
   private:
     //Variables
     DJConfig activeConfig_;
