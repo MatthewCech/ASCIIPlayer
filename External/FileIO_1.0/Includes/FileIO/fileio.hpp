@@ -88,14 +88,14 @@ namespace FileUtil
 namespace FileUtil
 {
   // Constructor for FileProxy
-  FileProxy::FileProxy(unsigned int line, File &f) 
+  inline FileProxy::FileProxy(unsigned int line, File &f) 
     : f_(f)
     , line_(line)
   {  }
 
 
   // Actually writes line(s) in question.
-  FileProxy &FileProxy::operator =(std::string str)
+  inline FileProxy &FileProxy::operator =(std::string str)
   {
     f_.Write(str, line_);
     return *this;
@@ -104,14 +104,14 @@ namespace FileUtil
 
   // Attempt to access the line in question.
   // Will throw exception if line does not exist.
-  FileProxy::operator std::string()
+  inline FileProxy::operator std::string()
   {
     return f_.GetLine(line_);
   }
 
 
   // Printing the FileProxy
-  std::ostream& operator<<(std::ostream &os, FileProxy &f)
+  inline std::ostream& operator<<(std::ostream &os, FileProxy &f)
   {
     os << f.f_.GetLine(f.line_);
     return os;
@@ -121,7 +121,7 @@ namespace FileUtil
   // Constructor.
   // Attempts to open the file in question, if no file was found,
   // automatically set to output.
-  File::File(std::string filepath, int mode)
+  inline File::File(std::string filepath, int mode)
     : filepath_(filepath)
     , currentFileType_((mode & Binary) ? Binary : Text)
     , currentModifyMode_((mode & Join) ? Join : Replace) 
@@ -141,30 +141,30 @@ namespace FileUtil
 
 
   // Destructor - Cleanup
-  File::~File()
+  inline File::~File()
   {  }
 
 
   // Gets the specified line. No bounds checking performed.
-  FileProxy File::operator[](unsigned int line)
+  inline FileProxy File::operator[](unsigned int line)
   {
     return FileProxy(line, *this);
   }
 
-  std::string File::GetLine(unsigned int line) const
+  inline std::string File::GetLine(unsigned int line) const
   {
     return fileLines_[line];
   }
 
   // Gets the specified line. No bounds checking performed.
-  std::string File::operator[](unsigned int line) const
+  inline std::string File::operator[](unsigned int line) const
   {
     return fileLines_[line];
   }
 
 
   // Writes arbitrary data to the file. Will disregard line if used in binary mode.
-  void File::Write(const void *data, size_t dataSizeBytes, int line)
+  inline void File::Write(const void *data, size_t dataSizeBytes, int line)
   {
     if (currentFileType_ == Binary)
     {
@@ -198,7 +198,7 @@ namespace FileUtil
 
   // Write to a specific line in the file.
   // Note that line and newlineDelimiter are completely disregarded for binary files.
-  void File::Write(std::string toWrite, int line, const std::string newlineDelimiter)
+  inline void File::Write(std::string toWrite, int line, const std::string newlineDelimiter)
   {
     // Handle binary case
     if (currentFileType_ == Binary)
@@ -257,7 +257,7 @@ namespace FileUtil
 
 
   // Writes file to output stream.
-  std::ostream& operator<<(std::ostream &os, File &f)
+  inline std::ostream& operator<<(std::ostream &os, File &f)
   {
     for (size_t i = 0; i < f.fileLines_.size(); ++i)
       os << f.fileLines_[i] << std::endl;
@@ -267,7 +267,7 @@ namespace FileUtil
 
 
   // Write the file changes
-  bool File::writeChangesToFile(bool writeOver)
+  inline bool File::writeChangesToFile(bool writeOver)
   {
     // Check to see if we will be writing over.
     std::fstream fTest(filepath_, std::ios::in);
@@ -316,7 +316,7 @@ namespace FileUtil
 
   // ReReads the file into memory from the current filepath.
   // WARNING: ERASES ALL LOCAL MODIFICATIONS AND OVERRIDES CHANGES IF UNWRITTEN
-  bool File::ReRead()
+  inline bool File::ReRead()
   {
     if (readCurrent())
     {
@@ -335,7 +335,7 @@ namespace FileUtil
 
 
   // Reads from scratch the file in question, resetting the object.
-  bool File::readCurrent()
+  inline bool File::readCurrent()
   {
     // Check read style
     int mode = std::ios::in;
@@ -364,28 +364,28 @@ namespace FileUtil
 
 
   // Getters
-  unsigned int File::GetLineCount() const   { return fileLines_.size(); }
-  std::string File::GetFileLocation() const { return fileLocation_;     }
-  std::string File::GetFileName() const     { return fileName_;         }
-  std::string File::GetExtension() const    { return fileExtension_;    }
+  inline unsigned int File::GetLineCount() const   { return fileLines_.size(); }
+  inline std::string File::GetFileLocation() const { return fileLocation_;     }
+  inline std::string File::GetFileName() const     { return fileName_;         }
+  inline std::string File::GetExtension() const    { return fileExtension_;    }
 
 
   // Clears contents of the read file, if it exists.
-  void File::Clear()
+  inline void File::Clear()
   {
     fileLines_.clear();
   }
 
 
   // Saves changes to file.
-  bool File::Save()
+  inline bool File::Save()
   {
     return writeChangesToFile(true);
   }
 
 
   // Save file with a different filepath and name, with bool to override or not.
-  bool File::SaveAs(std::string newPath, bool override)
+  inline bool File::SaveAs(std::string newPath, bool override)
   {
     // Get new filepath.
     filepath_ = newPath;
@@ -401,7 +401,7 @@ namespace FileUtil
 
 
   // Parses the file location, or folder, the file is in.
-  std::string File::parseFileLocation()
+  inline std::string File::parseFileLocation()
   {
     std::string path = "";
     std::size_t location = filepath_.find_last_of("/\\");
@@ -412,7 +412,7 @@ namespace FileUtil
 
 
   // Gets the name of the file with path removed.
-  std::string File::parseFileName()
+  inline std::string File::parseFileName()
   {
     std::string name = filepath_;
     std::size_t location = filepath_.find_last_of("/\\");
@@ -423,7 +423,7 @@ namespace FileUtil
 
 
   // Gets the extension of the file, if applicable. Otherwise, returns empty string.
-  std::string File::parseExtension()
+  inline std::string File::parseExtension()
   {
     std::string extension = "";
     std::size_t location = filepath_.find_last_of(".");
