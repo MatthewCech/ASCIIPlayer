@@ -3,6 +3,7 @@
 #include <string>
 
 
+
 class ArgParser
 {
 public:
@@ -30,11 +31,8 @@ private:
 
   // Variables
   std::vector<std::string> args_;
-  const static int NO_INDEX;
+  const static int NO_INDEX = -1;
 };
-
-// Static variable initalization
-const int ArgParser::NO_INDEX = -1;
 
 
 
@@ -176,9 +174,8 @@ inline int ArgParser::substrLoc(std::string toCheck, std::string substr)
   return static_cast<int>(loc);
 }
 
-#ifdef DISABLE_OVERLOAD
-#else
 
+#ifdef OVERLOAD_VECTOR
   /////////////////////////////////////////////////
  // Operator Overloads and other Global Methods //
 /////////////////////////////////////////////////
