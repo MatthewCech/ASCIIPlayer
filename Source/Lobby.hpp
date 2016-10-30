@@ -3,6 +3,7 @@
 #include "DJConfig.hpp"
 #include "DJ.hpp"
 #include <string>
+#include <ArgParser/ArgParser.hpp>
 
 
 
@@ -11,22 +12,24 @@ namespace ASCIIPlayer
   class Lobby
   {
   public:
-    //Constructor and Destructor
+    // Constructor and Destructor
     Lobby(int argc, char** argv);
     ~Lobby();
 
-    //Member Functions
-    bool Run(); //Has while loop and STD::Cin every loop to ensure it's running correctly. Loop sits until DJ starts with proper command.
-    void StartDJ();
-    void StopDj();
-    void RetartDJ();
-    void ReloadDJ();
-    std::string CleanCommand(std::string input);
-    bool ParseCommand(std::string command); //Returns if it was a valid command after executing. If not, display error message.
+    // Member Functions
+    void Run(); // Has while loop and STD::Cin every loop to ensure it's running correctly. Loop sits until DJ starts with proper command.
+    bool ParseCommand(std::string command); // Returns if it was a valid command after executing. If not, display error message.
     
   private:
-    //Variables
-    DJConfig activeConfig_;
+    // Private methods
+    std::string cleanCommand(std::string input);
+    void startDJ();
+    void stopDj();
+    void setDJ(DJ *newDJ);
+
+    // Variables
+    ArgParser argParser_;
     DJ *activeDJ_;
+    bool lobbyHosting_;
   };
 }

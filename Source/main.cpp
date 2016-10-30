@@ -1,6 +1,5 @@
 #include <iostream>
 #include <FileIO/FileIO.hpp>
-#include <ArgParser/ArgParser.hpp>
 #include "Lobby.hpp"
 
 
@@ -20,9 +19,10 @@ int main(int argc, char** argv) try
   //while (Dj.Update()) { } 
 
   ASCIIPlayer::Lobby dergLounge(argc, argv);
-  dergLounge.StartDJ();
   dergLounge.Run();
 
+  // === Effective steps layout with DJ and lobby mingling, one DJ. ===
+  // === Note: No longer valid as lobby can host multiple DJs in theory. ===
   // Parse command line. This will have both song names and flags to be interpreted. Consider getopt or similar for cross-platform stuff.
   // Parse config file. Just reinterpret_cast the data to the DJConfig structure.
   // Construct DJ object. One-liner.
