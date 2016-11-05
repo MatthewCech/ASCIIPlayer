@@ -15,7 +15,7 @@ namespace ASCIIPlayer
   {
   public:
     // Constructor
-    DJ(DJConfig config = DJConfig(), bool startPaused = false);
+    DJ(DJConfig config = DJConfig(), bool startPaused = true);
     ~DJ();
 
     // Member Functons

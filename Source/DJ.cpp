@@ -10,10 +10,11 @@ namespace ASCIIPlayer
     , config_(config)
     , hasShutdown_(false)
     , currSong_(false)
-    , paused_(startPaused)
+    , paused_(true)
   {
     //!TODO: Handle visualizer configuration
     DEBUG_PRINT("== DJ done with setup- Ready to accept song requests! ==");
+    playlist_.SetLooping(true);
   }
 
 
@@ -23,6 +24,7 @@ namespace ASCIIPlayer
     if (!hasShutdown_)
       Shutdown();
   }
+
 
   // Member Functons
   bool DJ::Update()
@@ -35,6 +37,16 @@ namespace ASCIIPlayer
         float vals[a128];
         FillSongSpectrum(vals, a128, FMOD_DSP_FFT_WINDOW_BLACKMAN); //blackman windooooowwww yaaaaaaaaaaassss (change that, rect is def)
         visualizer_->Update(vals, a128);
+      }
+
+      // Update the song and proceed if necessary
+      if (!audioSystem_.IsPlaying(*currSong_))
+      {
+        playlist_.Next();
+
+        // if playlist is not looping, gets called.
+        if (playlist_.GetPlaylistPos() == playlist_.GetPlaylistLength())
+          return false;
       }
 
       // Update our audio system at the very end.
@@ -53,19 +65,21 @@ namespace ASCIIPlayer
     {
       if (paused_)
       {
-        audioSystem_.TogglePause(*currSong_);
+        audioSystem_.SetPaused(*currSong_, false);
         paused_ = false;
       }
     }
   }
 
+
+  // Pauses the current song
   void DJ::Pause()
   {
     if (currSong_)
     {
       if (!paused_)
       {
-        audioSystem_.TogglePause(*currSong_);
+        audioSystem_.SetPaused(*currSong_, true);
         paused_ = true;
       }
     }
@@ -121,6 +135,7 @@ namespace ASCIIPlayer
       audioSystem_.StopFile(*currSong_);
 
     currSong_ = playlist_.GetCurrent();
-    audioSystem_.PlayFile(*currSong_);
+    if(!paused_)
+      audioSystem_.PlayFile(*currSong_, true);
   }
 }
