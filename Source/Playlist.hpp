@@ -24,6 +24,7 @@ namespace ASCIIPlayer
     void SetLooping(bool isLooping);
     AudioFile *GetCurrent();
     unsigned int GetPlaylistLength();
+    unsigned int GetPlaylistPos();
 
   private:
     // Private member functions
@@ -170,6 +171,13 @@ namespace ASCIIPlayer
   template<typename T> unsigned int Playlist<T>::GetPlaylistLength()
   {
     return playlist_.size();
+  }
+
+
+  // Get the current song's location in the playlist.
+  template<typename T> unsigned int Playlist<T>::GetPlaylistPos()
+  {
+    return activeIndex_;
   }
 
 
