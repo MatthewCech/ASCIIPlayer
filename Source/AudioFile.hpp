@@ -2,12 +2,21 @@
 #pragma once
 #include <string>
 #include "Defines.hpp"
+#include <unordered_map>
 
 
 
 namespace ASCIIPlayer
 {
   class AudioSystem;
+
+  struct AudioHandleWrapper
+  {
+    AudioHandleWrapper() : LoadedObject(nullptr), BoundToChannel(false) { }
+    AudioHandle *LoadedObject;
+    bool BoundToChannel;
+  };
+
 	class AudioFile
 	{
     // Mark as friend to manage handles.
@@ -22,12 +31,15 @@ namespace ASCIIPlayer
     bool operator==(const AudioFile &rhs);
 
 	private:
+    // Private methods
+    AudioHandleWrapper *get(APUnique apu);
+
     // Variables
-    std::string path_;          // Filepath of actual song
-    unsigned long long fileID_; // Unique song ID.
-    AudioHandle *loadedObject_; // Handle to the loaded object.
+    std::string path_;                                                 // Filepath of actual song
+    APUnique fileID_;                                                  // Unique song ID.
+    std::unordered_map<APUnique, AudioHandleWrapper> loadedObjects_;   // Handle to the loaded object.
 
     // Static Variables
-    static unsigned long long uniqueID_; // ID for lookup in the audio system
+    static APUnique uniqueID_; // ID for lookup in the audio system
 	};
 }
