@@ -54,6 +54,9 @@ namespace ASCIIPlayer
       if (activeDJ_)
         DEBUG_PRINT("== DJ Has prepped " << activeDJ_->GetPlaylistSize() << " songs! ==");
 
+    if (activeDJ_->GetPlaylistSize() > 0)
+      activeDJ_->Play();
+
     while (lobbyHosting_)
     {
       if (activeDJ_)
@@ -62,6 +65,7 @@ namespace ASCIIPlayer
   }
 
 
+  // 
   bool Lobby::ParseCommand(std::string command)
   {
     command = cleanCommand(command);
@@ -70,6 +74,7 @@ namespace ASCIIPlayer
 
     return true;
   }
+
 
     /////////////
    // Private //
