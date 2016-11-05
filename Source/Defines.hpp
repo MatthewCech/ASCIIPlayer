@@ -19,6 +19,7 @@
 using ChannelHandle = FMOD::Channel*;     // Channel handle for FMOD
 using AudioHandle   = FMOD::Sound;        // Sound object handle for FMOD
 using Channelgroup  = FMOD::ChannelGroup; // Channel object handle for FMOD
+using APUnique      = unsigned long long;
 
 // Defines
 #define DJ_ABSTRACT =0
