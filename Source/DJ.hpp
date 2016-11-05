@@ -25,6 +25,7 @@ namespace ASCIIPlayer
     void Shutdown();
     void ShufflePlaylist();
     void AddSong(AudioFile *toAdd);
+    unsigned int GetPlaylistSize();
     void FillSongSpectrum(float* toFill, AudioDataSize size, FMOD_DSP_FFT_WINDOW window);
 
   private:

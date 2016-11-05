@@ -94,13 +94,23 @@ namespace ASCIIPlayer
   }
 
   // Loads into memory the audiofile in question.
-  void AudioSystem::PreloadFile(AudioFile &audioFile)
+  // If it sees an object loaded, it assumes the object is valid.
+  bool AudioSystem::PreloadFile(AudioFile &audioFile)
   {
     if (!audioFile.loadedObject_)
     {
-      FCheck(fmodSystem_->createStream(
-        audioFile.path_.c_str(), FMOD_DEFAULT, 0, &audioFile.loadedObject_));
+      FMOD_RESULT res = fmodSystem_->createStream(
+        audioFile.path_.c_str(), FMOD_DEFAULT, 0, &audioFile.loadedObject_);
+
+      if (res != FMOD_OK)
+      {
+        DEBUG_PRINT("FAILED to preload:\n  " << audioFile.path_);
+        return false;
+      }
+      else
+        DEBUG_PRINT("Preloaded:\n  " << audioFile.path_);
     }
+    return true;
   }
 
 

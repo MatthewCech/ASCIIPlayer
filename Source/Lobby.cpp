@@ -2,6 +2,7 @@
 #include <FileIO/FileIO.hpp>
 
 
+
 namespace ASCIIPlayer
 {
     ////////////
@@ -11,6 +12,7 @@ namespace ASCIIPlayer
   Lobby::Lobby(int argc, char** argv) 
     : argParser_(argc, argv)
     , activeDJ_(nullptr)
+    , lobbyHosting_(true)
   { 
     // Read for config file using FIleIO
     DJConfig config;
@@ -19,8 +21,12 @@ namespace ASCIIPlayer
     DJ *Dj = new DJ(config, false);
 
     // Parse arguments using arg parser
-    AudioFile *test1 = new ASCIIPlayer::AudioFile("Test_Audio.mp3");
-    Dj->AddSong(test1);
+    std::vector<std::string> args = argParser_.GetAllArgs();
+    for (unsigned int i = 0; i < args.size(); ++i)
+    {
+      AudioFile *test1 = new ASCIIPlayer::AudioFile(args[i]);
+      Dj->AddSong(test1);
+    }
 
     // Set activeDJ to our DJ
     activeDJ_ = Dj;
@@ -42,6 +48,12 @@ namespace ASCIIPlayer
   // Runs the primary lobby loop
   void Lobby::Run()
   {
+    DEBUG_PRINT("== Lobby looking spiffy! == ");
+
+    if (AP_DEBUG_PRINT_VAL)
+      if (activeDJ_)
+        DEBUG_PRINT("== DJ Has prepped " << activeDJ_->GetPlaylistSize() << " songs! ==");
+
     while (lobbyHosting_)
     {
       if (activeDJ_)

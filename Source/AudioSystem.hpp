@@ -20,7 +20,7 @@ namespace ASCIIPlayer
     bool Update();
 
     // Loading
-    void PreloadFile(AudioFile &audioFile);
+    bool PreloadFile(AudioFile &audioFile);
     void UnloadFile(AudioFile &audioFile);
 
     // Basic Play/Pause

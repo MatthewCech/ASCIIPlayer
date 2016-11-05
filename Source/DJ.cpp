@@ -13,6 +13,7 @@ namespace ASCIIPlayer
     , paused_(startPaused)
   {
     //!TODO: Handle visualizer configuration
+    DEBUG_PRINT("== DJ done with setup- Ready to accept song requests! ==");
   }
 
 
@@ -91,8 +92,15 @@ namespace ASCIIPlayer
   // The DJ does NOT handle deallocation for you, in case you wanted to add this to other DJs.
   void DJ::AddSong(AudioFile *toAdd)
   {
-    audioSystem_.PreloadFile(*toAdd);
-    playlist_.Add(toAdd);
+    if(audioSystem_.PreloadFile(*toAdd))
+      playlist_.Add(toAdd);
+  }
+
+
+  // Returns the number of songs in the playlist.
+  unsigned int DJ::GetPlaylistSize()
+  {
+    return playlist_.GetPlaylistLength();
   }
 
 
