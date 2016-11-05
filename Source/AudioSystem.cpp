@@ -6,12 +6,16 @@
 
 namespace ASCIIPlayer
 {
+  // Static Variable Init
+  APUnique AudioSystem::AudioSystemIDIncrement = 0;
+
 
   // Constructor
   AudioSystem::AudioSystem(int numChannels) 
     : fmodSystem_(nullptr)
     , masterChannel_(nullptr)
     , numdrivers_(0)
+    , ID_(AudioSystemIDIncrement++)
   {
     // Generate system and get version
     FCheck(FMOD::System_Create(&fmodSystem_));
@@ -93,14 +97,15 @@ namespace ASCIIPlayer
     return af;
   }
 
+
   // Loads into memory the audiofile in question.
   // If it sees an object loaded, it assumes the object is valid.
   bool AudioSystem::PreloadFile(AudioFile &audioFile)
   {
-    if (!audioFile.loadedObject_)
+    if (!audioFile.get(ID_)->LoadedObject)
     {
       FMOD_RESULT res = fmodSystem_->createStream(
-        audioFile.path_.c_str(), FMOD_DEFAULT, 0, &audioFile.loadedObject_);
+        audioFile.path_.c_str(), FMOD_DEFAULT, 0, &audioFile.get(ID_)->LoadedObject);
 
       if (res != FMOD_OK)
       {
@@ -117,38 +122,54 @@ namespace ASCIIPlayer
   // Unload a file from memory.
   void AudioSystem::UnloadFile(AudioFile &audioFile)
   {
-    FCheck(audioFile.loadedObject_->release());
+    FCheck(audioFile.get(ID_)->LoadedObject->release());
   }
 
 
   // Play a file. 
-  void AudioSystem::PlayFile(AudioFile &audioFile)
+  void AudioSystem::PlayFile(AudioFile &audioFile, bool playing)
   {
-    if (audioFile.loadedObject_ == nullptr)
+    if (audioFile.get(ID_)->LoadedObject == nullptr)
       PreloadFile(audioFile);
 
     // Play and assign to master channel group.
     ChannelHandle channel;
     FCheck(fmodSystem_->playSound(
-      FMOD_CHANNEL_FREE, audioFile.loadedObject_, false, &channel));
+      FMOD_CHANNEL_FREE, audioFile.get(ID_)->LoadedObject, !playing, &channel));
     FCheck(channel->setChannelGroup(masterChannel_));
 
     // @ToDo: Channel override may result in same song playing multiple times.
     // Test this and confirm if it is an issue that needs to be solved.
     channelHandles_[audioFile.uniqueID_] = channel;
+    audioFile.get(ID_)->BoundToChannel = true;
   }
 
 
   // Pauses the file in question to be resumed later.
-  void AudioSystem::TogglePause(AudioFile &audioFile)
+  void AudioSystem::SetPaused(AudioFile &audioFile, bool pausedState)
   {
-    if (audioFile.loadedObject_ == nullptr)
+    if (audioFile.get(ID_)->LoadedObject == nullptr)
       return;
+    
+    if (audioFile.get(ID_)->BoundToChannel == false)
+    {
+      PlayFile(audioFile, !pausedState);
+      return;
+    }
 
     // Toggle paused using !
     bool pausedStatus;
     ChannelHandle ch = channelHandles_[audioFile.uniqueID_];
     FCheck(ch->getPaused(&pausedStatus));
+
+    if (pausedState)
+      if (pausedStatus == true)
+        return;
+    
+    if (!pausedState)
+      if (pausedStatus == false)
+        return;
+
     FCheck(ch->setPaused(!pausedStatus));
   }
   
@@ -156,9 +177,11 @@ namespace ASCIIPlayer
   // Stops the audio file completely, removing the channel.
   void AudioSystem::StopFile(AudioFile &audioFile)
   {
-    ChannelHandle ch = channelHandles_[audioFile.uniqueID_];
-    FCheck(ch->stop());
-    ch = nullptr;
+    ChannelHandle *ch = &channelHandles_[audioFile.uniqueID_];
+    bool playing;
+    (*ch)->isPlaying(&playing);
+    if(playing)
+      FCheck((*ch)->stop());
   }
   
 
@@ -198,19 +221,28 @@ namespace ASCIIPlayer
   }
 
 
+  // Gets if the audiofile is playing
+  bool AudioSystem::IsPlaying(AudioFile &audioFile)
+  {
+    bool status;
+    channelHandles_[audioFile.uniqueID_]->isPlaying(&status);
+    return status;
+  }
+
+
   // Returns the length of the file in question in Milliseconds.
-  unsigned int AudioSystem::GetLength(const AudioFile &audioFile) const
+  unsigned int AudioSystem::GetLength(AudioFile &audioFile) const
   {
     unsigned int tu;
-    FCheck(audioFile.loadedObject_->getLength(&tu, FMOD_TIMEUNIT_MS));
+    FCheck(audioFile.get(ID_)->LoadedObject->getLength(&tu, FMOD_TIMEUNIT_MS));
     return tu;
   }
 
 
   // Returns our current location in the file.
-  unsigned int AudioSystem::GetCurrentPosition(const AudioFile &audioFile)
+  unsigned int AudioSystem::GetCurrentPosition(AudioFile &audioFile)
   {
-    if (audioFile.loadedObject_ == nullptr)
+    if (audioFile.get(ID_)->LoadedObject == nullptr)
       return 0;
 
     unsigned int tu;
@@ -233,7 +265,7 @@ namespace ASCIIPlayer
   // Get the filepath
   std::string AudioSystem::GetFilepath(const AudioFile &audioFile) const
   {
-    std::string path = "";
+    std::string path = audioFile.path_;
     std::size_t location = path.find_last_of("/\\");
     if (location != std::string::npos)
       path = path.substr(0, location + 1);

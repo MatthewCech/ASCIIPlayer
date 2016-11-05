@@ -25,15 +25,16 @@ namespace ASCIIPlayer
 
     // Basic Play/Pause
     AudioFile *AudioSystem::PreloadFile(const std::string filepath);
-    void PlayFile(AudioFile &audioFile);
-    void TogglePause(AudioFile &audioFile);
+    void PlayFile(AudioFile &audioFile, bool playing = false);
+    void SetPaused(AudioFile &audioFile, bool pausedState);
     void StopFile(AudioFile &audioFile);
     void SetMasterVolume(float f);
     float GetMasterVolume() const;
 
     // Info about song
-    unsigned int GetLength(const AudioFile &audioFile) const;
-    unsigned int GetCurrentPosition(const AudioFile &audioFile);
+    bool IsPlaying(AudioFile &audioFile);
+    unsigned int GetLength(AudioFile &audioFile) const;
+    unsigned int GetCurrentPosition(AudioFile &audioFile);
     std::string GetFilename(const AudioFile &audioFile) const;
     std::string GetFilepath(const AudioFile &audioFile) const;
     void FillSpectrum(float *arr, int numVals, int channelOffset, FMOD_DSP_FFT_WINDOW window);
@@ -59,6 +60,10 @@ namespace ASCIIPlayer
     FMOD_SPEAKERMODE speakermode_; // The speaker mode- 5.1, 7.1, etc.
 
     // Active Handles map:
-    std::unordered_map<unsigned long long, ChannelHandle> channelHandles_;
+    std::unordered_map<APUnique, ChannelHandle> channelHandles_;
+
+    // ID Tracking
+    APUnique ID_;
+    static APUnique AudioSystemIDIncrement;
   };
 }
