@@ -17,8 +17,11 @@ int main(int argc, char** argv) try
   //ASCIIPlayer::AudioFile *test1 = new ASCIIPlayer::AudioFile("Test_Audio.mp3");
   //Dj.AddSong(test1);
   //while (Dj.Update()) { } 
-
-  ASCIIPlayer::Lobby dergLounge(argc, argv);
+  
+  // === Lobby Test ===
+  // Expected Use: ASCIIPlayer::Lobby dergLounge(argc, argv);
+  char * args[2] = { "Opening Soda Can.mp3", "Pool Shot.mp3" };// , "Test_Audio.mp3", "Caspa & Rusko.ogg" };
+  ASCIIPlayer::Lobby dergLounge(2, args);
   dergLounge.Run();
 
   // === Effective steps layout with DJ and lobby mingling, one DJ. ===
