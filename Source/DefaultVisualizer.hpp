@@ -12,14 +12,21 @@ namespace ASCIIPlayer
   public:
     // Constructor
     DefaultVisualizer();
-    virtual ~DefaultVisualizer();
 
     // DrawBars
-    bool Update(float* data, AudioDataSize size);
+    bool Update(float* data);
+  };
+}
 
-  private:
-    // Variables
-    char oddChar;
-    char evenChar;
+namespace ASCIIPlayer
+{
+  class LargeWaveformVisualizer : public Visualizer
+  {
+  public:
+    // Constructor
+    LargeWaveformVisualizer();
+
+    // DrawBars
+    bool Update(float* data);
   };
 }
