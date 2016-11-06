@@ -29,13 +29,27 @@ using APUnique      = unsigned long long;
  // Enums //
 ///////////
 // The size of the spectrum to get- confines it to custom size.
-enum AudioDataSize 
+enum AudioDataSize
 {
+  a1 = 1,
+  a4 = 4,
+  a16 = 16,
+  a32 = 32,
   a64 = 64,
   a128 = 128,
   a256 = 256,
   a512 = 512,
-  a1024 = 1024
+  a1024 = 1024,
+
+  aNO_SIZE
+};
+
+enum AudioDataStyle
+{
+  aSpectrum = 0,
+  aWaveform = 1,
+  
+  aNO_STYLE
 };
 
   /////////////////////////////////
