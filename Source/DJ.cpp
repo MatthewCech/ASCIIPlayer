@@ -1,6 +1,7 @@
 #include "DJ.hpp"
-
-
+#include "Visualizers\DefaultVisualizer.hpp"
+#include "Visualizers\HorizontalWaveformVisualizer.hpp"
+#include "Visualizers\ColorDefaultVisualizer.hpp"
 
 namespace ASCIIPlayer
 {
@@ -18,19 +19,14 @@ namespace ASCIIPlayer
   {
     //!TODO: Handle visualizer configuration
     if (config.VisualizerID == "default")
-    {
       visualizer_ = new DefaultVisualizer();
-      visaulizerDataSize_ = visualizer_->GetAudioDataSize();
-      visualizerDataStyle_ = visualizer_->GetAudioDataStyle();
-      visualizerDataArray_ = new float[visaulizerDataSize_];
-    }
-    else if (config.VisualizerID == "waveformLarge")
-    {
-      visualizer_ = new LargeWaveformVisualizer();
-      visaulizerDataSize_ = visualizer_->GetAudioDataSize();
-      visualizerDataStyle_ = visualizer_->GetAudioDataStyle();
-      visualizerDataArray_ = new float[visaulizerDataSize_];
-    }
+    else if (config.VisualizerID == "horizontalWaveform")
+      visualizer_ = new HorizontalWaveformVisualizer();
+    else if (config.VisualizerID == "colorDefault")
+      visualizer_ = new ColorDefaultVisualizer();
+    visaulizerDataSize_ = visualizer_->GetAudioDataSize();
+    visualizerDataStyle_ = visualizer_->GetAudioDataStyle();
+    visualizerDataArray_ = new float[visaulizerDataSize_];
 
     // Looping?
     if (config.Looping)

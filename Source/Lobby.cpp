@@ -15,6 +15,7 @@ namespace ASCIIPlayer
   { 
     // Read for config file using FIleIO
     DJConfig config;
+    config.VisualizerID = "colorDefault";
     //FileUtil::File f("config.cfg")
 
     // Make DJ, don't autoplay.

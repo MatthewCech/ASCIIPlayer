@@ -4,7 +4,7 @@
 #include "Defines.hpp"
 #include "Playlist.hpp"
 #include "Visualizer.hpp"
-#include "DefaultVisualizer.hpp"
+#include "Visualizers\DefaultVisualizer.hpp"
 #include "DJConfig.hpp"
 
 
