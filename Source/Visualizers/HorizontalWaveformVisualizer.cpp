@@ -1,18 +1,15 @@
-#include "DefaultVisualizer.hpp"
-#include <math.h>
-#include <thread>
-
+#include "HorizontalWaveformVisualizer.hpp"
 
 
 namespace ASCIIPlayer
 {
   // Constructor
-  DefaultVisualizer::DefaultVisualizer()
-    : Visualizer(a32, aWaveform, "default")
+  HorizontalWaveformVisualizer::HorizontalWaveformVisualizer()
+    : Visualizer(a128, aWaveform, "horizontalWaveform")
   {  }
 
   // Draw waveform based on updating
-  bool DefaultVisualizer::Update(float* data)
+  bool HorizontalWaveformVisualizer::Update(float* data)
   {
     for (int i = 0; i < GetAudioDataSize(); ++i)
     {
