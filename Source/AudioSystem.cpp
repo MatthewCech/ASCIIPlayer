@@ -204,9 +204,12 @@ namespace ASCIIPlayer
 
 
   // Fills a provided array of floats with the spectrum in question.
-  void AudioSystem::FillSpectrum(float *arr, int numVals, int channelOffset, FMOD_DSP_FFT_WINDOW window)
+  void AudioSystem::FillWithAudioData(float *arr, int numVals, int channelOffset, FMOD_DSP_FFT_WINDOW window, AudioDataStyle style)
   {
-    FCheck(fmodSystem_->getSpectrum(arr, numVals, channelOffset, window));
+    if(style == aWaveform)
+      FCheck(fmodSystem_->getWaveData(arr, numVals, channelOffset));
+    else
+      FCheck(fmodSystem_->getSpectrum(arr, numVals, channelOffset, window));
   }
 
 
