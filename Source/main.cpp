@@ -20,8 +20,12 @@ int main(int argc, char** argv) try
   
   // === Lobby Test ===
   // Expected Use: ASCIIPlayer::Lobby dergLounge(argc, argv);
-  char * args[2] = { "Opening Soda Can.mp3", "Pool Shot.mp3" };// , "Test_Audio.mp3", "Caspa & Rusko.ogg" };
-  ASCIIPlayer::Lobby dergLounge(2, args);
+  //char * args[2] = { "Opening Soda Can.mp3", "Pool Shot.mp3" };// , "Test_Audio.mp3", "Caspa & Rusko.ogg" };
+  //ASCIIPlayer::Lobby dergLounge(2, args);
+  //dergLounge.Run();
+
+  // === Actual Usage ===
+  ASCIIPlayer::Lobby dergLounge(argc, argv);
   dergLounge.Run();
 
   // === Effective steps layout with DJ and lobby mingling, one DJ. ===

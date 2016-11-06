@@ -112,6 +112,8 @@ namespace ASCIIPlayer
     {
       if (looping_)
       {
+        DEBUG_PRINT("== Playlist Looped! ==");
+
         activeIndex_ = 0;
         listUpdateCallback();
       }
@@ -163,7 +165,9 @@ namespace ASCIIPlayer
     if (activeIndex_ == playlist_.size())
       return nullptr;
 
-    return playlist_[activeIndex_];
+    if(playlist_.size() > 0)
+      return playlist_[activeIndex_];
+    return nullptr;
   }
 
 
@@ -184,6 +188,7 @@ namespace ASCIIPlayer
   // Calls the function given that allows updates.
   template<typename T> void Playlist<T>::listUpdateCallback()
   {
+    DEBUG_PRINT("List update callbacked was called.");
     if (toCallOnUpdate_ && caller_)
       (caller_->*toCallOnUpdate_)();
   }

@@ -2,7 +2,6 @@
 #include <FileIO/FileIO.hpp>
 
 
-
 namespace ASCIIPlayer
 {
     ////////////
@@ -16,11 +15,17 @@ namespace ASCIIPlayer
   { 
     // Read for config file using FIleIO
     DJConfig config;
+    //FileUtil::File f("config.cfg")
 
     // Make DJ, don't autoplay.
     DJ *Dj = new DJ(config, false);
+    
+    // Handle all of the flags
+    std::vector<std::string> cmds = argParser_.StartsWith("-");
+    for (unsigned int i = 0; i < cmds.size(); ++i)
+      ParseCommand(cmds[i]);
 
-    // Parse arguments using arg parser
+    // Just loop through and see if anything happens to be a song to load.
     std::vector<std::string> args = argParser_.GetAllArgs();
     for (unsigned int i = 0; i < args.size(); ++i)
     {
@@ -65,12 +70,13 @@ namespace ASCIIPlayer
   }
 
 
-  // 
+  // Parse commands as we see fit.
   bool Lobby::ParseCommand(std::string command)
   {
     command = cleanCommand(command);
-
-    // ...
+    bool update = false;
+    //if (command == "loop")
+      //activeDJ_->
 
     return true;
   }
@@ -82,7 +88,7 @@ namespace ASCIIPlayer
   // Private methods
   std::string Lobby::cleanCommand(std::string input)
   {
-    return "";
+    return input.substr(1, input.size() - 1);
   }
 
 

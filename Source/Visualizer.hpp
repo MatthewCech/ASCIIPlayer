@@ -10,18 +10,20 @@ namespace ASCIIPlayer
   {
   public:
     // Constructor
-    Visualizer(AudioDataSize ads, std::string tag) : audioSize_(ads), visualizerTag_(tag) {  }
+    Visualizer(AudioDataSize ads, AudioDataStyle style, std::string tag) : visualizerTag_(tag), audioSize_(ads), audioStyle_(style){  }
     virtual ~Visualizer() {  };
 
     // Member Functions
-    virtual bool Update(float* data, AudioDataSize size) DJ_ABSTRACT;
-    AudioDataSize GetAudioDataSize() { return audioSize_;  }
+    virtual bool Update(float* data) DJ_ABSTRACT;
+    AudioDataSize GetAudioDataSize() { return audioSize_; }
+    AudioDataStyle GetAudioDataStyle() { return audioStyle_; }
     std::string GetTag() { return visualizerTag_; }
 
-  private:
+  protected:
     // Variables
     std::string visualizerTag_;
     AudioDataSize audioSize_;
+    AudioDataStyle audioStyle_;
   };
 
 }
