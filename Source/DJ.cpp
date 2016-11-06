@@ -1,5 +1,7 @@
 #include "DJ.hpp"
 
+
+
 namespace ASCIIPlayer
 {
   // Constructor
@@ -7,14 +9,36 @@ namespace ASCIIPlayer
     : playlist_(&DJ::playlistUpdatedCallback, this)
     , audioSystem_(config.ChannelCount)
     , visualizer_(nullptr)
+    , visaulizerDataSize_(aNO_SIZE)
+    , visualizerDataStyle_(aNO_STYLE)
     , config_(config)
     , hasShutdown_(false)
     , currSong_(false)
     , paused_(true)
   {
     //!TODO: Handle visualizer configuration
+    if (config.VisualizerID == "default")
+    {
+      visualizer_ = new DefaultVisualizer();
+      visaulizerDataSize_ = visualizer_->GetAudioDataSize();
+      visualizerDataStyle_ = visualizer_->GetAudioDataStyle();
+      visualizerDataArray_ = new float[visaulizerDataSize_];
+    }
+    else if (config.VisualizerID == "waveformLarge")
+    {
+      visualizer_ = new LargeWaveformVisualizer();
+      visaulizerDataSize_ = visualizer_->GetAudioDataSize();
+      visualizerDataStyle_ = visualizer_->GetAudioDataStyle();
+      visualizerDataArray_ = new float[visaulizerDataSize_];
+    }
+
+    // Looping?
+    if (config.Looping)
+      playlist_.SetLooping(true);
+    else
+      playlist_.SetLooping(false);
+
     DEBUG_PRINT("== DJ done with setup- Ready to accept song requests! ==");
-    playlist_.SetLooping(true);
   }
 
 
@@ -31,14 +55,6 @@ namespace ASCIIPlayer
   {
     if (!hasShutdown_)
     {
-      if (visualizer_)
-      {
-        //!TODO: Make this more efficient, don't allocate it every time.
-        float vals[a128];
-        FillSongSpectrum(vals, a128, FMOD_DSP_FFT_WINDOW_BLACKMAN); //blackman windooooowwww yaaaaaaaaaaassss (change that, rect is def)
-        visualizer_->Update(vals, a128);
-      }
-
       // Update the song and proceed if necessary
       if (!audioSystem_.IsPlaying(*currSong_))
       {
@@ -47,6 +63,15 @@ namespace ASCIIPlayer
         // if playlist is not looping, gets called.
         if (playlist_.GetPlaylistPos() == playlist_.GetPlaylistLength())
           return false;
+      }
+      else
+      {
+        if (visualizer_)
+        {
+          //!TODO: Make this more efficient, don't allocate it every time.
+          FillSongData(visualizerDataArray_, visaulizerDataSize_, FMOD_DSP_FFT_WINDOW_RECT); //blackman windooooowwww yaaaaaaaaaaassss (change that, rect is def)
+          visualizer_->Update(visualizerDataArray_);
+        }
       }
 
       // Update our audio system at the very end.
@@ -89,6 +114,8 @@ namespace ASCIIPlayer
   // prepped for.
   void DJ::Shutdown()
   {
+    if(visualizer_)
+      delete visualizer_;
     hasShutdown_ = true;
   }
 
@@ -119,9 +146,12 @@ namespace ASCIIPlayer
 
 
   // Fills the array provided with the active spectrum.
-  void DJ::FillSongSpectrum(float* toFill, AudioDataSize size, FMOD_DSP_FFT_WINDOW window)
+  void DJ::FillSongData(float* toFill, AudioDataSize size, FMOD_DSP_FFT_WINDOW window)
   {
-    audioSystem_.FillSpectrum(toFill, size, 0, window);
+    if(visualizerDataStyle_ == aWaveform)
+      audioSystem_.FillWithAudioData(toFill, size, 0, window, aWaveform);
+    else
+      audioSystem_.FillWithAudioData(toFill, size, 0, window, aSpectrum);
   }
 
 

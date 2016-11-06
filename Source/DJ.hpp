@@ -26,21 +26,24 @@ namespace ASCIIPlayer
     void ShufflePlaylist();
     void AddSong(AudioFile *toAdd);
     unsigned int GetPlaylistSize();
-    void FillSongSpectrum(float* toFill, AudioDataSize size, FMOD_DSP_FFT_WINDOW window);
+    void FillSongData(float* toFill, AudioDataSize size, FMOD_DSP_FFT_WINDOW window);
 
   private:
     // Callback
     void playlistUpdatedCallback();
 
     // Variables
-    Playlist<DJ> playlist_;         // Contains the AudioFile objects.
-    AudioSystem audioSystem_;       // The sound system to play the audio files.
-    Visualizer *visualizer_;        // The visualizer to display the playing data.
-    DJConfig config_;               // The proivded config for the DJ.
+    Playlist<DJ> playlist_;   // Contains the AudioFile objects.
+    AudioSystem audioSystem_; // The sound system to play the audio files.
+    Visualizer *visualizer_;  // The visualizer to display the playing data.
+    DJConfig config_;         // The proivded config for the DJ.
 
     // Internal Tracking
-    bool hasShutdown_;  // Whether or not we have shut down.
-    bool paused_;
-    AudioFile *currSong_;
+    bool hasShutdown_;                   // Whether or not we have shut down.
+    bool paused_;                        // Is the JD paused or not?
+    AudioFile *currSong_;                // What is the current song?
+    AudioDataSize visaulizerDataSize_;   // The size of the array for the audio visualizer.
+    AudioDataStyle visualizerDataStyle_; // The style of data for the audio visualizer
+    float *visualizerDataArray_;         // Data used for the visualizer;
   };
 }
