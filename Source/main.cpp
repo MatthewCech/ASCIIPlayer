@@ -6,6 +6,8 @@
 
 int main(int argc, char** argv) try
 {
+  FMOD::Debug_SetLevel(FMOD_DEBUG_LEVEL_NONE);
+
   // === Audio System Test ===
   //ASCIIPlayer::AudioSystem a(10);
   //ASCIIPlayer::AudioFile *af = a.PreloadFile("Test_Audio.mp3");
