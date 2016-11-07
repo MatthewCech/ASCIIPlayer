@@ -1406,7 +1406,7 @@ namespace RConsole
     if (xStart > width_) return;
 
     // Checks the length and adjusts if it will be past.
-    int writeLen = len;
+    int writeLen = static_cast<int>(len);
     if (writeLen + index > modified_.Length())
       writeLen = modified_.Length() - index;
 

@@ -124,7 +124,7 @@ inline std::vector<std::string> ArgParser::GetAllArgs()
 // Returns the number of arguments.
 inline unsigned int ArgParser::GetNumArgs()
 {
-  return args_.size();
+  return static_cast<unsigned int>(args_.size());
 }
 
 

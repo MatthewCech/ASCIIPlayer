@@ -118,7 +118,7 @@ namespace ASCIIPlayer
         listUpdateCallback();
       }
       else
-        activeIndex_ = playlist_.size();
+        activeIndex_ = static_cast<unsigned int>(playlist_.size());
     }
   }
 
@@ -174,7 +174,7 @@ namespace ASCIIPlayer
   // Get the legnth of the playlist. (song count)
   template<typename T> unsigned int Playlist<T>::GetPlaylistLength()
   {
-    return playlist_.size();
+    return static_cast<unsigned int>(playlist_.size());
   }
 
 
@@ -188,7 +188,6 @@ namespace ASCIIPlayer
   // Calls the function given that allows updates.
   template<typename T> void Playlist<T>::listUpdateCallback()
   {
-    DEBUG_PRINT("List update callbacked was called.");
     if (toCallOnUpdate_ && caller_)
       (caller_->*toCallOnUpdate_)();
   }

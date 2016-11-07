@@ -235,7 +235,7 @@ namespace FileUtil
         line = lastModifiedLine_;
 
       // Resize to accomodate for adding to the end.
-      unsigned int newSize = splitLines.size() + line;
+      unsigned int newSize = static_cast<unsigned int>(splitLines.size() + line);
       if (fileLines_.size() < newSize)
         fileLines_.resize(newSize);
 
@@ -251,7 +251,7 @@ namespace FileUtil
       }
 
       // Update last modified.
-      lastModifiedLine_ = splitLines.size() - 1;
+      lastModifiedLine_ = static_cast<unsigned int>(splitLines.size() - 1);
     }
   }
 
@@ -364,7 +364,7 @@ namespace FileUtil
 
 
   // Getters
-  inline unsigned int File::GetLineCount() const   { return fileLines_.size(); }
+  inline unsigned int File::GetLineCount() const   { return static_cast<unsigned int>(fileLines_.size()); }
   inline std::string File::GetFileLocation() const { return fileLocation_;     }
   inline std::string File::GetFileName() const     { return fileName_;         }
   inline std::string File::GetExtension() const    { return fileExtension_;    }
