@@ -6,7 +6,7 @@ namespace ASCIIPlayer
 {
   // Constructor
   ColorDefaultVisualizer::ColorDefaultVisualizer()
-    : Visualizer(a80, aWaveform, "colorDefault")
+    : Visualizer(RConsole::Canvas::GetConsoleWidht(), aWaveform, "colorDefault")
     , width_(RConsole::Canvas::GetConsoleWidht())
     , height_(RConsole::Canvas::GetConsoleHeight())
   {

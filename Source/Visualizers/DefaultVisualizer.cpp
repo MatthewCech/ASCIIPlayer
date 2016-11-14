@@ -8,13 +8,13 @@ namespace ASCIIPlayer
 {
   // Constructor
   DefaultVisualizer::DefaultVisualizer()
-    : Visualizer(a32, aWaveform, "default")
+    : Visualizer(32, aWaveform, "default")
   {  }
 
   // Draw waveform based on updating
   bool DefaultVisualizer::Update(float* data)
   {
-    for (int i = 0; i < GetAudioDataSize(); ++i)
+    for (unsigned int i = 0; i < GetAudioDataSize(); ++i)
     {
       int dv = static_cast<int>(data[i] * 90);
       if (dv < 0) dv *= -1;

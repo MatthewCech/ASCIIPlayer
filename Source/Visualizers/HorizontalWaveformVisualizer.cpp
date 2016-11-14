@@ -5,13 +5,13 @@ namespace ASCIIPlayer
 {
   // Constructor
   HorizontalWaveformVisualizer::HorizontalWaveformVisualizer()
-    : Visualizer(a128, aWaveform, "horizontalWaveform")
+    : Visualizer(128, aWaveform, "horizontalWaveform")
   {  }
 
   // Draw waveform based on updating
   bool HorizontalWaveformVisualizer::Update(float* data)
   {
-    for (int i = 0; i < GetAudioDataSize(); ++i)
+    for (unsigned int i = 0; i < GetAudioDataSize(); ++i)
     {
       int dv = static_cast<int>(data[i] * 90);
       if (dv < 0) dv *= -1;

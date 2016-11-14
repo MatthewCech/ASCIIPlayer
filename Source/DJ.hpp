@@ -26,7 +26,7 @@ namespace ASCIIPlayer
     void ShufflePlaylist();
     void AddSong(AudioFile *toAdd);
     unsigned int GetPlaylistSize();
-    void FillSongData(float* toFill, AudioDataSize size, FMOD_DSP_FFT_WINDOW window);
+    void FillSongData(float* toFill, unsigned int size, FMOD_DSP_FFT_WINDOW window);
 
   private:
     // Callback
@@ -42,7 +42,7 @@ namespace ASCIIPlayer
     bool hasShutdown_;                   // Whether or not we have shut down.
     bool paused_;                        // Is the JD paused or not?
     AudioFile *currSong_;                // What is the current song?
-    AudioDataSize visaulizerDataSize_;   // The size of the array for the audio visualizer.
+    unsigned int visaulizerDataSize_;   // The size of the array for the audio visualizer.
     AudioDataStyle visualizerDataStyle_; // The style of data for the audio visualizer
     float *visualizerDataArray_;         // Data used for the visualizer;
   };

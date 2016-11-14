@@ -10,7 +10,7 @@ namespace ASCIIPlayer
     : playlist_(&DJ::playlistUpdatedCallback, this)
     , audioSystem_(config.ChannelCount)
     , visualizer_(nullptr)
-    , visaulizerDataSize_(aNO_SIZE)
+    , visaulizerDataSize_(64) // Not magic number, just default width
     , visualizerDataStyle_(aNO_STYLE)
     , config_(config)
     , hasShutdown_(false)
@@ -18,12 +18,15 @@ namespace ASCIIPlayer
     , paused_(true)
   {
     //!TODO: Handle visualizer configuration
-    if (config.VisualizerID == "default")
-      visualizer_ = new DefaultVisualizer();
-    else if (config.VisualizerID == "horizontalWaveform")
+    if (config.VisualizerID == "horizontalWaveform")
       visualizer_ = new HorizontalWaveformVisualizer();
     else if (config.VisualizerID == "colorDefault")
       visualizer_ = new ColorDefaultVisualizer();
+    else
+    {
+      // config.VisualizerID == "default"
+      visualizer_ = new DefaultVisualizer();
+    }
     visaulizerDataSize_ = visualizer_->GetAudioDataSize();
     visualizerDataStyle_ = visualizer_->GetAudioDataStyle();
     visualizerDataArray_ = new float[visaulizerDataSize_];
@@ -142,7 +145,7 @@ namespace ASCIIPlayer
 
 
   // Fills the array provided with the active spectrum.
-  void DJ::FillSongData(float* toFill, AudioDataSize size, FMOD_DSP_FFT_WINDOW window)
+  void DJ::FillSongData(float* toFill, unsigned int size, FMOD_DSP_FFT_WINDOW window)
   {
     if(visualizerDataStyle_ == aWaveform)
       audioSystem_.FillWithAudioData(toFill, size, 0, window, aWaveform);
