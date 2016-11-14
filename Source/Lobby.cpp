@@ -13,13 +13,8 @@ namespace ASCIIPlayer
     , activeDJ_(nullptr)
     , lobbyHosting_(true)
   { 
-    // Read for config file using FIleIO
-    DJConfig config;
-    config.VisualizerID = "colorDefault";
-    //FileUtil::File f("config.cfg")
-
     // Make DJ, don't autoplay.
-    DJ *Dj = new DJ(config, false);
+    DJ *Dj = new DJ(readConfigFile(), false);
     
     // Handle all of the flags
     std::vector<std::string> cmds = argParser_.StartsWith("-");
@@ -90,6 +85,27 @@ namespace ASCIIPlayer
   std::string Lobby::cleanCommand(std::string input)
   {
     return input.substr(1, input.size() - 1);
+  }
+
+
+  // Tries to open config file for the visualizer, generates one otherwise.
+  DJConfig Lobby::readConfigFile()
+  {
+    FileUtil::File f("config");
+    if (f.GetLineCount() == 0)
+    {
+      DJConfig def;
+      f.Write(def.ToString());
+      f.Save();
+      return def;
+    }
+    else
+    {
+      DJConfig newConf;
+      for (unsigned int i = 0; i < f.GetLineCount(); ++i)
+        newConf.ParseLine(f[i]);
+      return newConf;
+    }
   }
 
 
