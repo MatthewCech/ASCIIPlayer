@@ -3,7 +3,6 @@
 #include <string>
 
 
-
 namespace ASCIIPlayer
 {
   struct DJConfig
@@ -17,5 +16,9 @@ namespace ASCIIPlayer
     std::string   VisualizerID = "default";  // ID of the visualizer to use.
 
     //std::string DefaultFolder; // Default folder to load music from.
+
+    // Attempts to parse a line of a file.
+    void ParseLine(std::string line);
+    std::string ToString();
   };
 }
