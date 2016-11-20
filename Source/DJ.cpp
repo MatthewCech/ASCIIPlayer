@@ -2,6 +2,8 @@
 #include "Visualizers\DefaultVisualizer.hpp"
 #include "Visualizers\HorizontalWaveformVisualizer.hpp"
 #include "Visualizers\ColorDefaultVisualizer.hpp"
+#include "Visualizers\CenterVisualizer.hpp"
+
 
 namespace ASCIIPlayer
 {
@@ -22,6 +24,8 @@ namespace ASCIIPlayer
       visualizer_ = new HorizontalWaveformVisualizer();
     else if (config.VisualizerID == "colorDefault")
       visualizer_ = new ColorDefaultVisualizer();
+    else if (config.VisualizerID == "centerVisualizer")
+      visualizer_ = new CenterVisualizer();
     else
     {
       // config.VisualizerID == "default"

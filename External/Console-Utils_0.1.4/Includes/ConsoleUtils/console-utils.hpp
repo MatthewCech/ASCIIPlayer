@@ -808,7 +808,7 @@ namespace RConsole
    // Field2DProxy Methods and Co. //
   //////////////////////////////////
   template <typename T>
-  Field2DProxy<T>::Field2DProxy(Field2D<T> *parentField, unsigned int xPos)
+  inline Field2DProxy<T>::Field2DProxy(Field2D<T> *parentField, unsigned int xPos)
     : field_(parentField)
     , x_(xPos)
   {  }
@@ -817,7 +817,7 @@ namespace RConsole
   // [] Operator Overload.
   // Note- This sets the current index!
   template <typename T>
-  T &Field2DProxy<T>::operator[](unsigned int y)
+  inline T &Field2DProxy<T>::operator[](unsigned int y)
   {
     field_->GoTo(x_, y);
     return field_->Get();
@@ -828,20 +828,20 @@ namespace RConsole
   ////////////////////
   // Gets the width of the Field2D
   template <typename T>
-  unsigned int Field2D<T>::Width() const
+  inline unsigned int Field2D<T>::Width() const
   {
 	  return width_;
   }
 
   // Gets the height of the Field2D
   template <typename T>
-  unsigned int Field2D<T>::Height() const
+  inline unsigned int Field2D<T>::Height() const
   {
 	  return height_;
   }
 
   template <typename T>
-  unsigned int Field2D<T>::Length() const
+  inline unsigned int Field2D<T>::Length() const
   {
     return width_ * height_;
   }
@@ -853,7 +853,7 @@ namespace RConsole
   // Constructor
   // Defaults by setting everything to 0.
   template <typename T>
-  Field2D<T>::Field2D(unsigned int w, unsigned int h)
+  inline Field2D<T>::Field2D(unsigned int w, unsigned int h)
     : index_(0)
     , width_(w)
     , height_(h)
@@ -865,7 +865,7 @@ namespace RConsole
 
   // Sets all values to given default.
   template <typename T>
-  Field2D<T>::Field2D(unsigned int w, unsigned int h, const T defaultVal)
+  inline Field2D<T>::Field2D(unsigned int w, unsigned int h, const T defaultVal)
     : index_(0)
     , width_(w)
     , height_(h)
@@ -884,7 +884,7 @@ namespace RConsole
 
 
   template <typename T>
-  Field2D<T>::Field2D(const Field2D<T> &rhs)
+  inline Field2D<T>::Field2D(const Field2D<T> &rhs)
   {
     if (data_)
       delete[] data_;
@@ -900,7 +900,7 @@ namespace RConsole
 
   // Assignment operator
   template <typename T>
-  Field2D<T> & Field2D<T>::operator=(const Field2D<T> &rhs)
+  inline Field2D<T> & Field2D<T>::operator=(const Field2D<T> &rhs)
   {
     if (&rhs != this)
     {
@@ -921,7 +921,7 @@ namespace RConsole
 
   // Destructor
   template <typename T>
-  Field2D<T>::~Field2D()
+  inline Field2D<T>::~Field2D()
   {
     delete[] data_;
   }
@@ -933,7 +933,7 @@ namespace RConsole
   // Get the item at the position X, Y.
   // Does not set the actual index of the Field!
   template <typename T>
-  T &Field2D<T>::Get(unsigned int x, unsigned int y)
+  inline T &Field2D<T>::Get(unsigned int x, unsigned int y)
   {
     GoTo(x, y);
     return Get();
@@ -942,7 +942,7 @@ namespace RConsole
 
   // Const version of get that returns const reference.
   template <typename T>
-  const T &Field2D<T>::Get(unsigned int x, unsigned int y) const
+  inline const T &Field2D<T>::Get(unsigned int x, unsigned int y) const
   {
     return Get(x, y);
   }
@@ -950,7 +950,7 @@ namespace RConsole
 
   // Get the first part of a 2D array operator
   template <typename T>
-  Field2DProxy<T> Field2D<T>::operator[](unsigned int xPos) 
+  inline Field2DProxy<T> Field2D<T>::operator[](unsigned int xPos)
   {
     return Field2DProxy<T>(this, xPos);
   }
@@ -958,7 +958,7 @@ namespace RConsole
 
   // Set the value at the current index
   template <typename T>
-  void Field2D<T>::Set(const T &newItem)
+  inline void Field2D<T>::Set(const T &newItem)
   {
     data_[index_] = newItem;
   }
@@ -966,7 +966,7 @@ namespace RConsole
 
   // Glance at a read-only version of a specified location. Does NOT set index.
   template <typename T>
-  const T& Field2D<T>::Peek(unsigned int x, unsigned int y) const
+  inline const T& Field2D<T>::Peek(unsigned int x, unsigned int y) const
   {
     return data_[x + y * width_];
   }
@@ -974,7 +974,7 @@ namespace RConsole
 
   // Get the value at the specified index.
   template <typename T>
-  const T& Field2D<T>::Peek(unsigned int index) const
+  inline const T& Field2D<T>::Peek(unsigned int index) const
   {
     return data_[index];
   }
@@ -982,7 +982,7 @@ namespace RConsole
 
   // Chance selected index to specified point.
   template <typename T>
-  void Field2D<T>::GoTo(unsigned int x, unsigned int y)
+  inline void Field2D<T>::GoTo(unsigned int x, unsigned int y)
   {
     index_ = x + y * width_;
   }
@@ -990,7 +990,7 @@ namespace RConsole
 
   // Sets all memory to 0. Does NOT modify index!
   template <typename T>
-  void Field2D<T>::Zero()
+  inline void Field2D<T>::Zero()
   {
     memset(data_, 0, sizeof(T) * width_ * height_);
   }
@@ -998,7 +998,7 @@ namespace RConsole
 
   // Sets all memory to whatever you want.
   template <typename T>
-  void Field2D<T>::Fill(const T &objToUse)
+  inline void Field2D<T>::Fill(const T &objToUse)
   {
     Fill(objToUse, 0, Length());
   }
@@ -1007,7 +1007,7 @@ namespace RConsole
   // Fills a specific range to whatever I want, inclusive for start index and
   // excludes end index.
   template <typename T>
-  void Field2D<T>::Fill(const T &objToUse, unsigned int startIndex, unsigned int endIndex)
+  inline void Field2D<T>::Fill(const T &objToUse, unsigned int startIndex, unsigned int endIndex)
   {
     unsigned int prevIndex = index_;
     index_ = startIndex;
@@ -1024,7 +1024,7 @@ namespace RConsole
   //////////////////////
   // Get the value at the current index.
   template <typename T>
-  T &Field2D<T>::Get()
+  inline T &Field2D<T>::Get()
   {
     return data_[index_];
   }
@@ -1032,7 +1032,7 @@ namespace RConsole
 
   // Const get.
   template <typename T>
-  const T& Field2D<T>::Get() const
+  inline const T& Field2D<T>::Get() const
   {
     return data_[index_];
   }
@@ -1040,7 +1040,7 @@ namespace RConsole
 
   // Increment X location by 1 in the 2D field
   template <typename T>
-  void Field2D<T>::IncrementX()
+  inline void Field2D<T>::IncrementX()
   {
     ++index_;
   }
@@ -1048,7 +1048,7 @@ namespace RConsole
 
   // Increment Y location by 1 in the 2D field
   template <typename T>
-  void Field2D<T>::IncrementY()
+  inline void Field2D<T>::IncrementY()
   {
     index_ += width_;
   }
@@ -1056,7 +1056,7 @@ namespace RConsole
 
   // Decrement X location by 1 in the 2D field
   template <typename T>
-  void Field2D<T>::DecrementX()
+  inline void Field2D<T>::DecrementX()
   {
     --index_;
   }
@@ -1064,7 +1064,7 @@ namespace RConsole
 
   // Decrement Y location by 1 in the 2D Field
   template <typename T>
-  void Field2D<T>::DecrementY()
+  inline void Field2D<T>::DecrementY()
   {
     index_ -= width_;
   }
@@ -1072,7 +1072,7 @@ namespace RConsole
 
   // Gets the index that the 2D Field currently has.
   template <typename T>
-  unsigned int Field2D<T>::GetIndex()
+  inline unsigned int Field2D<T>::GetIndex()
   {
     return index_;
   }
@@ -1080,7 +1080,7 @@ namespace RConsole
 
   // Gets the index that the 2D Field currently has.
   template <typename T>
-  void Field2D<T>::SetIndex(unsigned int index)
+  inline void Field2D<T>::SetIndex(unsigned int index)
   {
     index_ = index;
   }
@@ -1210,17 +1210,17 @@ namespace RConsole
   ////////////////////////
   // 
   //constructor, no character and just the previous color.
-  RasterInfo::RasterInfo() : Value(0), C(Color::PREVIOUS_COLOR) 
+  inline RasterInfo::RasterInfo() : Value(0), C(Color::PREVIOUS_COLOR)
   {  }
 
   
   // Non-Default constructor, specifies const character and color.
-  RasterInfo::RasterInfo(const char val, Color col) : Value(val), C(col) 
+  inline RasterInfo::RasterInfo(const char val, Color col) : Value(val), C(col)
   {  }
 
 
   // Overloaded comparision operator that checks all fields.
-  bool RasterInfo::operator ==(const RasterInfo &rhs) const
+  inline bool RasterInfo::operator ==(const RasterInfo &rhs) const
   {
     if (rhs.C == C && rhs.Value == Value)
       return true;
@@ -1229,7 +1229,7 @@ namespace RConsole
 
 
   // Overloaded comparison operator that checks all fields.
-  bool RasterInfo::operator !=(const RasterInfo &rhs) const
+  inline bool RasterInfo::operator !=(const RasterInfo &rhs) const
   {
     return !(*this == rhs);
   }
@@ -1239,7 +1239,7 @@ namespace RConsole
    // Console Raster object //
   ///////////////////////////
   // Default constructor for the CanvasRaster- Zeros data and gets width and height.
-  CanvasRaster::CanvasRaster(unsigned int width, unsigned int height)
+  inline CanvasRaster::CanvasRaster(unsigned int width, unsigned int height)
     : width_(width)
     , height_(height)
     , data_(width, height, RasterInfo(' ', RConsole::WHITE))
@@ -1247,7 +1247,7 @@ namespace RConsole
 
 
   // Draws a character to the screen. Returns if it was successful or not.
-  bool CanvasRaster::WriteChar(char toDraw, float x, float y, Color color)
+  inline bool CanvasRaster::WriteChar(char toDraw, float x, float y, Color color)
   {
     #ifdef RConsole_CLIP_CONSOLE
 
@@ -1265,7 +1265,7 @@ namespace RConsole
 
 
   // Writes a string to the field
-  bool CanvasRaster::WriteString(const char *toWrite, size_t len, float x, float y, Color color)
+  inline bool CanvasRaster::WriteString(const char *toWrite, size_t len, float x, float y, Color color)
   {
 	  //Establish and check for a string of a usable size.
 	  data_.GoTo(static_cast<int>(x), static_cast<int>(y));
@@ -1281,42 +1281,42 @@ namespace RConsole
 
 
   // Writes a mass of spaces to the screen.
-  void CanvasRaster::Fill(const RasterInfo &ri)
+  inline void CanvasRaster::Fill(const RasterInfo &ri)
   {
     data_.Fill(ri);
   }
   
 
   // Clears out all of the data written to the raster. Does NOT move cursor to 0,0.
-  void CanvasRaster::Zero()
+  inline void CanvasRaster::Zero()
   {
     data_.Zero();
   }
 
 
   // Get a constant reference to the existing raster.
-  const Field2D<RasterInfo>& CanvasRaster::GetRasterData() const
+  inline const Field2D<RasterInfo>& CanvasRaster::GetRasterData() const
   {
     return data_;
   }
 
 
   // Underlying raster exposing.
-  Field2D<RasterInfo>& CanvasRaster::GetRasterData()
+  inline Field2D<RasterInfo>& CanvasRaster::GetRasterData()
   {
     return data_;
   }
   
 
   // Gets console width.
-  unsigned int CanvasRaster::GetRasterWidth() const 
+  inline unsigned int CanvasRaster::GetRasterWidth() const
   { 
     return width_;
   }  
 
 
   // Get console height
-  unsigned int CanvasRaster::GetRasterHeight() const
+  inline unsigned int CanvasRaster::GetRasterHeight() const
   { 
     return height_;
   } 
@@ -1354,7 +1354,7 @@ namespace RConsole
    // Public Member Functions //
   /////////////////////////////
   // Setup with width and height. Can be re-init
-  void Canvas::ReInit(unsigned int width, unsigned int height)
+  inline void Canvas::ReInit(unsigned int width, unsigned int height)
   {
     width_ = width;
     height_ = height;
@@ -1367,13 +1367,13 @@ namespace RConsole
   // Clear out the screen that the user sees.
   // Note: More expensive than clearing just the previous spaces
   // but less expensive than clearing entire buffer with command.
-  void Canvas::FillCanvas(const RasterInfo &ri)
+  inline void Canvas::FillCanvas(const RasterInfo &ri)
   {
     r_.Fill(ri);
   }
 
   // Write the specific character in a specific color to a specific location on the console.
-  void Canvas::Draw(char toWrite, float x, float y, Color color)
+  inline void Canvas::Draw(char toWrite, float x, float y, Color color)
   {
     #ifdef RConsole_CLIP_CONSOLE
 
@@ -1389,7 +1389,7 @@ namespace RConsole
 
 
   // Draw a string
-  void Canvas::DrawString(const char* toDraw, float xStart, float yStart, Color color)
+  inline void Canvas::DrawString(const char* toDraw, float xStart, float yStart, Color color)
   {
 	  size_t len = strlen(toDraw);
 	  if (len <= 0) return;
@@ -1428,7 +1428,7 @@ namespace RConsole
   }
 
   // Updates the current raster by drawing it to the screen.
-  bool Canvas::Update()
+  inline bool Canvas::Update()
   {
     if (!isDrawing_) return false;
     
@@ -1452,7 +1452,7 @@ namespace RConsole
 
 
   // Draws a point with ASCII to attempt to represent alpha values in 4 steps.
-  void Canvas::DrawAlpha(float x, float y, Color color, float opacity)
+  inline void Canvas::DrawAlpha(float x, float y, Color color, float opacity)
   {
     // All characters use represent alt-codes. 
     if (opacity < .25)
@@ -1467,14 +1467,14 @@ namespace RConsole
 
 
   // Stops the update loop.
-  void Canvas::Shutdown()
+  inline void Canvas::Shutdown()
   {
     isDrawing_ = false;
   }
 
 
   // Draws a point with ASCII to attempt to represent location in a square.
-  void Canvas::DrawPartialPoint(float x, float y, Color color)
+  inline void Canvas::DrawPartialPoint(float x, float y, Color color)
   {
     // Get first two decimal places from location.
     int xDec = static_cast<int>(x * 100) % 100;
@@ -1502,7 +1502,7 @@ namespace RConsole
   }
 
   // Drawing box
-  void Canvas::DrawBox(char toWrite, float x1, float y1, float x2, float y2, Color color)
+  inline void Canvas::DrawBox(char toWrite, float x1, float y1, float x2, float y2, Color color)
   {
     
     if(x1 > x2)
@@ -1531,7 +1531,7 @@ namespace RConsole
 
 
   //Set visibility of cursor to specified bool.
-  void Canvas::SetCursorVisible(bool isVisible)
+  inline void Canvas::SetCursorVisible(bool isVisible)
   {
     if (!isVisible)
       rlutil::hidecursor();
@@ -1541,14 +1541,14 @@ namespace RConsole
 
 
   // Gets the width of the console
-  unsigned int Canvas::GetConsoleWidht()
+  inline unsigned int Canvas::GetConsoleWidht()
   {
     return width_;
   }
 
 
   // Gets the height of the console
-  unsigned int Canvas::GetConsoleHeight()
+  inline unsigned int Canvas::GetConsoleHeight()
   {
     return height_;
   }
@@ -1557,7 +1557,7 @@ namespace RConsole
    // Private Member Functions //
   //////////////////////////////
   // Clears out the screen based on the previous items written. Clear character is a space.
-  void Canvas::clearPrevious()
+  inline void Canvas::clearPrevious()
   {
     // Walk through, write over only what was modified.
     modified_.SetIndex(0);
@@ -1592,7 +1592,7 @@ namespace RConsole
 
 
   // Explicitly clears every possible index. This is expensive! 
-  void Canvas::fullClear()
+  inline void Canvas::fullClear()
   {
     rlutil::cls();
   }
@@ -1607,7 +1607,7 @@ namespace RConsole
 
 
   // Write the raster we were attempting to write.
-  bool Canvas::writeRaster(CanvasRaster &r)
+  inline bool Canvas::writeRaster(CanvasRaster &r)
   {
     // Set initial position.
     unsigned int maxIndex = width_ * height_;
@@ -1659,7 +1659,7 @@ namespace RConsole
   }
 
   // Cross-platform putc
-  int Canvas::putC(int character, FILE * stream )
+  inline int Canvas::putC(int character, FILE * stream )
   {
     #if defined(RConsole_NO_THREADING) && defined(OS_WINDOWS)
       return _putc_nolock(character, stream);
@@ -1767,7 +1767,7 @@ namespace RConsole
     std::cout << std::endl;
     exit(signalNum);
   }
-  void Canvas::setCloseHandler()
+  inline void Canvas::setCloseHandler()
   {
     signal(SIGTERM, signalHandler);
     signal(SIGINT, signalHandler);

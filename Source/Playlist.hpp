@@ -112,7 +112,7 @@ namespace ASCIIPlayer
     {
       if (looping_)
       {
-        DEBUG_PRINT("== Playlist Looped! ==");
+        //DEBUG_PRINT("== Playlist Looped! ==");
 
         activeIndex_ = 0;
         listUpdateCallback();

@@ -8,10 +8,10 @@ namespace ASCIIPlayer
   {
   public:
     // Constructor
-    ColorDefaultVisualizer();
+    ColorDefaultVisualizer() : Visualizer(32, aWaveform, "colorDefault") { };
 
     // DrawBars
-    bool Update(float* data);
+    bool Update(float* data) { return false; };
     int width_;
     int height_;
   };
