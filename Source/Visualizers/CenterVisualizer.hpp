@@ -19,8 +19,9 @@ namespace ASCIIPlayer
     int lastWidth_;
     int lastHeight_;
     
-    float *prev_;
+    float *prev1_;
     float *prev2_;
+    float *prev3_;
     int prevSize_;
     int frameDeleay_;
     int frameDelayMax_;

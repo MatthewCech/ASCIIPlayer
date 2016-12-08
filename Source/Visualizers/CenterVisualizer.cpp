@@ -9,7 +9,7 @@
 
 namespace ASCIIPlayer
 {
-  void DrawSplit(int dataSize, float *data, int width, int height, unsigned char drawChar, int scalarVal = 1)
+  void DrawSplit(int dataSize, float *data, int width, int height, unsigned char drawChar, float SCALAR_TO_CHANGE = 2)
   {    // Calculate dependant values and precompute values.
     const int audioDataWidth{ static_cast<int>(dataSize / 2.5 - 1) };                              // Audio data width we use
     const int centerOffsetH = (width - audioDataWidth) / 2 < 0 ? 0 : (width - audioDataWidth) / 2; // Horizontal Offset
@@ -30,7 +30,7 @@ namespace ASCIIPlayer
       if (actualWidth <= 0) continue;
 
       // Place 4 mirrored blocks.
-      for (int j = 0; j < actualWidth * scalarVal; ++j)
+      for (int j = 0; j < actualWidth * 2; ++j)
       {
         // Lower Left quadrant
         RConsole::Canvas::Draw(
@@ -68,14 +68,14 @@ namespace ASCIIPlayer
     : Visualizer(64, aSpectrum, "centerVisualizer")
     , lastWidth_(CONSOLE_WIDTH_FUNC)
     , lastHeight_(CONSOLE_HEIGHT_FUNC)
-    , frameDelayMax_(90)
+    , frameDelayMax_(60) //!TODO: Tune
     , frameDeleay_(0)
   {  
     RConsole::Canvas::SetCursorVisible(false);
     prevSize_ = GetAudioDataSize();
-    prev_ = new float[prevSize_]{ 0 };
+    prev1_ = new float[prevSize_] { 0 };
     prev2_ = new float[prevSize_] { 0 };
-
+    prev3_ = new float[prevSize_] { 0 };
   }
 
   // Member functions
@@ -96,20 +96,22 @@ namespace ASCIIPlayer
       return false;
     }
 
-    // Draw primary shape
-    DrawSplit(dataSize, prev2_, width, height, static_cast<unsigned char>(176), 2);
-    DrawSplit(dataSize, prev_, width, height, static_cast<unsigned char>(177), 2);
-    DrawSplit(dataSize, data, width, height, static_cast<unsigned char>(219), 2);
+    // Draw primary shape with 3 frames of fade, fade drawn from most to least faded.
+    DrawSplit(dataSize, prev2_, width, height, static_cast<unsigned char>(176)); // most faded
+    DrawSplit(dataSize, prev2_, width, height, static_cast<unsigned char>(177)); // mid faded
+    DrawSplit(dataSize, prev1_, width, height, static_cast<unsigned char>(178)); // least faded
+    DrawSplit(dataSize, data, width, height, static_cast<unsigned char>(219));   // current
 
-    // Update the canvas
-    if (frameDeleay_ > frameDelayMax_)
+    // If we are past frame delay, update.
+    if (++frameDeleay_ > frameDelayMax_)
     {
-      prev2_ = static_cast<float *>(memcpy(prev2_, prev_, prevSize_));
-      prev_ = static_cast<float *>(memcpy(prev_, data, prevSize_));
+      prev3_ = static_cast<float *>(memcpy(prev3_, prev2_, prevSize_));
+      prev2_ = static_cast<float *>(memcpy(prev2_, prev1_, prevSize_));
+      prev1_ = static_cast<float *>(memcpy(prev1_, data, prevSize_));
       frameDeleay_ = { 0 };
     }
-    else
-      ++frameDeleay_;
+
+    // Update the canvas
     return RConsole::Canvas::Update();
   }
 }
