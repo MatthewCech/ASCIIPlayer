@@ -9,7 +9,7 @@
 
 namespace ASCIIPlayer
 {
-  void DrawSplit(int dataSize, float *data, int width, int height, unsigned char drawChar, float SCALAR_TO_CHANGE = 2)
+  void DrawSplit(int dataSize, float *data, int width, int height, unsigned char drawChar, float SCALAR_TO_CHANGE = 1.5)
   {    // Calculate dependant values and precompute values.
     const int audioDataWidth{ static_cast<int>(dataSize / 2.5 - 1) };                              // Audio data width we use
     const int centerOffsetH = (width - audioDataWidth) / 2 < 0 ? 0 : (width - audioDataWidth) / 2; // Horizontal Offset
@@ -30,7 +30,7 @@ namespace ASCIIPlayer
       if (actualWidth <= 0) continue;
 
       // Place 4 mirrored blocks.
-      for (int j = 0; j < actualWidth * 2; ++j)
+      for (int j = 0; j < actualWidth * SCALAR_TO_CHANGE; ++j)
       {
         // Lower Left quadrant
         RConsole::Canvas::Draw(
@@ -68,7 +68,7 @@ namespace ASCIIPlayer
     : Visualizer(64, aSpectrum, "centerVisualizer")
     , lastWidth_(CONSOLE_WIDTH_FUNC)
     , lastHeight_(CONSOLE_HEIGHT_FUNC)
-    , frameDelayMax_(60) //!TODO: Tune
+    , frameDelayMax_(70) //!TODO: Tune, current 60
     , frameDeleay_(0)
   {  
     RConsole::Canvas::SetCursorVisible(false);
@@ -103,12 +103,18 @@ namespace ASCIIPlayer
     DrawSplit(dataSize, data, width, height, static_cast<unsigned char>(219));   // current
 
     // If we are past frame delay, update.
-    if (++frameDeleay_ > frameDelayMax_)
+    if (++frameDeleay_ > frameDelayMax_ - 3)
     {
-      prev3_ = static_cast<float *>(memcpy(prev3_, prev2_, prevSize_));
-      prev2_ = static_cast<float *>(memcpy(prev2_, prev1_, prevSize_));
-      prev1_ = static_cast<float *>(memcpy(prev1_, data, prevSize_));
-      frameDeleay_ = { 0 };
+      // Stagger memcpy calls.
+      if(frameDeleay_ == frameDelayMax_ - 2)
+        prev3_ = static_cast<float *>(memcpy(prev3_, prev2_, prevSize_));
+      else if(frameDeleay_ == frameDelayMax_ - 1)
+        prev2_ = static_cast<float *>(memcpy(prev2_, prev1_, prevSize_));
+      else if (frameDeleay_ == frameDelayMax_)
+      {
+        prev1_ = static_cast<float *>(memcpy(prev1_, data, prevSize_));
+        frameDeleay_ = { 0 };
+      }
     }
 
     // Update the canvas
