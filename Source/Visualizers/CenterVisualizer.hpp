@@ -1,6 +1,6 @@
 #pragma once
 #include "Visualizer.hpp"
-
+#include <chrono>
 
 
 namespace ASCIIPlayer
@@ -15,8 +15,15 @@ namespace ASCIIPlayer
     bool Update(float* data);
 
   private:
+    // Variables
     int lastWidth_;
     int lastHeight_;
+    
+    float *prev_;
+    float *prev2_;
+    int prevSize_;
+    int frameDeleay_;
+    int frameDelayMax_;
   };
 }
 
