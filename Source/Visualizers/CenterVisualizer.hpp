@@ -25,6 +25,22 @@ namespace ASCIIPlayer
     int prevSize_;
     int frameDeleay_;
     int frameDelayMax_;
+		
+		int moveDelayMax_;
+		int moveDelay_;
+		float rand1_;
+		float rand2_;
+
+
+		float offsetX_;
+		float offsetY_;
+		float offsetX1_;
+		float offsetY1_;
+		float offsetX2_;
+		float offsetY2_;
+		float offsetX3_;
+		float offsetY3_;
+
   };
 }
 
