@@ -9,7 +9,7 @@
 
 namespace ASCIIPlayer
 {
-  void DrawSplit(int dataSize, float *data, int width, int height, unsigned char drawChar, float SCALAR_TO_CHANGE = 1.5)
+  void DrawSplit(int dataSize, float *data, int width, int height, unsigned char drawChar, float offsetX = 0, float offsetY = 0, float SCALAR_TO_CHANGE = 1.5)
   {    // Calculate dependant values and precompute values.
     const int audioDataWidth{ static_cast<int>(dataSize / 2.5 - 1) };                              // Audio data width we use
     const int centerOffsetH = (width - audioDataWidth) / 2 < 0 ? 0 : (width - audioDataWidth) / 2; // Horizontal Offset
@@ -35,29 +35,29 @@ namespace ASCIIPlayer
         // Lower Left quadrant
         RConsole::Canvas::Draw(
             drawChar
-          , static_cast<float>((centerOffsetH - i) + halfDataWidth)
-          , static_cast<float>(j + halfHeight)
+          , offsetX + static_cast<float>((centerOffsetH - i) + halfDataWidth)
+          , offsetY + static_cast<float>(j + halfHeight)
           , RConsole::BLUE);
 
         // Lower right quadrant
         RConsole::Canvas::Draw(
             drawChar
-          , static_cast<float>((centerOffsetH + i) + halfDataWidth)
-          , static_cast<float>(j + halfHeight)
+          , offsetX + static_cast<float>((centerOffsetH + i) + halfDataWidth)
+          , offsetY + static_cast<float>(j + halfHeight)
           , RConsole::BLUE);
 
         // Upper left quadrant
         RConsole::Canvas::Draw(
             drawChar
-          , static_cast<float>((centerOffsetH + audioDataWidth - i) - halfDataWidth)
-          , static_cast<float>(-j + halfHeight)
+          , offsetX + static_cast<float>((centerOffsetH + audioDataWidth - i) - halfDataWidth)
+          , offsetY + static_cast<float>(-j + halfHeight)
           , RConsole::LIGHTBLUE);
 
         // Upper right quadrant
         RConsole::Canvas::Draw(
             drawChar
-          , static_cast<float>((centerOffsetH + audioDataWidth + i) - halfDataWidth)
-          , static_cast<float>(-j + halfHeight)
+          , offsetX + static_cast<float>((centerOffsetH + audioDataWidth + i) - halfDataWidth)
+          , offsetY + static_cast<float>(-j + halfHeight)
           , RConsole::LIGHTBLUE);
       }
     }
@@ -97,10 +97,12 @@ namespace ASCIIPlayer
     }
 
     // Draw primary shape with 3 frames of fade, fade drawn from most to least faded.
-    DrawSplit(dataSize, prev2_, width, height, static_cast<unsigned char>(176)); // most faded
-    DrawSplit(dataSize, prev2_, width, height, static_cast<unsigned char>(177)); // mid faded
-    DrawSplit(dataSize, prev1_, width, height, static_cast<unsigned char>(178)); // least faded
-    DrawSplit(dataSize, data, width, height, static_cast<unsigned char>(219));   // current
+		float offsetX = (rand() % 20 - 10) * ((data[5] + data[6] + data[7]) / 3);
+		float offsetY = (rand() % 20 - 10) * ((data[0] + data[1]) / 2);
+    DrawSplit(dataSize, prev2_, width, height, static_cast<unsigned char>(176), offsetX, offsetY); // most faded
+    DrawSplit(dataSize, prev2_, width, height, static_cast<unsigned char>(177), offsetX, offsetY); // mid faded
+    DrawSplit(dataSize, prev1_, width, height, static_cast<unsigned char>(178)), offsetX, offsetY; // least faded
+    DrawSplit(dataSize, data, width, height, static_cast<unsigned char>(219), offsetX, offsetY);   // current
 
     // If we are past frame delay, update.
     if (++frameDeleay_ > frameDelayMax_ - 3)
