@@ -1340,14 +1340,14 @@ namespace RConsole
   #define DEFAULT_WIDTH_SIZE (rlutil::tcols() - 1)
   #define DEFAULT_HEIGHT_SIZE rlutil::trows()
 
-  // Static initialization in non-guaranteed order.
-  CanvasRaster Canvas::r_         = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
-  CanvasRaster Canvas::prev_      = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
-  bool Canvas::hasLazyInit_       = false;
-  bool Canvas::isDrawing_         = true;
-  unsigned int Canvas::width_     = DEFAULT_WIDTH_SIZE;
-  unsigned int Canvas::height_    = DEFAULT_HEIGHT_SIZE;
-  Field2D<bool> Canvas::modified_ = Field2D<bool>(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
+  //// Static initialization in non-guaranteed order.
+  //CanvasRaster Canvas::r_         = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
+  //CanvasRaster Canvas::prev_      = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
+  //bool Canvas::hasLazyInit_       = false;
+  //bool Canvas::isDrawing_         = true;
+  //unsigned int Canvas::width_     = DEFAULT_WIDTH_SIZE;
+  //unsigned int Canvas::height_    = DEFAULT_HEIGHT_SIZE;
+  //Field2D<bool> Canvas::modified_ = Field2D<bool>(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
 
 
     /////////////////////////////
@@ -1601,7 +1601,7 @@ namespace RConsole
 
   
   // Set the color in the console using utility, if applicable.
-  void Canvas::setColor(const Color &color)
+  inline void Canvas::setColor(const Color &color)
   {
     if (color != PREVIOUS_COLOR)
       rlutil::setColor(color);
@@ -1674,7 +1674,7 @@ namespace RConsole
   // print out the formatted raster.
   // Note that because of console color formatting, we use the RLUTIL coloring option when
   // we are printing to the console, or have no file output specified.
-  void Canvas::DumpRaster(FILE * fp)
+  inline void Canvas::DumpRaster(FILE * fp)
   {
     // Dump only relevant part of stream.
     for (unsigned int i = 0; i < height_; ++i)
@@ -1705,7 +1705,7 @@ namespace RConsole
 
 
   // Crops all of the raster
-  void Canvas::CropRaster(FILE *fp, char toTrim)
+  inline void Canvas::CropRaster(FILE *fp, char toTrim)
   {
     // Establish borders.
     unsigned int Xmin = width_;

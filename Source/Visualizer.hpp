@@ -2,6 +2,8 @@
 #pragma once
 #include "Defines.hpp"
 #include <string>
+#include <ConsoleUtils\console-utils.hpp>
+
 
 
 namespace ASCIIPlayer

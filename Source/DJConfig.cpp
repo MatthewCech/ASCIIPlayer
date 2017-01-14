@@ -49,8 +49,8 @@ namespace ASCIIPlayer
       << "BackwardsSkip:" << BackwardsSkip << "\n"
       << "Looping:" << Looping << "\n"
       << "ChannelCount:" << ChannelCount << "\n"
-      << "VisualizerID:" << VisualizerID << "\n";
-
+      << "VisualizerID:" << VisualizerID << "\n"
+			<< "Available Visualizers - default horizontalWaveform colorDefault centerVisualizer\n";
     return ss.str();
   }
 }
