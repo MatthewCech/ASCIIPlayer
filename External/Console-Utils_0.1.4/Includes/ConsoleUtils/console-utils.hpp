@@ -1379,6 +1379,8 @@ namespace RConsole
 
     if (x >= width_) return;
     if (y >= height_) return;
+		if (x <= 0) return;
+		if (y <= 0) return;
 
     #endif // RConsole_CLIP_CONSOLE
 
