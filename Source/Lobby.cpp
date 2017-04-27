@@ -1,6 +1,6 @@
 #include "Lobby.hpp"
 #include <FileIO/FileIO.hpp>
-
+#include <ConsoleInput/console-input.h>
 
 namespace ASCIIPlayer
 {
@@ -62,6 +62,14 @@ namespace ASCIIPlayer
     {
       if (activeDJ_)
         activeDJ_->Update();
+
+      if (int num = KeyHit())
+        while (num-- > 0)
+        {
+          char input = static_cast<char>(GetChar());
+          const char *c = &input;
+          ParseCommand(std::string(c, 1));
+        }
     }
   }
 
@@ -71,6 +79,9 @@ namespace ASCIIPlayer
   {
     command = cleanCommand(command);
     bool update = false;
+    
+    if (command == " ")
+      std::cout << "Space!\n";
     //if (command == "loop")
       //activeDJ_->
 
@@ -84,14 +95,25 @@ namespace ASCIIPlayer
   // Private methods
   std::string Lobby::cleanCommand(std::string input)
   {
-    return input.substr(1, input.size() - 1);
+    //DEBUG_PRINT("Cleaning " << input);
+    //Strip whitespace
+    //Stirp command indicator if present
+    //Return
+    //input.substr(1, input.size() - 1);
+    return input;
   }
 
 
   // Tries to open config file for the visualizer, generates one otherwise.
   DJConfig Lobby::readConfigFile()
   {
-    FileUtil::File f("config");
+    std::string arg0 = argParser_[0];
+    size_t loc = arg0.find_last_of("\\/");
+    std::string filepath = "";
+    if (loc != std::string::npos)
+      filepath = arg0.substr(0, loc);
+
+    FileUtil::File f(filepath + "ASCIIPlayer.conf");
     if (f.GetLineCount() == 0)
     {
       DJConfig def;
