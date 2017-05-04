@@ -36,9 +36,9 @@ enum AudioDataStyle
   aNO_STYLE
 };
 
-  /////////////////////////////////
- // Fun witchcr-- I mean macros //
-/////////////////////////////////
+  //////////////////////////
+ // Debug printing, etc. //
+//////////////////////////
 // Debug Printing
 #ifdef AP_DEBUG
   #define AP_DEBUG_PRINT_VAL 1

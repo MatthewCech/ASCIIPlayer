@@ -1,6 +1,8 @@
 #include "Lobby.hpp"
 #include <FileIO/FileIO.hpp>
 #include <ConsoleInput/console-input.h>
+#include <exception>
+
 
 namespace ASCIIPlayer
 {
@@ -49,11 +51,12 @@ namespace ASCIIPlayer
   // Runs the primary lobby loop
   void Lobby::Run()
   {
-    DEBUG_PRINT("== Lobby looking spiffy! == ");
+    DEBUG_PRINT("Lobby looking spiffy!");
 
-    if (AP_DEBUG_PRINT_VAL)
-      if (activeDJ_)
-        DEBUG_PRINT("== DJ Has prepped " << activeDJ_->GetPlaylistSize() << " songs! ==");
+    if (activeDJ_)
+    {
+      DEBUG_PRINT("DJ Has prepped " << activeDJ_->GetPlaylistSize() << " songs!");
+    }
 
     if (activeDJ_->GetPlaylistSize() > 0)
       activeDJ_->Play();
@@ -108,10 +111,13 @@ namespace ASCIIPlayer
   DJConfig Lobby::readConfigFile()
   {
     std::string arg0 = argParser_[0];
-    size_t loc = arg0.find_last_of("\\/");
+    size_t loc = arg0.find_last_of('\\');
     std::string filepath = "";
     if (loc != std::string::npos)
       filepath = arg0.substr(0, loc);
+
+    DEBUG_PRINT("This is our arg0: " << arg0);
+    DEBUG_PRINT("This is our path: " << filepath);
 
     FileUtil::File f(filepath + "ASCIIPlayer.conf");
     if (f.GetLineCount() == 0)

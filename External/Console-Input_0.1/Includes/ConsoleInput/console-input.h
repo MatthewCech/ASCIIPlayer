@@ -47,8 +47,8 @@ both windows and linux! Relevant functions are KeyHit() and GetKey().
   /////////////////////////
  // Function Prototypes //
 /////////////////////////
-int KeyHit(void);  // Returns truthy if a key was hit.
-int GetChar(void); // Retrieves the last key value pressed.
+inline int KeyHit(void);  // Returns truthy if a key was hit.
+inline int GetChar(void); // Retrieves the last key value pressed.
 
 
 
@@ -59,8 +59,8 @@ int GetChar(void); // Retrieves the last key value pressed.
 #define _NO_OLDNAMES   // for MinGW
 #include <conio.h>     // getch and kbhit
 
-int KeyHit(void)  { return _kbhit();  }
-int GetChar(void) { return _getwch();  }
+inline int KeyHit(void)  { return _kbhit();  }
+inline int GetChar(void) { return _getwch();  }
 
 #endif // OS_WINDOWS
 
@@ -82,7 +82,7 @@ int GetChar(void) { return _getwch();  }
 #include <unistd.h>
 
 
-int KeyHit(void)
+inline int KeyHit(void)
 {
   // Recall: Define variables at the top for C
   static struct termios oldTermios; // Save off for previous terminal settings
@@ -108,7 +108,7 @@ int KeyHit(void)
   return charCount; 
 }
 
-int GetChar(void)
+inline int GetChar(void)
 {
   // Recall: Define variables at the top for C
   struct termios oldTermios; // Save off for previous terminal settings
