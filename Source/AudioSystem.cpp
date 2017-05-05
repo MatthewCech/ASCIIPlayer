@@ -10,7 +10,7 @@ namespace ASCIIPlayer
 
 
   // Constructor
-  AudioSystem::AudioSystem(int numChannels) 
+  AudioSystem::AudioSystem(int numChannels, float defaultVolume) 
     : fmodSystem_(nullptr)
     , masterChannel_(nullptr)
     , numdrivers_(0)
@@ -38,7 +38,7 @@ namespace ASCIIPlayer
       // Get the driver capabilities.
       FCheck(fmodSystem_->getDriverCaps(0, &caps_, 0, &speakermode_));
 
-      //Set the user selected speaker mode.
+      // Set the user selected speaker mode.
       FCheck(fmodSystem_->setSpeakerMode(speakermode_));
 
       if (caps_ & FMOD_CAPS_HARDWARE_EMULATED)
@@ -46,11 +46,11 @@ namespace ASCIIPlayer
         // for latency! You might want to warn the user about this.
         FCheck(fmodSystem_->setDSPBufferSize(1024, 10));
 
-      //Get the info for the sound device in place, handle ones that don't like things.
+      // Get the info for the sound device in place, handle ones that don't like things.
       FCheck(fmodSystem_->getDriverInfo(0, name_, 256, 0));
       if (strstr(name_, "SigmaTel"))
-        //Sigmatel sound devices crackle for some reason if the format is PCM 16bit.
-        //PCM floating point output seems to solve it.
+        // Sigmatel sound devices crackle for some reason if the format is PCM 16bit.
+        // PCM floating point output seems to solve it.
         FCheck(fmodSystem_->setSoftwareFormat(
           48000, FMOD_SOUND_FORMAT_PCMFLOAT, 0, 0, FMOD_DSP_RESAMPLER_LINEAR));
     }
@@ -59,17 +59,20 @@ namespace ASCIIPlayer
     FMOD_RESULT res = fmodSystem_->init(numChannels, FMOD_INIT_NORMAL, 0);
     if (res == FMOD_ERR_OUTPUT_CREATEBUFFER)
     {
-      //Ok, the speaker mode selected isn't supported by this soundcard. Switch it
-      //back to stereo...
+      // Ok, the speaker mode selected isn't supported by this soundcard. Switch it
+      // back to stereo...
       FCheck(fmodSystem_->setSpeakerMode(FMOD_SPEAKERMODE_STEREO));
 
-      //... and re-init.
+      // ... and re-init.
       res = fmodSystem_->init(numChannels, FMOD_INIT_NORMAL, 0);
     }
 
-    //Regardless, check the result.
+    // Regardless, check the result.
     FCheck(res);
 
+    // Set default volume
+    fmodSystem_->createChannelGroup("Master", &masterChannel_);
+    SetMasterVolume(defaultVolume);
   }
 
 
@@ -186,11 +189,13 @@ namespace ASCIIPlayer
   
 
   // Sets the volume of the master channel.
-  void AudioSystem::SetMasterVolume(float f)
+  // Returns what we set the volume to.
+  float AudioSystem::SetMasterVolume(float f)
   {
     if (f > 1) f = 1;
     if (f < 0) f = 0;
     FCheck(masterChannel_->setVolume(f));
+    return f;
   }
 
 
@@ -251,6 +256,20 @@ namespace ASCIIPlayer
     unsigned int tu;
     FCheck(channelHandles_[audioFile.uniqueID_]->getPosition(&tu, FMOD_TIMEUNIT_MS));
     return tu;
+  }
+
+
+  // Set the position of the current song in MS
+  void AudioSystem::SetCurrentPosition(AudioFile &audioFile, unsigned int pos)
+  {
+    if (audioFile.get(ID_)->LoadedObject == nullptr)
+      return;
+
+    unsigned int length = GetLength(audioFile);
+    if (length <= pos)
+      pos = length - 1;
+
+    FCheck(channelHandles_[audioFile.uniqueID_]->setPosition(pos, FMOD_TIMEUNIT_MS));
   }
 
 

@@ -24,6 +24,8 @@ namespace ASCIIPlayer
     // Private methods
     std::string cleanCommand(std::string input);
     DJConfig readConfigFile();
+    bool interpretString(const std::string str);
+    bool interpretChar(const char key);
     void startDJ();
     void stopDj();
     void setDJ(DJ *newDJ);

@@ -12,7 +12,7 @@ namespace ASCIIPlayer
   {
   public:
     // Constructor
-    AudioSystem(int numChannels = 10);
+    AudioSystem(int numChannels = 10, float defaultVolume = .8f);
     ~AudioSystem();
 
     // Member Functions
@@ -28,13 +28,14 @@ namespace ASCIIPlayer
     void PlayFile(AudioFile &audioFile, bool playing = false);
     void SetPaused(AudioFile &audioFile, bool pausedState);
     void StopFile(AudioFile &audioFile);
-    void SetMasterVolume(float f);
+    float SetMasterVolume(float f);
     float GetMasterVolume() const;
 
     // Info about song
     bool IsPlaying(AudioFile &audioFile);
     unsigned int GetLength(AudioFile &audioFile) const;
     unsigned int GetCurrentPosition(AudioFile &audioFile);
+    void SetCurrentPosition(AudioFile &audioFile, unsigned int pos);
     std::string GetFilename(const AudioFile &audioFile) const;
     std::string GetFilepath(const AudioFile &audioFile) const;
     void FillWithAudioData(float *arr, int numVals, int channelOffset, FMOD_DSP_FFT_WINDOW window, AudioDataStyle style);

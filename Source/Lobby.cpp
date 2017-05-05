@@ -61,6 +61,7 @@ namespace ASCIIPlayer
     if (activeDJ_->GetPlaylistSize() > 0)
       activeDJ_->Play();
 
+    // While we're hosting stuff in the lobby
     while (lobbyHosting_)
     {
       if (activeDJ_)
@@ -70,25 +71,21 @@ namespace ASCIIPlayer
         while (num-- > 0)
         {
           char input = static_cast<char>(GetChar());
-          const char *c = &input;
-          ParseCommand(std::string(c, 1));
+          interpretChar(input);
         }
     }
   }
 
 
-  // Parse commands as we see fit.
+  // Parse commands as we see fit. Assumes command has been consumed already.
   bool Lobby::ParseCommand(std::string command)
   {
     command = cleanCommand(command);
-    bool update = false;
     
-    if (command == " ")
-      std::cout << "Space!\n";
-    //if (command == "loop")
-      //activeDJ_->
+    if (command.size() == 0)
+      return false;
 
-    return true;
+    return interpretString(command);
   }
 
 
@@ -104,6 +101,50 @@ namespace ASCIIPlayer
     //Return
     //input.substr(1, input.size() - 1);
     return input;
+  }
+
+
+  bool Lobby::interpretString(const std::string command)
+  {
+    if(command.size() <= 0)
+      return false;
+
+    return false;
+    //if(command == whatever)
+    //  doThing();
+    //...
+    // return true;
+  }
+
+
+  bool Lobby::interpretChar(const char c)
+  {
+    if (activeDJ_ == nullptr)
+      throw "You should have an active DJ to issue character commands";
+
+    switch (c)
+    {
+    case KEY_RIGHT:
+    case KEY_NUM_6:
+      activeDJ_->SkipForward();
+      break;
+    case KEY_LEFT:
+    case KEY_NUM_4:
+      activeDJ_->SkipBackward();
+      break;
+    case '-':
+      activeDJ_->VolumeDown();
+      break;
+    case '+':
+    case '=':
+      activeDJ_->VolumeUp();
+      break;
+    case '0':
+    default:
+      return false;
+    }
+
+    return true;
   }
 
 

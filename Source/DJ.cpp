@@ -10,7 +10,7 @@ namespace ASCIIPlayer
   // Constructor
   DJ::DJ(DJConfig config, bool startPaused)
     : playlist_(&DJ::playlistUpdatedCallback, this)
-    , audioSystem_(config.ChannelCount)
+    , audioSystem_(config.DJChannelCount)
     , visualizer_(nullptr)
     , visaulizerDataSize_(64) // Not magic number, just default width
     , visualizerDataStyle_(aNO_STYLE)
@@ -20,11 +20,11 @@ namespace ASCIIPlayer
     , paused_(true)
   {
     //!TODO: Handle visualizer configuration
-    if (config.VisualizerID == "horizontalWaveform")
+    if (config.DJVisualizerID == "horizontalWaveform")
       visualizer_ = new HorizontalWaveformVisualizer();
-    else if (config.VisualizerID == "colorDefault")
+    else if (config.DJVisualizerID == "colorDefault")
       visualizer_ = new ColorDefaultVisualizer();
-    else if (config.VisualizerID == "centerVisualizer")
+    else if (config.DJVisualizerID == "centerVisualizer")
       visualizer_ = new CenterVisualizer();
     else
     {
@@ -36,7 +36,7 @@ namespace ASCIIPlayer
     visualizerDataArray_ = new float[visaulizerDataSize_];
 
     // Looping?
-    if (config.Looping)
+    if (config.DJLooping)
       playlist_.SetLooping(true);
     else
       playlist_.SetLooping(false);
@@ -138,6 +138,46 @@ namespace ASCIIPlayer
   {
     if(audioSystem_.PreloadFile(*toAdd))
       playlist_.Add(toAdd);
+  }
+
+
+  // Convert config skip to MS and add it to the current position
+  void DJ::SkipForward()
+  {
+    unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
+    audioSystem_.SetCurrentPosition(*currSong_, posMS + config_.SkipForwardSeconds * 1000);
+  }
+
+
+  // Convert config skip to MS and subtract it from the current position
+  void DJ::SkipBackward()
+  {
+    unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
+    audioSystem_.SetCurrentPosition(*currSong_, posMS - config_.SkipForwardSeconds * 1000);
+  }
+
+
+  // Increases by volume change amount
+  void DJ::VolumeUp()
+  {
+    const float vol = audioSystem_.GetMasterVolume();
+    audioSystem_.SetMasterVolume(vol + config_.VolumeChangeAmount);
+  }
+
+
+  // Decreases by volume change amount
+  void DJ::VolumeDown()
+  {
+    const float vol = audioSystem_.GetMasterVolume();
+    audioSystem_.SetMasterVolume(vol - config_.VolumeChangeAmount);
+  }
+    
+
+  // Sets the volume, capped between 0 and 1.
+  void DJ::VolumeSet(const float newVolume)
+  {
+    //config_ = newVolume
+    audioSystem_.SetMasterVolume(newVolume);
   }
 
 

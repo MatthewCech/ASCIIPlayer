@@ -3,6 +3,9 @@
 #include "Defines.hpp"
 #include "DJConfig.hpp"
 
+#define NAME_STR_LINE(var) #var << ": " << var << "\n"
+#define PARSE_CONTINUE(var, toCompare, func) if(toCompare == #var) { var = func ; break; }
+
 namespace ASCIIPlayer
 {
   // Attempts to parse a line of a file.
@@ -20,18 +23,15 @@ namespace ASCIIPlayer
 
     try
     {
-      if (name == "DefaultVolume")
-        DefaultVolume = stof(val);
-      else if (name == "ForwardSkip")
-        ForwardSkip = stoi(val);
-      else if (name == "BackwardsSkip")
-        BackwardsSkip = stoi(val);
-      else if (name == "Looping")
-        Looping = stoi(val) > 0 ? true : false;
-      else if (name == "ChannelCount")
-        ChannelCount = stoi(val);
-      else if (name == "VisualizerID")
-        VisualizerID = val;
+      do {
+        PARSE_CONTINUE(DJLooping, name, stoi(val) > 0 ? true : false)
+        PARSE_CONTINUE(VolumeChangeAmount, name, stof(val))
+        PARSE_CONTINUE(VolumeDefault, name, stof(val))
+        PARSE_CONTINUE(SkipForwardSeconds, name, stoi(val))
+        PARSE_CONTINUE(SkipBackwardSeconds, name, stoi(val))
+        PARSE_CONTINUE(DJChannelCount, name, stoi(val))
+        PARSE_CONTINUE(DJVisualizerID, name, val)
+      } while (false);
     }
     catch (...)
     {
@@ -44,13 +44,14 @@ namespace ASCIIPlayer
   std::string DJConfig::ToString()
   {
     std::stringstream ss;
-    ss << "DefaultVolume:" << DefaultVolume << "\n"
-      << "ForwardSkip:" << ForwardSkip << "\n"
-      << "BackwardsSkip:" << BackwardsSkip << "\n"
-      << "Looping:" << Looping << "\n"
-      << "ChannelCount:" << ChannelCount << "\n"
-      << "VisualizerID:" << VisualizerID << "\n"
-			<< "Available Visualizers - default horizontalWaveform colorDefault centerVisualizer\n";
+    ss << NAME_STR_LINE(DJLooping)
+       << NAME_STR_LINE(VolumeDefault)
+       << NAME_STR_LINE(SkipForwardSeconds)
+       << NAME_STR_LINE(SkipBackwardSeconds)
+       << NAME_STR_LINE(DJChannelCount)
+       << NAME_STR_LINE(VolumeChangeAmount)
+       << NAME_STR_LINE(DJVisualizerID)
+			 << "Available Visualizers - default horizontalWaveform colorDefault centerVisualizer\n";
     return ss.str();
   }
 }

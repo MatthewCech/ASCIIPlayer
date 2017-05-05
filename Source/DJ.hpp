@@ -25,6 +25,11 @@ namespace ASCIIPlayer
     void Shutdown();
     void ShufflePlaylist();
     void AddSong(AudioFile *toAdd);
+    void SkipForward();
+    void SkipBackward();
+    void VolumeUp();
+    void VolumeDown();
+    void VolumeSet(const float newVolume);
     unsigned int GetPlaylistSize();
     void FillSongData(float* toFill, unsigned int size, FMOD_DSP_FFT_WINDOW window);
 
