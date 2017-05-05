@@ -124,19 +124,39 @@ namespace ASCIIPlayer
 
     switch (c)
     {
+    case ']':
+    case '}':
+    case '>':
+    case '.':
+    case 'e':
+    case KEY_TAB: 
+    case KEY_END: // Also capital O
+      activeDJ_->SongNext();
+      break;
+    case '[':
+    case '{':
+    case '<':
+    case ',':
+    case 'q':
+    case KEY_HOME: // also capital G
+    case KEY_BACKSPACE: 
+      activeDJ_->SongPrev();
+      break;
     case KEY_RIGHT:
     case KEY_NUM_6:
-      activeDJ_->SkipForward();
+      activeDJ_->MoveForward();
       break;
     case KEY_LEFT:
     case KEY_NUM_4:
-      activeDJ_->SkipBackward();
+      activeDJ_->MoveBackward();
       break;
     case '-':
+    case KEY_PAGEDOWN: // also capital Q
       activeDJ_->VolumeDown();
       break;
     case '+':
     case '=':
+    case KEY_PAGEUP: // also capital I
       activeDJ_->VolumeUp();
       break;
     case '0':

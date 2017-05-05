@@ -112,8 +112,6 @@ namespace ASCIIPlayer
     {
       if (looping_)
       {
-        //DEBUG_PRINT("== Playlist Looped! ==");
-
         activeIndex_ = 0;
         listUpdateCallback();
       }
@@ -130,6 +128,20 @@ namespace ASCIIPlayer
     {
       --activeIndex_;
       listUpdateCallback();
+    }
+    else
+    {
+      if (looping_)
+      {
+        int index = static_cast<int>(playlist_.size()) - 1;
+
+        // Handle edge case of 0 things
+        if (index < 0)
+          throw "This should not be happening: Looped to index -1 while going back.";
+
+        activeIndex_ = static_cast<unsigned int>(index);
+        listUpdateCallback();
+      }
     }
   }
 

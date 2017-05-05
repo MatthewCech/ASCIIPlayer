@@ -25,8 +25,10 @@ namespace ASCIIPlayer
     void Shutdown();
     void ShufflePlaylist();
     void AddSong(AudioFile *toAdd);
-    void SkipForward();
-    void SkipBackward();
+    void SongNext();
+    void SongPrev();
+    void MoveForward();
+    void MoveBackward();
     void VolumeUp();
     void VolumeDown();
     void VolumeSet(const float newVolume);

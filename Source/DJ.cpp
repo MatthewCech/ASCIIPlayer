@@ -141,8 +141,22 @@ namespace ASCIIPlayer
   }
 
 
+  // Next song in playlist
+  void DJ::SongNext()
+  {
+    playlist_.Next();
+  }
+
+
+  // Previous song in playlist
+  void DJ::SongPrev()
+  {
+    playlist_.Back();
+  }
+
+
   // Convert config skip to MS and add it to the current position
-  void DJ::SkipForward()
+  void DJ::MoveForward()
   {
     unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
     audioSystem_.SetCurrentPosition(*currSong_, posMS + config_.SkipForwardSeconds * 1000);
@@ -150,7 +164,7 @@ namespace ASCIIPlayer
 
 
   // Convert config skip to MS and subtract it from the current position
-  void DJ::SkipBackward()
+  void DJ::MoveBackward()
   {
     unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
     audioSystem_.SetCurrentPosition(*currSong_, posMS - config_.SkipForwardSeconds * 1000);
