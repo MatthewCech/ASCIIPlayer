@@ -11,13 +11,13 @@ echo.
 echo -- [ BUILDING ] --
 cd Build
 echo Building...
-call build_vs2015.bat
+call build_vs2017.bat
 
 echo.
 echo.
 echo -- [ MOVING RESOURCES ] --
 cd ..
-copy Resources project_vs2015
+copy Resources project_vs2017
 
 echo.
 echo.
