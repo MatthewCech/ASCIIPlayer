@@ -180,7 +180,7 @@ namespace ASCIIPlayer
     DEBUG_PRINT("This is our arg0: " << arg0);
     DEBUG_PRINT("This is our path: " << filepath);
 
-    FileUtil::File f(filepath + "ASCIIPlayer.conf");
+    FileUtil::File f(filepath + "\\ASCIIPlayer.conf");
     if (f.GetLineCount() == 0)
     {
       DJConfig def;

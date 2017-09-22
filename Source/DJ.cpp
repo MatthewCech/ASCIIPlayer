@@ -20,11 +20,11 @@ namespace ASCIIPlayer
     , paused_(true)
   {
     //!TODO: Handle visualizer configuration
-    if (config.DJVisualizerID == "horizontalWaveform")
+    if (config_.DJVisualizerID == "horizontalWaveform")
       visualizer_ = new HorizontalWaveformVisualizer();
-    else if (config.DJVisualizerID == "colorDefault")
+    else if (config_.DJVisualizerID == "colorDefault")
       visualizer_ = new ColorDefaultVisualizer();
-    else if (config.DJVisualizerID == "centerVisualizer")
+    else if (config_.DJVisualizerID == "centerVisualizer")
       visualizer_ = new CenterVisualizer();
     else
     {

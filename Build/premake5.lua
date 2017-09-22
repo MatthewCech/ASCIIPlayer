@@ -38,7 +38,7 @@ workspace "ASCII_Player"                     -- Solution Name
     -- Generate configs dropdown info, VS
     filter { "configurations:Debug" }
       defines { "DEBUG" }  -- Actively defined in code, can be checked for.
-      flags { "Symbols" }
+      --flags { "" }
     filter { "configurations:Release" }
       defines { "NDEBUG" } -- Actively defined in code, can be checked for.
       optimize "On"

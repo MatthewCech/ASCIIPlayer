@@ -8,6 +8,17 @@
 
 namespace ASCIIPlayer
 {
+  std::string TrimWhitespace(std::string input)
+  {
+    while (input.length() > 0 && input[0] == ' ' || input[0] == '\t')
+      input = input.substr(1);
+
+    while (input.length() > 0 && input[input.length() - 1] == ' ' || input[input.length() - 1] == '\t')
+      input = input.substr(0, input.length() - 1);
+
+    return input;
+  }
+
   // Attempts to parse a line of a file.
   void DJConfig::ParseLine(std::string line)
   {
@@ -30,7 +41,7 @@ namespace ASCIIPlayer
         PARSE_CONTINUE(SkipForwardSeconds, name, stoi(val))
         PARSE_CONTINUE(SkipBackwardSeconds, name, stoi(val))
         PARSE_CONTINUE(DJChannelCount, name, stoi(val))
-        PARSE_CONTINUE(DJVisualizerID, name, val)
+        PARSE_CONTINUE(DJVisualizerID, name, TrimWhitespace(val))
       } while (false);
     }
     catch (...)
