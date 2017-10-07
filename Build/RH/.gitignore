@@ -15,4 +15,5 @@
 # Generated files will be lowercase-- relevant folders will be uppercase.
 *.ini
 
-
+ResourceHacker.ini
+ResourceHacker.log
