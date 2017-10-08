@@ -3,6 +3,7 @@
 #include "Visualizers\HorizontalWaveformVisualizer.hpp"
 #include "Visualizers\ColorDefaultVisualizer.hpp"
 #include "Visualizers\CenterVisualizer.hpp"
+#include <chrono>
 
 
 namespace ASCIIPlayer
@@ -18,6 +19,7 @@ namespace ASCIIPlayer
     , hasShutdown_(false)
     , currSong_(false)
     , paused_(true)
+	, lastVolumeChange_(0)
   {
     //!TODO: Handle visualizer configuration
     if (config_.DJVisualizerID == "horizontalWaveform")
@@ -176,6 +178,7 @@ namespace ASCIIPlayer
   {
     const float vol = audioSystem_.GetMasterVolume();
     audioSystem_.SetMasterVolume(vol + config_.VolumeChangeAmount);
+	updateLastVolumeChange();
   }
 
 
@@ -184,6 +187,7 @@ namespace ASCIIPlayer
   {
     const float vol = audioSystem_.GetMasterVolume();
     audioSystem_.SetMasterVolume(vol - config_.VolumeChangeAmount);
+	updateLastVolumeChange();
   }
     
 
@@ -192,6 +196,14 @@ namespace ASCIIPlayer
   {
     //config_ = newVolume
     audioSystem_.SetMasterVolume(newVolume);
+	updateLastVolumeChange();
+  }
+
+
+  // Gets the last time the volume changed.
+  long long DJ::GetLastVolumeChange()
+  {
+	  return lastVolumeChange_;
   }
 
 
@@ -224,5 +236,12 @@ namespace ASCIIPlayer
     currSong_ = playlist_.GetCurrent();
     if(!paused_)
       audioSystem_.PlayFile(*currSong_, true);
+  }
+
+	
+  // Called whenever the volume is changed, this sets the internal tracking variables for that.
+  void DJ::updateLastVolumeChange()
+  {
+	  lastVolumeChange_ = std::chrono::high_resolution_clock::now().time_since_epoch().count();
   }
 }

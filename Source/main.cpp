@@ -27,8 +27,8 @@ int main(int argc, char** argv) try
   //dergLounge.Run();
 
   // === Actual Usage ===
-  ASCIIPlayer::Lobby dergLounge(argc, argv);
-  dergLounge.Run();
+  ASCIIPlayer::Lobby lounge(argc, argv);
+  lounge.Run();
 
   // === Effective steps layout with DJ and lobby mingling, one DJ. ===
   // === Note: No longer valid as lobby can host multiple DJs in theory. ===

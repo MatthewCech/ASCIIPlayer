@@ -14,7 +14,7 @@ namespace ASCIIPlayer
     unsigned int SkipBackwardSeconds = 20;             // Seconds to go backwards when skipping.
     bool         DJLooping           = true;           // Does it loop?
     unsigned int DJChannelCount      = 10;             // The number of channels for the DJ to have.
-    std::string  DJVisualizerID      = "centerVisualizer"; // ID of the visualizer to use.
+    std::string  DJVisualizerID      = "colorDefault"; // ID of the visualizer to use.
 
     //std::string DefaultFolder; // Default folder to load music from.
 

@@ -32,12 +32,14 @@ namespace ASCIIPlayer
     void VolumeUp();
     void VolumeDown();
     void VolumeSet(const float newVolume);
+	long long GetLastVolumeChange();
     unsigned int GetPlaylistSize();
     void FillSongData(float* toFill, unsigned int size, FMOD_DSP_FFT_WINDOW window);
 
   private:
     // Callback
     void playlistUpdatedCallback();
+	void updateLastVolumeChange();
 
     // Variables
     Playlist<DJ> playlist_;   // Contains the AudioFile objects.
@@ -49,8 +51,9 @@ namespace ASCIIPlayer
     bool hasShutdown_;                   // Whether or not we have shut down.
     bool paused_;                        // Is the JD paused or not?
     AudioFile *currSong_;                // What is the current song?
-    unsigned int visaulizerDataSize_;   // The size of the array for the audio visualizer.
+    unsigned int visaulizerDataSize_;    // The size of the array for the audio visualizer.
     AudioDataStyle visualizerDataStyle_; // The style of data for the audio visualizer
     float *visualizerDataArray_;         // Data used for the visualizer;
+	long long lastVolumeChange_;         // The last time the volume was changed, in ms
   };
 }
