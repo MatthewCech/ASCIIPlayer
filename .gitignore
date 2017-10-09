@@ -20,5 +20,4 @@ bin_*/
 make/
 project_*/
 documentation/
-
-
+.vs/
