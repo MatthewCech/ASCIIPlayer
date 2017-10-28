@@ -21,10 +21,10 @@ int main(int argc, char** argv) try
   //while (Dj.Update()) { } 
   
   // === Lobby Test ===
-  // Expected Use: ASCIIPlayer::Lobby dergLounge(argc, argv);
+  // Expected Use: ASCIIPlayer::Lobby lounge(argc, argv);
   //char * args[2] = { "Opening Soda Can.mp3", "Pool Shot.mp3" };// , "Test_Audio.mp3", "Caspa & Rusko.ogg" };
-  //ASCIIPlayer::Lobby dergLounge(2, args);
-  //dergLounge.Run();
+  //ASCIIPlayer::Lobby lounge(2, args);
+  //lounge.Run();
 
   // === Actual Usage ===
   ASCIIPlayer::Lobby lounge(argc, argv);
