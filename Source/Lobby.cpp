@@ -77,7 +77,7 @@ namespace ASCIIPlayer
 
       long long end = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count();
       std::cout << (end - start) << std::endl;
-      //std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      std::this_thread::sleep_for(std::chrono::microseconds(500));
     }
   }
 
