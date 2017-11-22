@@ -2,7 +2,7 @@
 #include <FileIO/FileIO.hpp>
 #include <ConsoleInput/console-input.h>
 #include <exception>
-
+#include <thread>
 
 namespace ASCIIPlayer
 {
@@ -64,6 +64,7 @@ namespace ASCIIPlayer
     // While we're hosting stuff in the lobby
     while (lobbyHosting_)
     {
+      long long start = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count();
       if (activeDJ_)
         activeDJ_->Update();
 
@@ -73,6 +74,10 @@ namespace ASCIIPlayer
           char input = static_cast<char>(GetChar());
           interpretChar(input);
         }
+
+      long long end = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count();
+      std::cout << (end - start) << std::endl;
+      //std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
   }
 
