@@ -159,6 +159,9 @@ namespace ASCIIPlayer
     case KEY_PAGEUP: // also capital I
       activeDJ_->VolumeUp();
       break;
+    case KEY_SPACE: // Pauses. Not another key afaik.
+      activeDJ_->TogglePause();
+      break;
     case '0':
     default:
       return false;

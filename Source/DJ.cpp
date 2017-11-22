@@ -115,6 +115,15 @@ namespace ASCIIPlayer
     }
   }
 
+
+  void DJ::TogglePause()
+  {
+    if (!paused_)
+      Pause();
+    else
+      Play();
+  }
+
   // Shuts down the DJ, closing out of all the audio that has been loaded and it has
   // prepped for.
   void DJ::Shutdown()

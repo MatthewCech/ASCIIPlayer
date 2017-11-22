@@ -22,6 +22,7 @@ namespace ASCIIPlayer
     bool Update();
     void Play();
     void Pause();
+    void TogglePause();
     void Shutdown();
     void ShufflePlaylist();
     void AddSong(AudioFile *toAdd);
