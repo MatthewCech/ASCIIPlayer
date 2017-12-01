@@ -3,7 +3,7 @@
 #include "AudioSystem.hpp"
 #include "Defines.hpp"
 #include "Playlist.hpp"
-#include "Visualizer.hpp"
+#include "ASCIIVisualizer.hpp"
 #include "Visualizers\DefaultVisualizer.hpp"
 #include "DJConfig.hpp"
 
@@ -33,7 +33,7 @@ namespace ASCIIPlayer
     void VolumeUp();
     void VolumeDown();
     void VolumeSet(const float newVolume);
-	long long GetLastVolumeChange();
+	  long long GetLastVolumeChange();
     unsigned int GetPlaylistSize();
     void FillSongData(float* toFill, unsigned int size, FMOD_DSP_FFT_WINDOW window);
 
@@ -45,7 +45,7 @@ namespace ASCIIPlayer
     // Variables
     Playlist<DJ> playlist_;   // Contains the AudioFile objects.
     AudioSystem audioSystem_; // The sound system to play the audio files.
-    Visualizer *visualizer_;  // The visualizer to display the playing data.
+    ASCIIVisualizer *visualizer_;  // The visualizer to display the playing data.
     DJConfig config_;         // The proivded config for the DJ.
 
     // Internal Tracking
@@ -55,6 +55,6 @@ namespace ASCIIPlayer
     unsigned int visaulizerDataSize_;    // The size of the array for the audio visualizer.
     AudioDataStyle visualizerDataStyle_; // The style of data for the audio visualizer
     float *visualizerDataArray_;         // Data used for the visualizer;
-	long long lastVolumeChange_;         // The last time the volume was changed, in ms
+	  long long lastVolumeChange_;         // The last time the volume was changed, in ms
   };
 }

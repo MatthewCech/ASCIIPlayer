@@ -22,7 +22,7 @@ using Channelgroup  = FMOD::ChannelGroup; // Channel object handle for FMOD
 using APUnique      = unsigned long long;
 
 // Defines
-#define DJ_ABSTRACT =0
+#define ABSTRACT =0
 
 
   ///////////

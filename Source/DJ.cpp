@@ -76,6 +76,7 @@ namespace ASCIIPlayer
           //!TODO: Make this more efficient, don't allocate it every time.
           FillSongData(visualizerDataArray_, visaulizerDataSize_, FMOD_DSP_FFT_WINDOW_RECT); //blackman windooooowwww yaaaaaaaaaaassss (change that, rect is def)
           visualizer_->Update(visualizerDataArray_);
+          visualizer_->UpdatePost();
         }
       }
 
@@ -196,7 +197,7 @@ namespace ASCIIPlayer
   {
     const float vol = audioSystem_.GetMasterVolume();
     audioSystem_.SetMasterVolume(vol - config_.VolumeChangeAmount);
-	updateLastVolumeChange();
+	  updateLastVolumeChange();
   }
     
 
