@@ -3,8 +3,5 @@
 
 namespace ASCIIPlayer
 {
-	void GenerateASCIIVolumeOverlay()
-	{
-		
-	}
+
 }
