@@ -6,7 +6,7 @@ namespace ASCIIPlayer
 {
   // Constructor
   ColorDefaultVisualizer::ColorDefaultVisualizer()
-    : Visualizer(RConsole::Canvas::GetConsoleWidht(), aWaveform, "colorDefault")
+    : ASCIIVisualizer(RConsole::Canvas::GetConsoleWidht(), aWaveform, "colorDefault")
     , width_(RConsole::Canvas::GetConsoleWidht())
     , height_(RConsole::Canvas::GetConsoleHeight())
   {
@@ -24,7 +24,6 @@ namespace ASCIIPlayer
         RConsole::Canvas::Draw(static_cast<unsigned char>(219), static_cast<float>(i), static_cast<float>(h2 - j), RConsole::LIGHTBLUE);
       }
 
-    RConsole::Canvas::Update();
     return true;
   }
 }

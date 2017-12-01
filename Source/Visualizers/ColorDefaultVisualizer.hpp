@@ -1,10 +1,10 @@
 #pragma once
-#include "Visualizer.hpp"
+#include "ASCIIVisualizer.hpp"
 
 
 namespace ASCIIPlayer
 {
-  class ColorDefaultVisualizer : public Visualizer
+  class ColorDefaultVisualizer : public ASCIIVisualizer
   {
   public:
     // Constructor

@@ -8,7 +8,7 @@ namespace ASCIIPlayer
 {
   // Constructor
   DefaultVisualizer::DefaultVisualizer()
-    : Visualizer(32, aWaveform, "default")
+    : ASCIIVisualizer(32, aWaveform, "default")
   {  }
 
   // Draw waveform based on updating

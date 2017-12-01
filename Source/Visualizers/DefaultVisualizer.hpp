@@ -1,12 +1,12 @@
 // Default vizualizer if nothing else is defined.
 #pragma once
-#include "Visualizer.hpp"
+#include "ASCIIVisualizer.hpp"
 
 
 
 namespace ASCIIPlayer
 {
-  class DefaultVisualizer : public Visualizer
+  class DefaultVisualizer : public ASCIIVisualizer
   {
   public:
     // Constructor

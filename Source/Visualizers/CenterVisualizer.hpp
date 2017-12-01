@@ -1,12 +1,12 @@
 #pragma once
-#include "Visualizer.hpp"
+#include "ASCIIVisualizer.hpp"
 #include "Overlays/ASCIIOverlay.hpp"
 #include <chrono>
 
 
 namespace ASCIIPlayer
 {
-  class CenterVisualizer : public Visualizer
+  class CenterVisualizer : public ASCIIVisualizer
   {
   public:
     // Ctor

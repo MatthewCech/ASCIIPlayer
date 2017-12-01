@@ -5,7 +5,7 @@ namespace ASCIIPlayer
 {
   // Constructor
   HorizontalWaveformVisualizer::HorizontalWaveformVisualizer()
-    : Visualizer(128, aWaveform, "horizontalWaveform")
+    : ASCIIVisualizer(128, aWaveform, "horizontalWaveform")
   {  }
 
   // Draw waveform based on updating

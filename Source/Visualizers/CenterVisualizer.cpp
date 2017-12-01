@@ -1,5 +1,4 @@
 #include "CenterVisualizer.hpp"
-//#include "ConsoleUtils\console-utils.hpp"
 #include <math.h>
 
 
@@ -66,7 +65,7 @@ namespace ASCIIPlayer
 
   // Ctor - hide the cursor and set up.
   CenterVisualizer::CenterVisualizer()
-	: Visualizer(64, aSpectrum, "centerVisualizer")
+	: ASCIIVisualizer(64, aSpectrum, "centerVisualizer")
 	, lastWidth_(CONSOLE_WIDTH_FUNC)
 	, lastHeight_(CONSOLE_HEIGHT_FUNC)
 	, frameDelayMax_(5) // 15 //!TODO: Tune, current 60
@@ -115,10 +114,10 @@ namespace ASCIIPlayer
 	offsetY_ += rand2_ * (lowBinValues) * .2f;
 	offsetX_ *= .985f;
 	offsetY_ *= .985f;
-    DrawSplit(dataSize, prev3_, width, height, static_cast<unsigned char>(176), offsetX3_, offsetY3_, 1.4f, 1.0f); // most faded
-    DrawSplit(dataSize, prev2_, width, height, static_cast<unsigned char>(177), offsetX2_, offsetY2_, 1.1f, .8f); // mid faded
-    DrawSplit(dataSize, prev1_, width, height, static_cast<unsigned char>(178), offsetX1_, offsetY1_, .8f, .6f); // least faded
-    DrawSplit(dataSize, data, width, height, static_cast<unsigned char>(219), offsetX_, offsetY_, .5f, .4f);   // current
+  DrawSplit(dataSize, prev3_, width, height, static_cast<unsigned char>(176), offsetX3_, offsetY3_, 1.4f, 1.0f); // most faded
+  DrawSplit(dataSize, prev2_, width, height, static_cast<unsigned char>(177), offsetX2_, offsetY2_, 1.1f, .8f); // mid faded
+  DrawSplit(dataSize, prev1_, width, height, static_cast<unsigned char>(178), offsetX1_, offsetY1_, .8f, .6f); // least faded
+  DrawSplit(dataSize, data, width, height, static_cast<unsigned char>(219), offsetX_, offsetY_, .5f, .4f);   // current
 
 	if (++moveDelay_ > moveDelayMax_)
 	{
@@ -131,31 +130,27 @@ namespace ASCIIPlayer
     if (++frameDeleay_ > frameDelayMax_ - 3)
     {
       // Stagger memcpy calls.
-		if (frameDeleay_ == frameDelayMax_ - 2)
-		{
-			prev3_ = static_cast<float *>(memcpy(prev3_, prev2_, prevSize_));
-			offsetX3_ = offsetX2_;
-			offsetY3_ = offsetY2_;
-		}
-		else if (frameDeleay_ == frameDelayMax_ - 1)
-		{
-			prev2_ = static_cast<float *>(memcpy(prev2_, prev1_, prevSize_));
-			offsetX2_ = offsetX1_;
-			offsetY2_ = offsetY1_;
-		}
-		else if (frameDeleay_ == frameDelayMax_)
-		{
-		prev1_ = static_cast<float *>(memcpy(prev1_, data, prevSize_));
-				offsetX1_ = offsetX_;
-				offsetY1_ = offsetY_;
-		frameDeleay_ = 0;
-		}
+		  if (frameDeleay_ == frameDelayMax_ - 2)
+		  {
+			  prev3_ = static_cast<float *>(memcpy(prev3_, prev2_, prevSize_));
+			  offsetX3_ = offsetX2_;
+			  offsetY3_ = offsetY2_;
+		  }
+		  else if (frameDeleay_ == frameDelayMax_ - 1)
+		  {
+			  prev2_ = static_cast<float *>(memcpy(prev2_, prev1_, prevSize_));
+			  offsetX2_ = offsetX1_;
+			  offsetY2_ = offsetY1_;
+		  }
+		  else if (frameDeleay_ == frameDelayMax_)
+		  {
+		  prev1_ = static_cast<float *>(memcpy(prev1_, data, prevSize_));
+				  offsetX1_ = offsetX_;
+				  offsetY1_ = offsetY_;
+		  frameDeleay_ = 0;
+		  }
     }
 
-	// Visualizer
-	GenerateASCIIVolumeOverlay();
-
-    // Update the canvas
-    return RConsole::Canvas::Update();
+    return true;
   }
 }

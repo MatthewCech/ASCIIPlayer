@@ -1,11 +1,11 @@
 #pragma once
-#include "Visualizer.hpp"
+#include "ASCIIVisualizer.hpp"
 
 
 
 namespace ASCIIPlayer
 {
-  class HorizontalWaveformVisualizer : public Visualizer
+  class HorizontalWaveformVisualizer : public ASCIIVisualizer
   {
   public:
     // Constructor
