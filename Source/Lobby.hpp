@@ -34,5 +34,15 @@ namespace ASCIIPlayer
     ArgParser argParser_;
     DJ *activeDJ_;
     bool lobbyHosting_;
+
+    // Debug Related
+    int averageFPS(long long start, long long end);
+    size_t timesIndex_;
+    long long times_[200];
+    bool showDebug_;
+    long long fpsStart_;
+    long long fpsPrevStart_;
+    long long fpsEnd_;
+    long long appStartTime_;
   };
 }

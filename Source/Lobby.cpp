@@ -4,6 +4,9 @@
 #include <exception>
 #include <thread>
 
+#define MS_SINCE_EPOCH std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count()
+
+
 namespace ASCIIPlayer
 {
     ////////////
@@ -14,6 +17,13 @@ namespace ASCIIPlayer
     : argParser_(argc, argv)
     , activeDJ_(nullptr)
     , lobbyHosting_(true)
+    , timesIndex_(0)
+    , times_()
+    , showDebug_(false)
+    , fpsStart_(0)
+    , fpsPrevStart_(0)
+    , fpsEnd_(0)
+    , appStartTime_(MS_SINCE_EPOCH)
   { 
     // Make DJ, don't autoplay.
     DJ *Dj = new DJ(readConfigFile(), false);
@@ -64,7 +74,11 @@ namespace ASCIIPlayer
     // While we're hosting stuff in the lobby
     while (lobbyHosting_)
     {
-      long long start = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count();
+      fpsPrevStart_ = fpsStart_;
+      fpsStart_ = MS_SINCE_EPOCH;
+      // ============================ Start primary loop ============================
+
+
       if (activeDJ_)
         activeDJ_->Update();
 
@@ -75,9 +89,24 @@ namespace ASCIIPlayer
           interpretChar(input);
         }
 
-      long long end = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count();
-      std::cout << (end - start) << std::endl;
-      std::this_thread::sleep_for(std::chrono::microseconds(500));
+      // Finalize drawing
+      if (showDebug_)
+      {
+        float loc = 0;
+        RConsole::Canvas::DrawString(("[ from " + argParser_[0]).c_str(), 0, loc++, RConsole::DARKGREY);
+        RConsole::Canvas::DrawString(("[ for: " + std::to_string((fpsStart_ - appStartTime_) / 1000) + "s").c_str(), 0, loc++, RConsole::DARKGREY);
+        RConsole::Canvas::DrawString(("[ f/s: " + std::to_string(averageFPS(fpsPrevStart_, fpsEnd_))).c_str(), 0, loc++, RConsole::DARKGREY);
+      }
+
+      // finalize all drawing
+      RConsole::Canvas::Update();
+
+      // Smol sleep. This makes most OSs extremely happy and reduces CPU load by like 30%.
+      std::this_thread::sleep_for(std::chrono::microseconds(500)); 
+
+
+      // ============================ End primary loop ============================
+      fpsEnd_ = MS_SINCE_EPOCH;
     }
   }
 
@@ -98,6 +127,20 @@ namespace ASCIIPlayer
    // Private //
   /////////////
   // Private methods
+  int Lobby::averageFPS(long long start, long long end)
+  {
+    size_t size = sizeof(times_) / sizeof(long long);
+    times_[timesIndex_++] = end - start;
+    if (timesIndex_ >= size)
+      timesIndex_ = 0;
+
+    float total = 0;
+    for (size_t i = 0; i < size; ++i)
+      total += times_[i];
+
+    return static_cast<int>(1000.0f / (total / size));
+  }
+
   std::string Lobby::cleanCommand(std::string input)
   {
     //DEBUG_PRINT("Cleaning " << input);
@@ -167,6 +210,8 @@ namespace ASCIIPlayer
     case KEY_SPACE: // Pauses. Not another key afaik.
       activeDJ_->TogglePause();
       break;
+    case 'd':
+      showDebug_ = !showDebug_;
     case '0':
     default:
       return false;
