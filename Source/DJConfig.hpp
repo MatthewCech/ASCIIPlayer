@@ -15,6 +15,7 @@ namespace ASCIIPlayer
     bool         DJLooping           = true;           // Does it loop?
     unsigned int DJChannelCount      = 10;             // The number of channels for the DJ to have.
     std::string  DJVisualizerID      = "colorDefault"; // ID of the visualizer to use.
+    std::string  DJOverlayID         = "default";      // ID of the info overlay to use.
 
     //std::string DefaultFolder; // Default folder to load music from.
 

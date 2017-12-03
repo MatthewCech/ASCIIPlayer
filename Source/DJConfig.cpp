@@ -42,6 +42,7 @@ namespace ASCIIPlayer
         PARSE_CONTINUE(SkipBackwardSeconds, name, stoi(val))
         PARSE_CONTINUE(DJChannelCount, name, stoi(val))
         PARSE_CONTINUE(DJVisualizerID, name, TrimWhitespace(val))
+        PARSE_CONTINUE(DJOverlayID, name, TrimWhitespace(val))
       } while (false);
     }
     catch (...)
@@ -62,6 +63,7 @@ namespace ASCIIPlayer
        << NAME_STR_LINE(DJChannelCount)
        << NAME_STR_LINE(VolumeChangeAmount)
        << NAME_STR_LINE(DJVisualizerID)
+       << NAME_STR_LINE(DJOverlayID)
 			 << "Available Visualizers - default horizontalWaveform colorDefault centerVisualizer\n";
     return ss.str();
   }

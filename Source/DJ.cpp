@@ -1,8 +1,9 @@
 #include "DJ.hpp"
-#include "Visualizers\DefaultVisualizer.hpp"
-#include "Visualizers\HorizontalWaveformVisualizer.hpp"
-#include "Visualizers\ColorDefaultVisualizer.hpp"
-#include "Visualizers\CenterVisualizer.hpp"
+#include "Visualizers/DefaultVisualizer.hpp"
+#include "Visualizers/HorizontalWaveformVisualizer.hpp"
+#include "Visualizers/ColorDefaultVisualizer.hpp"
+#include "Visualizers/CenterVisualizer.hpp"
+#include "Overlays/DefaultOverlay.hpp"
 #include <chrono>
 
 
@@ -22,16 +23,21 @@ namespace ASCIIPlayer
     , paused_(true)
 	, lastVolumeChange_(0)
   {
-    //!TODO: Handle visualizer configuration
+    //!TODO: HANDLE OVERLAY CONFIRGUATION
+    if (config_.DJVisualizerID == "some name or something")
+      overlay_ = new DefaultOverlay();
+    else // default
+      overlay_ = new DefaultOverlay();
+
+    //!TODO: HANDLE VISUALIZER CONFIGURATION
     if (config_.DJVisualizerID == "horizontalWaveform")
       visualizer_ = new HorizontalWaveformVisualizer();
     else if (config_.DJVisualizerID == "colorDefault")
       visualizer_ = new ColorDefaultVisualizer();
     else if (config_.DJVisualizerID == "centerVisualizer")
       visualizer_ = new CenterVisualizer();
-    else
+    else // default
     {
-      // config.VisualizerID == "default"
       visualizer_ = new DefaultVisualizer();
     }
     visaulizerDataSize_ = visualizer_->GetAudioDataSize();
@@ -72,6 +78,15 @@ namespace ASCIIPlayer
       }
       else
       {
+        if (overlay_)
+        {
+          overlay_->Update(
+            UIInfo(audioSystem_.GetMasterVolume()
+                 , audioSystem_.GetFilename(*currSong_)
+                 , audioSystem_.IsPlaying(*currSong_)));
+          
+          overlay_->UpdatePost();
+        }
         if (visualizer_)
         {
           //!TODO: Make this more efficient, don't allocate it every time.
