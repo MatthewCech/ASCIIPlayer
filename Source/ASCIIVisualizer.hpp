@@ -26,7 +26,7 @@ namespace ASCIIPlayer
 
     // Pre-defined, but virtual functions. 
     // Can be fiddled with if you want, but defaults are reasonable.
-    virtual bool UpdatePost() { return RConsole::Canvas::Update(); };
+    virtual bool UpdatePost() { return true; };
     virtual unsigned int GetAudioDataSize() { return audioSize_; }
     virtual AudioDataStyle GetAudioDataStyle() { return audioStyle_; }
     virtual std::string GetTag() { return visualizerTag_; }
