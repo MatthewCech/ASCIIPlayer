@@ -24,7 +24,7 @@ namespace ASCIIPlayer
     {
       if (&rhs == this)
         return true;
-      else if (Volume + .0004f <= rhs.Volume && Volume - .0004f >= rhs.Volume)
+      else if (Volume + .0004f <= rhs.Volume || Volume - .0004f >= rhs.Volume)
         return false;
       else if (IsPlaying != rhs.IsPlaying)
         return false;
