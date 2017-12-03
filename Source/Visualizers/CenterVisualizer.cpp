@@ -2,9 +2,6 @@
 #include <math.h>
 
 
-#define CONSOLE_WIDTH_FUNC (rlutil::tcols() - 1)
-#define CONSOLE_HEIGHT_FUNC (rlutil::trows())
-
 
 namespace ASCIIPlayer
 {
@@ -109,22 +106,22 @@ namespace ASCIIPlayer
     }
 
     // Draw primary shape with 3 frames of fade, fade drawn from most to least faded.
-	const float lowBinValues { (data[0] + data[1]) / 2 };
-	offsetX_ += rand1_ * (lowBinValues) * .5f;
-	offsetY_ += rand2_ * (lowBinValues) * .2f;
-	offsetX_ *= .985f;
-	offsetY_ *= .985f;
-  DrawSplit(dataSize, prev3_, width, height, static_cast<unsigned char>(176), offsetX3_, offsetY3_, 1.4f, 1.0f); // most faded
-  DrawSplit(dataSize, prev2_, width, height, static_cast<unsigned char>(177), offsetX2_, offsetY2_, 1.1f, .8f); // mid faded
-  DrawSplit(dataSize, prev1_, width, height, static_cast<unsigned char>(178), offsetX1_, offsetY1_, .8f, .6f); // least faded
-  DrawSplit(dataSize, data, width, height, static_cast<unsigned char>(219), offsetX_, offsetY_, .5f, .4f);   // current
+	  const float lowBinValues { (data[0] + data[1]) / 2 };
+	  offsetX_ += rand1_ * (lowBinValues) * .5f;
+	  offsetY_ += rand2_ * (lowBinValues) * .2f;
+	  offsetX_ *= .985f;
+	  offsetY_ *= .985f;
+    DrawSplit(dataSize, prev3_, width, height, static_cast<unsigned char>(176), offsetX3_, offsetY3_, 1.4f, 1.0f); // most faded
+    DrawSplit(dataSize, prev2_, width, height, static_cast<unsigned char>(177), offsetX2_, offsetY2_, 1.1f, .8f); // mid faded
+    DrawSplit(dataSize, prev1_, width, height, static_cast<unsigned char>(178), offsetX1_, offsetY1_, .8f, .6f); // least faded
+    DrawSplit(dataSize, data, width, height, static_cast<unsigned char>(219), offsetX_, offsetY_, .5f, .4f);   // current
 
-	if (++moveDelay_ > moveDelayMax_)
-	{
-		rand1_ = static_cast<float>(rand() % 20 - 10);
-		rand2_ = static_cast<float>(rand() % 20 - 10);
-		moveDelay_ = 0;
-	}
+	  if (++moveDelay_ > moveDelayMax_)
+	  {
+		  rand1_ = static_cast<float>(rand() % 20 - 10);
+		  rand2_ = static_cast<float>(rand() % 20 - 10);
+		  moveDelay_ = 0;
+	  }
 
     // If we are past frame delay, update.
     if (++frameDeleay_ > frameDelayMax_ - 3)

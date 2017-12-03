@@ -13,6 +13,7 @@ namespace ASCIIPlayer
     : playlist_(&DJ::playlistUpdatedCallback, this)
     , audioSystem_(config.DJChannelCount)
     , visualizer_(nullptr)
+    , overlay_(nullptr)
     , visaulizerDataSize_(64) // Not magic number, just default width
     , visualizerDataStyle_(aNO_STYLE)
     , config_(config)

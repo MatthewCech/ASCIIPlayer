@@ -1775,3 +1775,7 @@ namespace RConsole
     signal(SIGINT, signalHandler);
   }
 }
+
+#define CONSOLE_WIDTH_FUNC (rlutil::tcols() - 1)
+#define CONSOLE_HEIGHT_FUNC (rlutil::trows())
+

@@ -20,7 +20,7 @@ namespace ASCIIPlayer
     int lastWidth_;
     int lastHeight_;
     
-	// Previous info
+	  // Previous info
     float *prev1_;
     float *prev2_;
     float *prev3_;
@@ -28,22 +28,21 @@ namespace ASCIIPlayer
     int frameDeleay_;
     int frameDelayMax_;
 	
-	// Delay for movement
-	int moveDelayMax_;
-	int moveDelay_;
-	float rand1_;
-	float rand2_;
+    // Delay for movement
+    int moveDelayMax_;
+    int moveDelay_;
+    float rand1_;
+    float rand2_;
 
-	// Visual offsets of backing
-	float offsetX_;
-	float offsetY_;
-	float offsetX1_;
-	float offsetY1_;
-	float offsetX2_;
-	float offsetY2_;
-	float offsetX3_;
-	float offsetY3_;
-
+    // Visual offsets of backing
+    float offsetX_;
+    float offsetY_;
+    float offsetX1_;
+    float offsetY1_;
+    float offsetX2_;
+    float offsetY2_;
+    float offsetX3_;
+    float offsetY3_;
   };
 }
 

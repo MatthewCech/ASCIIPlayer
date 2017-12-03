@@ -4,9 +4,9 @@
 #include "Defines.hpp"
 #include "Playlist.hpp"
 #include "ASCIIVisualizer.hpp"
-#include "Visualizers\DefaultVisualizer.hpp"
+#include "Visualizers/DefaultVisualizer.hpp"
 #include "DJConfig.hpp"
-
+#include "Overlays/ASCIIOverlay.hpp"
 
 
 namespace ASCIIPlayer
@@ -43,10 +43,11 @@ namespace ASCIIPlayer
 	void updateLastVolumeChange();
 
     // Variables
-    Playlist<DJ> playlist_;   // Contains the AudioFile objects.
-    AudioSystem audioSystem_; // The sound system to play the audio files.
-    ASCIIVisualizer *visualizer_;  // The visualizer to display the playing data.
-    DJConfig config_;         // The proivded config for the DJ.
+    Playlist<DJ> playlist_;       // Contains the AudioFile objects.
+    AudioSystem audioSystem_;     // The sound system to play the audio files.
+    ASCIIVisualizer *visualizer_; // The visualizer to display the playing data.
+    ASCIIOverlay *overlay_;       // The overlay for the visualizer
+    DJConfig config_;             // The proivded config for the DJ.
 
     // Internal Tracking
     bool hasShutdown_;                   // Whether or not we have shut down.
