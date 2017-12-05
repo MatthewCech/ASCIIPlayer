@@ -12,8 +12,10 @@ namespace ASCIIPlayer
     virtual bool Update(const UIInfo uinfo);
 
   private:
+    // Private methods
     long long getTime();
 
+    // Private variables
     UIInfo lastInfo_;
     long long lastFadeTime_;
     long long lastTime_;

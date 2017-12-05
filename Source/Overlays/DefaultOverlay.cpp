@@ -29,10 +29,14 @@ namespace ASCIIPlayer
     time_ = getTime();
 
     // Determine color index 
-    const int fadeDelayMS = 500;
+    const int fadeDelayMS = 10000;
     long long color_index = (time_ - lastFadeTime_) / fadeDelayMS;
-    const RConsole::Color colors[] = { RConsole::WHITE, RConsole::WHITE, RConsole::WHITE, RConsole::GREY, RConsole::GREY, RConsole::DARKGREY };
-
+    const RConsole::Color colors[] = { RConsole::WHITE, RConsole::WHITE, RConsole::WHITE, RConsole::WHITE 
+                                     , RConsole::WHITE, RConsole::WHITE, RConsole::WHITE, RConsole::WHITE 
+                                     , RConsole::WHITE, RConsole::WHITE, RConsole::WHITE, RConsole::WHITE
+                                     , RConsole::WHITE, RConsole::WHITE, RConsole::WHITE, RConsole::WHITE
+                                     , RConsole::GREY , RConsole::DARKGREY };
+     
     // Leave if we have no more colors to go through
     if (color_index >= sizeof(colors) / sizeof(RConsole::Color))
       return false;
@@ -40,28 +44,40 @@ namespace ASCIIPlayer
     // Set up variables for colors, then use it to draw the UI.
     RConsole::Color color = colors[color_index];
 
-    // ========================== [ stuff we draw ] ==========
+    ///////////////// Draw code below ///////////////// 
 
-
-    // Draw volume bar
+    // Draw volume bar: Centered.
     const int volumeHeightOffset = 2;
     const int volumeWidthOffset = 2;
     const int volumeWidthTotal = (width - volumeWidthOffset + 1);
     float volumeWidthCurrent = info.Volume * volumeWidthTotal;
-    RConsole::Canvas::Draw('[', static_cast<float>(volumeWidthOffset - 1), static_cast<float>(volumeHeightOffset), color);
-    RConsole::Canvas::Draw(']', static_cast<float>(volumeWidthTotal), static_cast<float>(volumeHeightOffset), color);
+
     if (info.Volume > 0.99f)
       volumeWidthCurrent = static_cast<float>(volumeWidthTotal);
-    for (int i = volumeWidthOffset; i < volumeWidthCurrent; ++i)
-      RConsole::Canvas::Draw('=', static_cast<float>(i), static_cast<float>(volumeHeightOffset), color);
 
+    RConsole::Canvas::Draw('[', static_cast<float>(volumeWidthOffset - 1), static_cast<float>(volumeHeightOffset), color);
+    RConsole::Canvas::Draw(']', static_cast<float>(volumeWidthTotal), static_cast<float>(volumeHeightOffset), color);
+
+    for (int i = volumeWidthOffset; i < volumeWidthCurrent; ++i)
+      RConsole::Canvas::Draw('-', static_cast<float>(i), static_cast<float>(volumeHeightOffset), color);
+
+
+    // Draw current song name out: Centered
+    const int titleHeightOfset = volumeHeightOffset + 2;
+    float titleWidthOffset = (width - info.Song.size()) / 2.0f;
+    if (titleWidthOffset < 1)
+      titleWidthOffset = 0;
+
+    RConsole::Canvas::DrawString(info.Song.c_str(), titleWidthOffset, static_cast<float>(titleHeightOfset), color);
+
+    // Everything was drawn without issue. We're good to go!
     return true;
   }
 
-  // Get a long long
+  // Get a long long of current time in MS
   long long DefaultOverlay::getTime()
   {
-    return std::chrono::system_clock::now().time_since_epoch().count() / 1000;
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
   }
 
 }

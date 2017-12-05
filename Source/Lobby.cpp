@@ -177,6 +177,7 @@ namespace ASCIIPlayer
     case '>':
     case '.':
     case 'e':
+    //case 'E':
     case KEY_TAB: 
     case KEY_END: // Also capital O
       activeDJ_->SongNext();
@@ -186,6 +187,7 @@ namespace ASCIIPlayer
     case '<':
     case ',':
     case 'q':
+    //case 'Q':
     case KEY_HOME: // also capital G
     case KEY_BACKSPACE: 
       activeDJ_->SongPrev();
@@ -211,6 +213,7 @@ namespace ASCIIPlayer
       activeDJ_->TogglePause();
       break;
     case 'd':
+    case 'D':
       showDebug_ = !showDebug_;
     case '0':
     default:
