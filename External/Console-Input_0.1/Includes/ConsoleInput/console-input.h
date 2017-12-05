@@ -103,7 +103,7 @@ inline int GetChar(void);
 inline int KeyHit(void) { return _kbhit(); }
 
 // Uses wch to handle additional cases.
-inline int GetChar(void) { return _getwch(); }
+inline int GetChar(void) { return _getch(); }
 
 #endif // OS_WINDOWS
 
