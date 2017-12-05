@@ -46,6 +46,27 @@ namespace ASCIIPlayer
 
     ///////////////// Draw code below ///////////////// 
 
+    // Left aligned volume bar
+    const int volumeHeightOffset = height - 5;
+    int volumeWidthOffset = 2;
+    const int volumeWidthTotal = 20;
+    float volumeWidthCurrent = info.Volume * volumeWidthTotal;
+
+    if (info.Volume > 0.99f)
+      volumeWidthCurrent = static_cast<float>(volumeWidthTotal);
+
+    RConsole::Canvas::Draw('V', volumeWidthOffset++, volumeHeightOffset, color);
+    RConsole::Canvas::Draw('o', volumeWidthOffset++, volumeHeightOffset, color);
+    RConsole::Canvas::Draw('l', volumeWidthOffset++, volumeHeightOffset, color);
+    RConsole::Canvas::Draw('.', volumeWidthOffset++, volumeHeightOffset, color);
+    RConsole::Canvas::Draw(' ', volumeWidthOffset++, volumeHeightOffset, color);
+    RConsole::Canvas::Draw('[', static_cast<float>(volumeWidthOffset++), static_cast<float>(volumeHeightOffset), color);
+    RConsole::Canvas::Draw(']', static_cast<float>(volumeWidthTotal + volumeWidthOffset), static_cast<float>(volumeHeightOffset), color);
+
+    for (int i = volumeWidthOffset; i < volumeWidthCurrent + volumeWidthOffset; ++i)
+      RConsole::Canvas::Draw('-', static_cast<float>(i), static_cast<float>(volumeHeightOffset), color);
+
+    /*
     // Draw volume bar: Centered.
     const int volumeHeightOffset = 2;
     const int volumeWidthOffset = 2;
@@ -60,7 +81,7 @@ namespace ASCIIPlayer
 
     for (int i = volumeWidthOffset; i < volumeWidthCurrent; ++i)
       RConsole::Canvas::Draw('-', static_cast<float>(i), static_cast<float>(volumeHeightOffset), color);
-
+    */
 
     // Draw current song name out: Centered
     const int titleHeightOfset = volumeHeightOffset + 2;

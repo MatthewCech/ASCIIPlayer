@@ -1155,6 +1155,7 @@ namespace RConsole
     static bool Update();
     static void FillCanvas(const RasterInfo &ri = RasterInfo(' ', WHITE));
     static void Draw(char toWrite, float x, float y, Color color = PREVIOUS_COLOR);
+    static void Draw(char toWrite, int x, int y, Color color = PREVIOUS_COLOR);
 	  static void DrawString(const char* toDraw, float xStart, float yStart, Color color = PREVIOUS_COLOR);
     static void DrawAlpha(float x, float y, Color color, float opacity);
     static void Shutdown();
@@ -1392,6 +1393,12 @@ namespace RConsole
     r_.WriteChar(toWrite, x, y, color);
   }
 
+
+  // Write the specific character in a specific color to a specific location on the console.
+  inline void Canvas::Draw(char toWrite, int x, int y, Color color)
+  {
+    Canvas::Draw(toWrite, static_cast<float>(x), static_cast<float>(y), color);
+  }
 
   // Draw a string
   inline void Canvas::DrawString(const char* toDraw, float xStart, float yStart, Color color)
