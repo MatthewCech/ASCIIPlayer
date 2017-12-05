@@ -29,7 +29,7 @@ namespace ASCIIPlayer
     time_ = getTime();
 
     // Determine color index 
-    const int fadeDelayMS = 10000;
+    const int fadeDelayMS = 100;
     long long color_index = (time_ - lastFadeTime_) / fadeDelayMS;
     const RConsole::Color colors[] = { RConsole::WHITE, RConsole::WHITE, RConsole::WHITE, RConsole::WHITE 
                                      , RConsole::WHITE, RConsole::WHITE, RConsole::WHITE, RConsole::WHITE 

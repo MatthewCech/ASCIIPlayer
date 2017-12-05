@@ -17,7 +17,7 @@ namespace ASCIIPlayer
     ~Lobby();
 
     // Member Functions
-    void Run(); // Has while loop and STD::Cin every loop to ensure it's running correctly. Loop sits until DJ starts with proper command.
+    void Run(); 
     bool ParseCommand(std::string command); // Returns if it was a valid command after executing. If not, display error message.
     
   private:

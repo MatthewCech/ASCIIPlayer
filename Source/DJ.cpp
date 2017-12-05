@@ -78,21 +78,23 @@ namespace ASCIIPlayer
       }
       else
       {
-        if (overlay_)
-        {
-          overlay_->Update(
-            UIInfo(audioSystem_.GetMasterVolume()
-                 , audioSystem_.GetFilename(*currSong_)
-                 , audioSystem_.IsPlaying(*currSong_)));
-          
-          overlay_->UpdatePost();
-        }
         if (visualizer_)
         {
           //!TODO: Make this more efficient, don't allocate it every time.
           FillSongData(visualizerDataArray_, visaulizerDataSize_, FMOD_DSP_FFT_WINDOW_RECT); //blackman windooooowwww yaaaaaaaaaaassss (change that, rect is def)
           visualizer_->Update(visualizerDataArray_);
           visualizer_->UpdatePost();
+        }
+
+        // Draw overlay after visualizer so it's "On top"
+        if (overlay_)
+        {
+          overlay_->Update(
+            UIInfo(audioSystem_.GetMasterVolume()
+              , audioSystem_.GetFilename(*currSong_)
+              , audioSystem_.IsPlaying(*currSong_)));
+
+          overlay_->UpdatePost();
         }
       }
 

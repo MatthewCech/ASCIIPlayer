@@ -1159,6 +1159,9 @@ namespace RConsole
     static void DrawAlpha(float x, float y, Color color, float opacity);
     static void Shutdown();
 
+    // EXPENSIVE ONE-TIME CALLS! UNDEFINED RASTER BEHAVIOR IF THERE ARE THINGS IN IT. DO NOT CALL EVERY FRAME.
+    static void ForceClearEverything() { fullClear(); } 
+
     // Advanced drawing calls
     static void DrawPartialPoint(float x, float y, Color color);
     static void DrawBox(char toWrite, float x1, float y1, float x2, float y2, Color color);

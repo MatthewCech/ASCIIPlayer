@@ -58,7 +58,8 @@ namespace ASCIIPlayer
   }
 
 
-  // Runs the primary lobby loop
+  // Has while loop and STD::Cin every loop to ensure it's running correctly. 
+  // Loop sits until DJ starts with proper command, at which point we get to "lobbyHosting".
   void Lobby::Run()
   {
     DEBUG_PRINT("Lobby looking spiffy!");
@@ -68,6 +69,8 @@ namespace ASCIIPlayer
       DEBUG_PRINT("DJ Has prepped " << activeDJ_->GetPlaylistSize() << " songs!");
     }
 
+    // Set up to start entering the primary loop
+    RConsole::Canvas::ForceClearEverything();
     if (activeDJ_->GetPlaylistSize() > 0)
       activeDJ_->Play();
 
@@ -98,7 +101,7 @@ namespace ASCIIPlayer
         RConsole::Canvas::DrawString(("[ f/s: " + std::to_string(averageFPS(fpsPrevStart_, fpsEnd_))).c_str(), 0, loc++, RConsole::DARKGREY);
       }
 
-      // finalize all drawing
+      // Finalize all drawing
       RConsole::Canvas::Update();
 
       // Smol sleep. This makes most OSs extremely happy and reduces CPU load by like 30%.
