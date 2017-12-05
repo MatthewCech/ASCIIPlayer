@@ -32,7 +32,8 @@ namespace ASCIIPlayer
     float GetMasterVolume() const;
 
     // Info about song
-    bool IsPlaying(AudioFile &audioFile);
+    bool IsActive(AudioFile &audioFile);
+    bool IsPaused(AudioFile &audioFile);
     unsigned int GetLength(AudioFile &audioFile) const;
     unsigned int GetCurrentPosition(AudioFile &audioFile);
     void SetCurrentPosition(AudioFile &audioFile, unsigned int pos);

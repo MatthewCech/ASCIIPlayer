@@ -68,7 +68,7 @@ namespace ASCIIPlayer
     if (!hasShutdown_)
     {
       // Update the song and proceed if necessary
-      if (!audioSystem_.IsPlaying(*currSong_))
+      if (!audioSystem_.IsActive(*currSong_))
       {
         playlist_.Next();
 
@@ -92,7 +92,7 @@ namespace ASCIIPlayer
           overlay_->Update(
             UIInfo(audioSystem_.GetMasterVolume()
               , audioSystem_.GetFilename(*currSong_)
-              , audioSystem_.IsPlaying(*currSong_)));
+              , !audioSystem_.IsPaused(*currSong_)));
 
           overlay_->UpdatePost();
         }

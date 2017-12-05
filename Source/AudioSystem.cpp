@@ -230,13 +230,19 @@ namespace ASCIIPlayer
 
 
   // Gets if the audiofile is playing
-  bool AudioSystem::IsPlaying(AudioFile &audioFile)
+  bool AudioSystem::IsActive(AudioFile &audioFile)
   {
     bool status;
     channelHandles_[audioFile.uniqueID_]->isPlaying(&status);
     return status;
   }
 
+  bool AudioSystem::IsPaused(AudioFile &audioFile)
+  {
+    bool status;
+    channelHandles_[audioFile.uniqueID_]->getPaused(&status);
+    return status;
+  }
 
   // Returns the length of the file in question in Milliseconds.
   unsigned int AudioSystem::GetLength(AudioFile &audioFile) const
