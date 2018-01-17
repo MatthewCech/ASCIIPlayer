@@ -21,6 +21,7 @@ namespace ASCIIPlayer
     , hasShutdown_(false)
     , currSong_(false)
     , paused_(true)
+    , isJumpingPos_(false)
 	, lastVolumeChange_(0)
   {
     //!TODO: HANDLE OVERLAY CONFIRGUATION
@@ -95,13 +96,17 @@ namespace ASCIIPlayer
           overlay_->Update(
             UIInfo(audioSystem_.GetMasterVolume()
               , audioSystem_.GetFilename(*currSong_)
-              , !audioSystem_.IsPaused(*currSong_)));
+              , !audioSystem_.IsPaused(*currSong_)
+              , isJumpingPos_
+              , audioSystem_.GetCurrentPosition(*currSong_)
+              , audioSystem_.GetLength(*currSong_)));
 
           overlay_->UpdatePost();
         }
       }
 
       // Update our audio system at the very end.
+      isJumpingPos_ = false;
       audioSystem_.Update();
       return true;
     }
@@ -193,6 +198,7 @@ namespace ASCIIPlayer
   {
     unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
     audioSystem_.SetCurrentPosition(*currSong_, posMS + config_.SkipForwardSeconds * 1000);
+    isJumpingPos_ = true;
   }
 
 
@@ -201,6 +207,7 @@ namespace ASCIIPlayer
   {
     unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
     audioSystem_.SetCurrentPosition(*currSong_, posMS - config_.SkipForwardSeconds * 1000);
+    isJumpingPos_ = true;
   }
 
 

@@ -50,15 +50,19 @@ namespace ASCIIPlayer
 
     ///////////////// Drawing happens below ///////////////// 
 
-    // Left aligned volume bar
+    // Variables
     const int volumeHeightOffset = height - 4;
     const int leftGlobalOffset = 2;
     int volumeWidthOffset = leftGlobalOffset;
     const int volumeWidthTotal = 20;
+    const int progressWidthTotal = 20;
     float volumeWidthCurrent = info.Volume * volumeWidthTotal;
+    float progressWidthCurrent = static_cast<float>(info.SongPos) / static_cast<float>(info.SongLength) * 20;
 
     if (info.Volume > 0.99f)
       volumeWidthCurrent = static_cast<float>(volumeWidthTotal);
+    if (info.SongPos > info.SongLength - (info.SongLength / 80))
+      progressWidthCurrent = static_cast<float>(progressWidthTotal);
 
     // Label
     // This is split up into each individual character because I wanted to use alt+13, alt+14, and alt+17 at one point for a vol icon.
@@ -76,6 +80,7 @@ namespace ASCIIPlayer
       RConsole::Canvas::Draw(static_cast<unsigned char>(254), i, volumeHeightOffset, color);
 
 
+
     // Draw current song name out: Left aligned
     int titleLeftOffset = leftGlobalOffset;
     const int titleHeightOfset = volumeHeightOffset + 1;
@@ -85,11 +90,32 @@ namespace ASCIIPlayer
     RConsole::Canvas::Draw('g', titleLeftOffset++, titleHeightOfset, color);
     RConsole::Canvas::Draw(':', titleLeftOffset++, titleHeightOfset, color);
     RConsole::Canvas::Draw(' ', titleLeftOffset++, titleHeightOfset, color);
+
+    // Title
     float titleWidthOffset = (width - info.Song.size()) / 2.0f;
     if (titleWidthOffset < 1)
       titleWidthOffset = 0;
-
     RConsole::Canvas::DrawString(info.Song.c_str(), static_cast<float>(titleLeftOffset), static_cast<float>(titleHeightOfset), color);
+
+
+
+    // Draw song progress
+    // Label
+    int progressLeftOffset = leftGlobalOffset;
+    const int progressHeightOffset = titleHeightOfset + 1;
+    RConsole::Canvas::Draw(' ', progressLeftOffset++, progressHeightOffset, color);
+    RConsole::Canvas::Draw('P', progressLeftOffset++, progressHeightOffset, color);
+    RConsole::Canvas::Draw('o', progressLeftOffset++, progressHeightOffset, color);
+    RConsole::Canvas::Draw('s', progressLeftOffset++, progressHeightOffset, color);
+    RConsole::Canvas::Draw(':', progressLeftOffset++, progressHeightOffset, color);
+    RConsole::Canvas::Draw(' ', progressLeftOffset++, progressHeightOffset, color);
+
+    // Bar
+    RConsole::Canvas::Draw('<', progressLeftOffset++, progressHeightOffset, color);
+    RConsole::Canvas::Draw('>', progressWidthTotal + progressLeftOffset, progressHeightOffset, color);
+    for (int i = progressLeftOffset; i < progressWidthCurrent + progressLeftOffset; ++i)
+      RConsole::Canvas::Draw(static_cast<unsigned char>(254), i, progressHeightOffset, color);
+
 
 
     // Draw paused icon.
@@ -103,30 +129,6 @@ namespace ASCIIPlayer
       RConsole::Canvas::DrawString(pausedLine, width - rightOffset, volumeHeightOffset - 0.0f, color);
       RConsole::Canvas::DrawString(pausedLine, width - rightOffset, volumeHeightOffset + 1.0f, color);
     }
-    /*
-    // Draw volume bar: Centered.
-    const int volumeHeightOffset = 2;
-    const int volumeWidthOffset = 2;
-    const int volumeWidthTotal = (width - volumeWidthOffset + 1);
-    float volumeWidthCurrent = info.Volume * volumeWidthTotal;
-
-    if (info.Volume > 0.99f)
-      volumeWidthCurrent = static_cast<float>(volumeWidthTotal);
-
-    RConsole::Canvas::Draw('[', static_cast<float>(volumeWidthOffset - 1), static_cast<float>(volumeHeightOffset), color);
-    RConsole::Canvas::Draw(']', static_cast<float>(volumeWidthTotal), static_cast<float>(volumeHeightOffset), color);
-
-    for (int i = volumeWidthOffset; i < volumeWidthCurrent; ++i)
-      RConsole::Canvas::Draw('-', static_cast<float>(i), static_cast<float>(volumeHeightOffset), color);
-
-    // Draw current song name out: Centered
-    const int titleHeightOfset = volumeHeightOffset + 2;
-    float titleWidthOffset = (width - info.Song.size()) / 2.0f;
-    if (titleWidthOffset < 1)
-      titleWidthOffset = 0;
-
-    RConsole::Canvas::DrawString(info.Song.c_str(), titleWidthOffset, static_cast<float>(titleHeightOfset), color);
-    */
 
     // Everything was drawn without issue. We're good to go!
     return true;

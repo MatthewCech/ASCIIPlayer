@@ -12,10 +12,13 @@ namespace ASCIIPlayer
   {
     // Constructors
     UIInfo() : Volume(0), IsPlaying(false), Song("") {  }
-    UIInfo(float vol, std::string song, bool isPlaying)
+    UIInfo(float vol, std::string song, bool isPlaying, bool justSkipped, size_t current_pos, size_t length)
       : Volume(vol)
       , IsPlaying(isPlaying)
+      , IsJumpingPos(justSkipped)
       , Song(song)
+      , SongPos(current_pos)
+      , SongLength(length)
     { }
 
     // Operator equals
@@ -27,6 +30,10 @@ namespace ASCIIPlayer
       else if (Volume + .0004f <= rhs.Volume || Volume - .0004f >= rhs.Volume)
         return false;
       else if (IsPlaying != rhs.IsPlaying)
+        return false;
+      else if (SongLength != rhs.SongLength)
+        return false;
+      else if (IsJumpingPos != rhs.IsJumpingPos)
         return false;
       else if (Song != rhs.Song)
         return false;
@@ -44,7 +51,10 @@ namespace ASCIIPlayer
     // Variables
     float Volume;
     bool IsPlaying;
+    bool IsJumpingPos;
     std::string Song;
+    size_t SongPos;
+    size_t SongLength;
   };
 
   // A class designed to represent UI Overlay.
