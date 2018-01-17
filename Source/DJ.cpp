@@ -45,10 +45,13 @@ namespace ASCIIPlayer
     visualizerDataArray_ = new float[visaulizerDataSize_];
 
     // Looping?
-    if (config.DJLooping)
+    if (config_.DJLooping)
       playlist_.SetLooping(true);
     else
       playlist_.SetLooping(false);
+
+    // Set volume
+    VolumeSet(config_.VolumeDefault);
 
     DEBUG_PRINT("== DJ done with setup- Ready to accept song requests! ==");
   }

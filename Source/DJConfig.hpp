@@ -8,7 +8,7 @@ namespace ASCIIPlayer
   struct DJConfig
   {
     // Basic
-    float        VolumeDefault       = 0.8f;            // Default volume for the DJ to play at.
+    float        VolumeDefault       = 0.8f;           // Default volume for the DJ to play at.
     float        VolumeChangeAmount  = 0.1f;           // By how much we change the volume every time.
     unsigned int SkipForwardSeconds  = 20;             // Seconds to go forwards when skipping. 
     unsigned int SkipBackwardSeconds = 20;             // Seconds to go backwards when skipping.
