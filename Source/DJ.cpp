@@ -21,7 +21,9 @@ namespace ASCIIPlayer
     , hasShutdown_(false)
     , currSong_(false)
     , paused_(true)
-	, lastVolumeChange_(0)
+    , isJumpingPos_(false)
+	  , lastVolumeChange_(0)
+    , requestUIActive_(false)
   {
     //!TODO: HANDLE OVERLAY CONFIRGUATION
     if (config_.DJVisualizerID == "some name or something")
@@ -45,10 +47,13 @@ namespace ASCIIPlayer
     visualizerDataArray_ = new float[visaulizerDataSize_];
 
     // Looping?
-    if (config.DJLooping)
+    if (config_.DJLooping)
       playlist_.SetLooping(true);
     else
       playlist_.SetLooping(false);
+
+    // Set volume
+    VolumeSet(config_.VolumeDefault);
 
     DEBUG_PRINT("== DJ done with setup- Ready to accept song requests! ==");
   }
@@ -90,15 +95,20 @@ namespace ASCIIPlayer
         if (overlay_)
         {
           overlay_->Update(
-            UIInfo(audioSystem_.GetMasterVolume()
+            UIInfo(requestUIActive_
+              , !audioSystem_.IsPaused(*currSong_)
+              , isJumpingPos_
+              , audioSystem_.GetMasterVolume()
               , audioSystem_.GetFilename(*currSong_)
-              , !audioSystem_.IsPaused(*currSong_)));
+              , audioSystem_.GetCurrentPosition(*currSong_)
+              , audioSystem_.GetLength(*currSong_)));
 
           overlay_->UpdatePost();
         }
       }
 
       // Update our audio system at the very end.
+      isJumpingPos_ = false;
       audioSystem_.Update();
       return true;
     }
@@ -135,6 +145,7 @@ namespace ASCIIPlayer
   }
 
 
+  // Toggles if it's paused or not
   void DJ::TogglePause()
   {
     if (!paused_)
@@ -142,6 +153,14 @@ namespace ASCIIPlayer
     else
       Play();
   }
+
+
+  // Toggles if we are requesting to have an acive UI
+  void DJ::ToggleRequestUIActive()
+  {
+    requestUIActive_ = !requestUIActive_;
+  }
+
 
   // Shuts down the DJ, closing out of all the audio that has been loaded and it has
   // prepped for.
@@ -190,6 +209,7 @@ namespace ASCIIPlayer
   {
     unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
     audioSystem_.SetCurrentPosition(*currSong_, posMS + config_.SkipForwardSeconds * 1000);
+    isJumpingPos_ = true;
   }
 
 
@@ -198,6 +218,7 @@ namespace ASCIIPlayer
   {
     unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
     audioSystem_.SetCurrentPosition(*currSong_, posMS - config_.SkipForwardSeconds * 1000);
+    isJumpingPos_ = true;
   }
 
 

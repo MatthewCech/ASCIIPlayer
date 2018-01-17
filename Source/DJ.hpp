@@ -23,6 +23,7 @@ namespace ASCIIPlayer
     void Play();
     void Pause();
     void TogglePause();
+    void ToggleRequestUIActive();
     void Shutdown();
     void ShufflePlaylist();
     void AddSong(AudioFile *toAdd);
@@ -52,6 +53,8 @@ namespace ASCIIPlayer
     // Internal Tracking
     bool hasShutdown_;                   // Whether or not we have shut down.
     bool paused_;                        // Is the JD paused or not?
+    bool requestUIActive_;               // Wether or not the user requested the UI be visible by default.
+    bool isJumpingPos_;                  // Are we using this update loop to update our song position with a manual jump?
     AudioFile *currSong_;                // What is the current song?
     unsigned int visaulizerDataSize_;    // The size of the array for the audio visualizer.
     AudioDataStyle visualizerDataStyle_; // The style of data for the audio visualizer
