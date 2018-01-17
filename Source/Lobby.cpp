@@ -96,7 +96,7 @@ namespace ASCIIPlayer
       if (showDebug_)
       {
         float loc = 0;
-        size_t seconds = static_cast<size_t>((fpsStart_ - appStartTime_) / 1000);
+        size_t seconds = static_cast<size_t>((fpsStart_ - appStartTime_) / 1000) % 60;
         size_t minutes = (seconds / 60) % 60;
         size_t hours = minutes / 60;
 

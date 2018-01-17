@@ -113,6 +113,12 @@ namespace ASCIIPlayer
     // Bar
     RConsole::Canvas::Draw('<', progressLeftOffset++, progressHeightOffset, color);
     RConsole::Canvas::Draw('>', progressWidthTotal + progressLeftOffset, progressHeightOffset, color);
+    size_t seconds = info.SongPos / 1000 % 60;
+    size_t minutes = seconds / 60 % 60;
+    size_t hours = minutes / 60 % 60;
+    RConsole::Canvas::DrawString((std::to_string(hours) + "h " + std::to_string(minutes) + "m " + std::to_string(seconds) + "s").c_str()
+      , static_cast<float>(progressWidthTotal + progressLeftOffset + 2)
+      , static_cast<float>(progressHeightOffset), color);
     for (int i = progressLeftOffset; i < progressWidthCurrent + progressLeftOffset; ++i)
       RConsole::Canvas::Draw(static_cast<unsigned char>(254), i, progressHeightOffset, color);
 
