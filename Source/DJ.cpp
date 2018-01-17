@@ -22,7 +22,8 @@ namespace ASCIIPlayer
     , currSong_(false)
     , paused_(true)
     , isJumpingPos_(false)
-	, lastVolumeChange_(0)
+	  , lastVolumeChange_(0)
+    , requestUIActive_(false)
   {
     //!TODO: HANDLE OVERLAY CONFIRGUATION
     if (config_.DJVisualizerID == "some name or something")
@@ -94,10 +95,11 @@ namespace ASCIIPlayer
         if (overlay_)
         {
           overlay_->Update(
-            UIInfo(audioSystem_.GetMasterVolume()
-              , audioSystem_.GetFilename(*currSong_)
+            UIInfo(requestUIActive_
               , !audioSystem_.IsPaused(*currSong_)
               , isJumpingPos_
+              , audioSystem_.GetMasterVolume()
+              , audioSystem_.GetFilename(*currSong_)
               , audioSystem_.GetCurrentPosition(*currSong_)
               , audioSystem_.GetLength(*currSong_)));
 
@@ -143,6 +145,7 @@ namespace ASCIIPlayer
   }
 
 
+  // Toggles if it's paused or not
   void DJ::TogglePause()
   {
     if (!paused_)
@@ -150,6 +153,14 @@ namespace ASCIIPlayer
     else
       Play();
   }
+
+
+  // Toggles if we are requesting to have an acive UI
+  void DJ::ToggleRequestUIActive()
+  {
+    requestUIActive_ = !requestUIActive_;
+  }
+
 
   // Shuts down the DJ, closing out of all the audio that has been loaded and it has
   // prepped for.

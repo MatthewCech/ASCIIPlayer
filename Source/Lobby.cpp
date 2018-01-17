@@ -100,9 +100,9 @@ namespace ASCIIPlayer
         size_t minutes = (seconds / 60) % 60;
         size_t hours = minutes / 60;
 
-        RConsole::Canvas::DrawString(("[ from " + argParser_[0]).c_str(), 0, loc++, RConsole::DARKGREY);
-        RConsole::Canvas::DrawString(("[ for: " + std::to_string(hours) + "h " + std::to_string(minutes) + "m " + std::to_string(seconds) + "s").c_str(), 0, loc++, RConsole::DARKGREY);
-        RConsole::Canvas::DrawString(("[ f/s: " + std::to_string(averageFPS(fpsPrevStart_, fpsEnd_))).c_str(), 0, loc++, RConsole::DARKGREY);
+        RConsole::Canvas::DrawString(("[ argv0: " + argParser_[0]).c_str(), 0, loc++, RConsole::DARKGREY);
+        RConsole::Canvas::DrawString(("[ utime: " + std::to_string(hours) + "h " + std::to_string(minutes) + "m " + std::to_string(seconds) + "s").c_str(), 0, loc++, RConsole::DARKGREY);
+        RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(averageFPS(fpsPrevStart_, fpsEnd_)) + " per second").c_str(), 0, loc++, RConsole::DARKGREY);
       }
 
       // Finalize all drawing
@@ -224,7 +224,13 @@ namespace ASCIIPlayer
     case 'd':
     case 'D':
       showDebug_ = !showDebug_;
-    case '0':
+      break;
+    case 'u':
+    case 'U':
+    case 'i':
+    case '0': // Make it so the UI is requested.
+      activeDJ_->ToggleRequestUIActive();
+      break;
     default:
       return false;
     }

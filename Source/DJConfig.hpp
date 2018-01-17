@@ -16,6 +16,7 @@ namespace ASCIIPlayer
     unsigned int DJChannelCount      = 10;             // The number of channels for the DJ to have.
     std::string  DJVisualizerID      = "colorDefault"; // ID of the visualizer to use.
     std::string  DJOverlayID         = "default";      // ID of the info overlay to use.
+    bool         DJOverlayAlwaysOn   = false;           // A request for having the UI on all the time.
 
     //std::string DefaultFolder; // Default folder to load music from.
 

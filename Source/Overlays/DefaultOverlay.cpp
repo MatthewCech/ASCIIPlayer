@@ -1,5 +1,7 @@
 ﻿#include "DefaultOverlay.hpp"
-
+#include <sstream>
+#include <ostream>
+#include <iomanip>
 
 
 namespace ASCIIPlayer
@@ -18,7 +20,7 @@ namespace ASCIIPlayer
     const int width{ CONSOLE_WIDTH_FUNC };
     const int height{ CONSOLE_HEIGHT_FUNC };
 
-    if (info != lastInfo_)
+    if (info.IsRequestedActive || info != lastInfo_)
     {
       lastFadeTime_ = getTime();
       lastInfo_ = info;
@@ -110,17 +112,31 @@ namespace ASCIIPlayer
     RConsole::Canvas::Draw(':', progressLeftOffset++, progressHeightOffset, color);
     RConsole::Canvas::Draw(' ', progressLeftOffset++, progressHeightOffset, color);
 
-    // Bar
+    // Progress bar
     RConsole::Canvas::Draw('<', progressLeftOffset++, progressHeightOffset, color);
     RConsole::Canvas::Draw('>', progressWidthTotal + progressLeftOffset, progressHeightOffset, color);
-    size_t seconds = info.SongPos / 1000 % 60;
-    size_t minutes = seconds / 60 % 60;
-    size_t hours = minutes / 60 % 60;
-    RConsole::Canvas::DrawString((std::to_string(hours) + "h " + std::to_string(minutes) + "m " + std::to_string(seconds) + "s").c_str()
-      , static_cast<float>(progressWidthTotal + progressLeftOffset + 2)
-      , static_cast<float>(progressHeightOffset), color);
     for (int i = progressLeftOffset; i < progressWidthCurrent + progressLeftOffset; ++i)
       RConsole::Canvas::Draw(static_cast<unsigned char>(254), i, progressHeightOffset, color);
+
+    // Time
+    const size_t secondsCurr = info.SongPos / 1000;
+    const size_t secondsTotal = info.SongLength / 1000;
+    const size_t minutesCurr = secondsCurr / 60;
+    const size_t minutesTotal = secondsTotal / 60;
+    const size_t hoursCurr = minutesCurr / 60;
+    const size_t hoursTotal = minutesTotal / 60;
+    std::stringstream ss("");
+    ss << std::setfill('0') << std::setw(2) << hoursCurr << ":"
+      << std::setfill('0') << std::setw(2) << minutesCurr % 60 << ":"
+      << std::setfill('0') << std::setw(2) << secondsCurr % 60 << " / "
+      << std::setfill('0') << std::setw(2) << hoursTotal << ":"
+      << std::setfill('0') << std::setw(2) << minutesTotal %60 << ":"
+      << std::setfill('0') << std::setw(2) << secondsTotal %60;
+      RConsole::Canvas::DrawString(ss.str().c_str()
+        , static_cast<float>(progressWidthTotal + progressLeftOffset + 2)
+        , static_cast<float>(progressHeightOffset), color);
+
+
 
 
 

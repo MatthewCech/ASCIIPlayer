@@ -12,8 +12,9 @@ namespace ASCIIPlayer
   {
     // Constructors
     UIInfo() : Volume(0), IsPlaying(false), Song("") {  }
-    UIInfo(float vol, std::string song, bool isPlaying, bool justSkipped, size_t current_pos, size_t length)
-      : Volume(vol)
+    UIInfo(bool requestedActive, bool isPlaying, bool justSkipped, float vol, std::string song, size_t current_pos, size_t length)
+      : IsRequestedActive(requestedActive)
+      , Volume(vol)
       , IsPlaying(isPlaying)
       , IsJumpingPos(justSkipped)
       , Song(song)
@@ -35,6 +36,8 @@ namespace ASCIIPlayer
         return false;
       else if (IsJumpingPos != rhs.IsJumpingPos)
         return false;
+      else if (IsRequestedActive != rhs.IsRequestedActive)
+        return false;
       else if (Song != rhs.Song)
         return false;
 
@@ -49,6 +52,7 @@ namespace ASCIIPlayer
     }  
 
     // Variables
+    bool IsRequestedActive;
     float Volume;
     bool IsPlaying;
     bool IsJumpingPos;
