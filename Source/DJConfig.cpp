@@ -35,15 +35,22 @@ namespace ASCIIPlayer
     try
     {
       do {
-        PARSE_CONTINUE(DJLooping, name, stoi(val) > 0 ? true : false)
+        // Floats
         PARSE_CONTINUE(VolumeDefault, name, stof(val))
         PARSE_CONTINUE(VolumeChangeAmount, name, stof(val))
+
+        // Bools
+        PARSE_CONTINUE(DJLooping, name, stoi(val) > 0 ? true : false)
+        PARSE_CONTINUE(DJOverlayAlwaysOn, name, stoi(val) > 0 ? true : false)
+
+        // Ints
         PARSE_CONTINUE(SkipForwardSeconds, name, stoi(val))
         PARSE_CONTINUE(SkipBackwardSeconds, name, stoi(val))
         PARSE_CONTINUE(DJChannelCount, name, stoi(val))
+
+        // Strings
         PARSE_CONTINUE(DJVisualizerID, name, TrimWhitespace(val))
         PARSE_CONTINUE(DJOverlayID, name, TrimWhitespace(val))
-        PARSE_CONTINUE(DJOverlayAlwaysOn, name, stoi(val) > 0 ? true : false)
       } while (false);
     }
     catch (...)
@@ -57,17 +64,27 @@ namespace ASCIIPlayer
   std::string DJConfig::ToString()
   {
     std::stringstream ss;
-    ss << NAME_STR_LINE(DJLooping)
+    ss 
+       // Floats
        << NAME_STR_LINE(VolumeDefault)
        << NAME_STR_LINE(VolumeChangeAmount)
+
+       // Bools
+       << NAME_STR_LINE(DJLooping)
+       << NAME_STR_LINE(DJOverlayAlwaysOn)
+
+       // Ints
        << NAME_STR_LINE(SkipForwardSeconds)
        << NAME_STR_LINE(SkipBackwardSeconds)
        << NAME_STR_LINE(DJChannelCount)
+
+       // Strings
        << NAME_STR_LINE(DJVisualizerID)
        << NAME_STR_LINE(DJOverlayID)
-       << NAME_STR_LINE(DJOverlayAlwaysOn)
+
+       // Etc.
        << "\n\n"
-       << "Notes:\n"
+       << "===[Notes]===\n"
 			 << "Available Visualizers - default horizontalWaveform colorDefault centerVisualizer\n";
     return ss.str();
   }

@@ -228,9 +228,9 @@ namespace ASCIIPlayer
     case 'u':
     case 'U':
     case 'i':
-    case '0': // Make it so the UI is requested.
       activeDJ_->ToggleRequestUIActive();
       break;
+    case '0': // Make it so the UI is requested.
     default:
       return false;
     }
