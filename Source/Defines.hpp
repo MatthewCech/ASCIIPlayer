@@ -8,7 +8,7 @@
  // OS and Compiler-Specific //
 //////////////////////////////
 #if defined (DEBUG) | (_DEBUG)
-  #define AP_DEBUG // As in, ascii-player debug
+  //#define AP_DEBUG // As in, ascii-player debug
 #endif
 
 
@@ -23,7 +23,7 @@ using APUnique      = unsigned long long;
 
 // Defines
 #define ABSTRACT =0
-
+#define SONG_TIME_SCALE_FOR_SECONDS 1000
 
   ///////////
  // Enums //
@@ -41,9 +41,8 @@ enum AudioDataStyle
 //////////////////////////
 // Debug Printing
 #ifdef AP_DEBUG
-  #define AP_DEBUG_PRINT_VAL 1
+  #define DEBUG_PRINT(x) do{ std::cout << x << std::endl; } while (0)
 #else
-  #define AP_DEBUG_PRINT_VAL 0
+  #define DEBUG_PRINT(x) do{ } while (0)
 #endif
-#define DEBUG_PRINT(x) do{ if(AP_DEBUG_PRINT_VAL) { std::cout << x << std::endl; } } while (0)
 

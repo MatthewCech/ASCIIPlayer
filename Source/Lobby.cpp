@@ -65,9 +65,8 @@ namespace ASCIIPlayer
     DEBUG_PRINT("Lobby looking spiffy!");
 
     if (activeDJ_)
-    {
       DEBUG_PRINT("DJ Has prepped " << activeDJ_->GetPlaylistSize() << " songs!");
-    }
+    
 
     // Set up to start entering the primary loop
     RConsole::Canvas::ForceClearEverything();
@@ -75,13 +74,30 @@ namespace ASCIIPlayer
       activeDJ_->Play();
 
     // While we're hosting stuff in the lobby
+    size_t loops = 0;
     while (lobbyHosting_)
     {
       fpsPrevStart_ = fpsStart_;
       fpsStart_ = MS_SINCE_EPOCH;
       // ============================ Start primary loop ============================
 
+      // Idle screen if necessary
+      if (activeDJ_->GetPlaylistSize() == 0)
+      {
+        const int osc[] = {'`', '*', '+', '_', ',', '.', '.', '.', '.', ',', '/', '^'};
+        const size_t index = loops / 30;
+        const size_t mod = (sizeof(osc) / sizeof(*osc));
 
+        RConsole::Canvas::DrawString((std::string("Waiting for songs ") 
+          + static_cast<char>(osc[(index) % mod])
+          + static_cast<char>(osc[(index + 1) % mod])
+          + static_cast<char>(osc[(index + 2) % mod])
+          + static_cast<char>(osc[(index + 3) % mod])
+          + static_cast<char>(osc[(index + 4) % mod])
+          ).c_str(), 3, 3, RConsole::WHITE);
+      }
+
+      // Actively run DJ
       if (activeDJ_)
         activeDJ_->Update();
 
@@ -96,13 +112,13 @@ namespace ASCIIPlayer
       if (showDebug_)
       {
         float loc = 0;
-        size_t seconds = static_cast<size_t>((fpsStart_ - appStartTime_) / 1000) % 60;
-        size_t minutes = (seconds / 60) % 60;
-        size_t hours = minutes / 60;
+        const size_t seconds = static_cast<size_t>((fpsStart_ - appStartTime_) / 1000);
+        const size_t minutes = seconds / 60;
+        const size_t hours = minutes / 60;
 
-        RConsole::Canvas::DrawString(("[ argv0: " + argParser_[0]).c_str(), 0, loc++, RConsole::DARKGREY);
-        RConsole::Canvas::DrawString(("[ utime: " + std::to_string(hours) + "h " + std::to_string(minutes) + "m " + std::to_string(seconds) + "s").c_str(), 0, loc++, RConsole::DARKGREY);
-        RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(averageFPS(fpsPrevStart_, fpsEnd_)) + " per second").c_str(), 0, loc++, RConsole::DARKGREY);
+        RConsole::Canvas::DrawString(("[ argv0: " + argParser_[0]).c_str(), 0.0f, loc++, RConsole::DARKGREY);
+        RConsole::Canvas::DrawString(("[ utime: " + std::to_string(hours) + "h " + std::to_string(minutes % 60) + "m " + std::to_string(seconds % 60) + "s").c_str(), 0.0f, loc++, RConsole::DARKGREY);
+        RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(averageFPS(fpsPrevStart_, fpsEnd_)) + " per second").c_str(), 0.0f, loc++, RConsole::DARKGREY);
       }
 
       // Finalize all drawing
@@ -114,6 +130,7 @@ namespace ASCIIPlayer
 
       // ============================ End primary loop ============================
       fpsEnd_ = MS_SINCE_EPOCH;
+      ++loops;
     }
   }
 

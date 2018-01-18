@@ -45,6 +45,7 @@ namespace ASCIIPlayer
     visaulizerDataSize_ = visualizer_->GetAudioDataSize();
     visualizerDataStyle_ = visualizer_->GetAudioDataStyle();
     visualizerDataArray_ = new float[visaulizerDataSize_];
+    memset(visualizerDataArray_, 0, visaulizerDataSize_);
 
     // Looping?
     if (config_.DJLooping)
@@ -55,6 +56,7 @@ namespace ASCIIPlayer
     // Set volume
     VolumeSet(config_.VolumeDefault);
 
+    // Done!
     DEBUG_PRINT("== DJ done with setup- Ready to accept song requests! ==");
   }
 
@@ -85,8 +87,10 @@ namespace ASCIIPlayer
       {
         if (visualizer_)
         {
-          //!TODO: Make this more efficient, don't allocate it every time.
-          FillSongData(visualizerDataArray_, visaulizerDataSize_, FMOD_DSP_FFT_WINDOW_RECT); //blackman windooooowwww yaaaaaaaaaaassss (change that, rect is def)
+          // Only fill if not paused
+          if(!paused_)
+            FillSongData(visualizerDataArray_, visaulizerDataSize_, FMOD_DSP_FFT_WINDOW_RECT);
+
           visualizer_->Update(visualizerDataArray_);
           visualizer_->UpdatePost();
         }
@@ -207,8 +211,11 @@ namespace ASCIIPlayer
   // Convert config skip to MS and add it to the current position
   void DJ::MoveForward()
   {
-    unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
-    audioSystem_.SetCurrentPosition(*currSong_, posMS + config_.SkipForwardSeconds * 1000);
+    if (!currSong_)
+      return;
+
+    const unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
+    audioSystem_.SetCurrentPosition(*currSong_, posMS + config_.SkipForwardSeconds * SONG_TIME_SCALE_FOR_SECONDS);
     isJumpingPos_ = true;
   }
 
@@ -216,8 +223,11 @@ namespace ASCIIPlayer
   // Convert config skip to MS and subtract it from the current position
   void DJ::MoveBackward()
   {
-    unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
-    audioSystem_.SetCurrentPosition(*currSong_, posMS - config_.SkipForwardSeconds * 1000);
+    if (!currSong_)
+      return;
+
+    const unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
+    audioSystem_.SetCurrentPosition(*currSong_, posMS - config_.SkipForwardSeconds * SONG_TIME_SCALE_FOR_SECONDS);
     isJumpingPos_ = true;
   }
 
@@ -227,7 +237,7 @@ namespace ASCIIPlayer
   {
     const float vol = audioSystem_.GetMasterVolume();
     audioSystem_.SetMasterVolume(vol + config_.VolumeChangeAmount);
-	updateLastVolumeChange();
+	  updateLastVolumeChange();
   }
 
 
