@@ -23,7 +23,7 @@ using APUnique      = unsigned long long;
 
 // Defines
 #define ABSTRACT =0
-
+#define SONG_TIME_SCALE_FOR_SECONDS 1000
 
   ///////////
  // Enums //

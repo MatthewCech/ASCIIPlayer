@@ -207,8 +207,11 @@ namespace ASCIIPlayer
   // Convert config skip to MS and add it to the current position
   void DJ::MoveForward()
   {
-    unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
-    audioSystem_.SetCurrentPosition(*currSong_, posMS + config_.SkipForwardSeconds * 1000);
+    if (!currSong_)
+      return;
+
+    const unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
+    audioSystem_.SetCurrentPosition(*currSong_, posMS + config_.SkipForwardSeconds * SONG_TIME_SCALE_FOR_SECONDS);
     isJumpingPos_ = true;
   }
 
@@ -216,8 +219,11 @@ namespace ASCIIPlayer
   // Convert config skip to MS and subtract it from the current position
   void DJ::MoveBackward()
   {
-    unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
-    audioSystem_.SetCurrentPosition(*currSong_, posMS - config_.SkipForwardSeconds * 1000);
+    if (!currSong_)
+      return;
+
+    const unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
+    audioSystem_.SetCurrentPosition(*currSong_, posMS - config_.SkipForwardSeconds * SONG_TIME_SCALE_FOR_SECONDS);
     isJumpingPos_ = true;
   }
 
@@ -227,7 +233,7 @@ namespace ASCIIPlayer
   {
     const float vol = audioSystem_.GetMasterVolume();
     audioSystem_.SetMasterVolume(vol + config_.VolumeChangeAmount);
-	updateLastVolumeChange();
+	  updateLastVolumeChange();
   }
 
 
