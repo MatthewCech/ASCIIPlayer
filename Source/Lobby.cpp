@@ -116,9 +116,9 @@ namespace ASCIIPlayer
         const size_t minutes = seconds / 60;
         const size_t hours = minutes / 60;
 
-        RConsole::Canvas::DrawString(("[ argv0: " + argParser_[0]).c_str(), 0, loc++, RConsole::DARKGREY);
-        RConsole::Canvas::DrawString(("[ utime: " + std::to_string(hours) + "h " + std::to_string(minutes % 60) + "m " + std::to_string(seconds % 60) + "s").c_str(), 0, loc++, RConsole::DARKGREY);
-        RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(averageFPS(fpsPrevStart_, fpsEnd_)) + " per second").c_str(), 0, loc++, RConsole::DARKGREY);
+        RConsole::Canvas::DrawString(("[ argv0: " + argParser_[0]).c_str(), 0.0f, loc++, RConsole::DARKGREY);
+        RConsole::Canvas::DrawString(("[ utime: " + std::to_string(hours) + "h " + std::to_string(minutes % 60) + "m " + std::to_string(seconds % 60) + "s").c_str(), 0.0f, loc++, RConsole::DARKGREY);
+        RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(averageFPS(fpsPrevStart_, fpsEnd_)) + " per second").c_str(), 0.0f, loc++, RConsole::DARKGREY);
       }
 
       // Finalize all drawing

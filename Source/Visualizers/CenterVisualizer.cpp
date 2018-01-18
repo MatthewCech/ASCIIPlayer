@@ -5,6 +5,34 @@
 
 namespace ASCIIPlayer
 {
+  // Ctor - hide the cursor and set up.
+  CenterVisualizer::CenterVisualizer()
+    : ASCIIVisualizer(64, aSpectrum, "centerVisualizer")
+    , lastWidth_(CONSOLE_WIDTH_FUNC)
+    , lastHeight_(CONSOLE_HEIGHT_FUNC)
+    , frameDelayMax_(5)
+    , frameDeleay_(0)
+    , offsetX_(0)
+    , offsetY_(0)
+    , offsetX1_(0)
+    , offsetY1_(0)
+    , offsetX2_(0)
+    , offsetY2_(0)
+    , offsetX3_(0)
+    , offsetY3_(0)
+    , moveDelayMax_(30)
+    , moveDelay_(0)
+    , rand1_(0)
+    , rand2_(0)
+  {
+    RConsole::Canvas::SetCursorVisible(false);
+    prevSize_ = GetAudioDataSize();
+    prev1_ = new float[prevSize_] { 0 };
+    prev2_ = new float[prevSize_] { 0 };
+    prev3_ = new float[prevSize_] { 0 };
+  }
+
+  // Draw the split center formation
   void DrawSplit(int dataSize, float *data, int width, int height, unsigned char drawChar, float offsetX = 0, float offsetY = 0, float SCALAR_TO_CHANGE = 1.5, float horizontalScalar = 1.0f)
   { 
 	// Calculate dependant values and precompute values.
@@ -60,32 +88,6 @@ namespace ASCIIPlayer
     }
   }
 
-  // Ctor - hide the cursor and set up.
-  CenterVisualizer::CenterVisualizer()
-	: ASCIIVisualizer(64, aSpectrum, "centerVisualizer")
-	, lastWidth_(CONSOLE_WIDTH_FUNC)
-	, lastHeight_(CONSOLE_HEIGHT_FUNC)
-	, frameDelayMax_(5) // 15 //!TODO: Tune, current 60
-	, frameDeleay_(0)
-	, offsetX_(0)
-	, offsetY_(0)
-	, offsetX1_(0)
-	, offsetY1_(0)
-	, offsetX2_(0)
-	, offsetY2_(0)
-	, offsetX3_(0)
-	, offsetY3_(0)
-	, moveDelayMax_(30)
-	, moveDelay_(0)
-	, rand1_(0)
-	, rand2_(0)
-  {  
-    RConsole::Canvas::SetCursorVisible(false);
-    prevSize_ = GetAudioDataSize();
-    prev1_ = new float[prevSize_] { 0 };
-    prev2_ = new float[prevSize_] { 0 };
-    prev3_ = new float[prevSize_] { 0 };
-  }
 
   // Member functions
   bool CenterVisualizer::Update(float* data)
@@ -126,7 +128,7 @@ namespace ASCIIPlayer
     // If we are past frame delay, update.
     if (++frameDeleay_ > frameDelayMax_ - 3)
     {
-      // Stagger memcpy calls.
+      // Stagger memcpy calls to reduce visibility
 		  if (frameDeleay_ == frameDelayMax_ - 2)
 		  {
 			  prev3_ = static_cast<float *>(memcpy(prev3_, prev2_, prevSize_));

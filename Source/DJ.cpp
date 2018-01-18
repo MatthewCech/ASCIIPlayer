@@ -87,8 +87,6 @@ namespace ASCIIPlayer
       {
         if (visualizer_)
         {
-          //!TODO: Make this more efficient, don't allocate it every time.
-
           // Only fill if not paused
           if(!paused_)
             FillSongData(visualizerDataArray_, visaulizerDataSize_, FMOD_DSP_FFT_WINDOW_RECT);
