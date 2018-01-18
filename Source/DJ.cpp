@@ -45,6 +45,7 @@ namespace ASCIIPlayer
     visaulizerDataSize_ = visualizer_->GetAudioDataSize();
     visualizerDataStyle_ = visualizer_->GetAudioDataStyle();
     visualizerDataArray_ = new float[visaulizerDataSize_];
+    memset(visualizerDataArray_, 0, visaulizerDataSize_);
 
     // Looping?
     if (config_.DJLooping)
@@ -55,6 +56,7 @@ namespace ASCIIPlayer
     // Set volume
     VolumeSet(config_.VolumeDefault);
 
+    // Done!
     DEBUG_PRINT("== DJ done with setup- Ready to accept song requests! ==");
   }
 
@@ -86,7 +88,11 @@ namespace ASCIIPlayer
         if (visualizer_)
         {
           //!TODO: Make this more efficient, don't allocate it every time.
-          FillSongData(visualizerDataArray_, visaulizerDataSize_, FMOD_DSP_FFT_WINDOW_RECT); //blackman windooooowwww yaaaaaaaaaaassss (change that, rect is def)
+
+          // Only fill if not paused
+          if(!paused_)
+            FillSongData(visualizerDataArray_, visaulizerDataSize_, FMOD_DSP_FFT_WINDOW_RECT);
+
           visualizer_->Update(visualizerDataArray_);
           visualizer_->UpdatePost();
         }
