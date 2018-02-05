@@ -157,7 +157,9 @@ private:
   // Pushes a continer to the stack if possible.
   void pushContainer(Container *c)
   {
-    stack_.top()->GetSelected().Call();
+    if(stack_.size() > 0)
+      stack_.top()->GetSelected().Call();
+
     if (c == nullptr)
     {
       if (stack_.top()->GetSelected().Target == "back")

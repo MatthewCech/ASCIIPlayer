@@ -5,6 +5,8 @@
 #include <thread>
 
 #define MS_SINCE_EPOCH std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count()
+#define MENU_BASE "menuBase"
+
 
 
 namespace ASCIIPlayer
@@ -45,6 +47,13 @@ namespace ASCIIPlayer
 
     // Set activeDJ to our DJ
     activeDJ_ = Dj;
+
+    // Configure menus
+    Container *mainMenu = Container::Create(MENU_BASE);
+    mainMenu->SetOrientation(ASCIIMenus::HORIZONTAL);
+    mainMenu->AddItem("  File  ", "");
+    mainMenu->AddItem(" Edit  ", "");
+    mainMenu->AddItem(" Quit  ", "", []() { exit(0); });
   }
 
 
@@ -110,7 +119,7 @@ namespace ASCIIPlayer
           interpretChar(input);
         }
 
-      // Finalize drawing
+      // Finalize drawing for debug
       if (showDebug_)
       {
         float loc = 0;
@@ -123,7 +132,10 @@ namespace ASCIIPlayer
         RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(averageFPS(fpsPrevStart_, fpsEnd_)) + " per second").c_str(), 0.0f, loc++, RConsole::DARKGREY);
       }
 
-      // Finalize all drawing
+      // Finalize drawing for menu overlay
+      menuSystems_.Draw(0, 0);
+
+      // Write out and display all drawing
       RConsole::Canvas::Update();
 
       // Smol sleep. This makes most OSs extremely happy and reduces CPU load by like 30%.
@@ -198,19 +210,53 @@ namespace ASCIIPlayer
 
     switch (c)
     {
-    case 'w':
-    case 'W':
-      //if (menuVisible_)
-
+    // Menu Show/Hide
+    case KEY_ESCAPE:
+    //case KEY_ALT_LEFT:
+      if (menuVisible_)
+        menuSystems_.Back();
+      else
+        menuSystems_.Select(MENU_BASE);
+      menuVisible_ = !menuVisible_;
       break;
+
+
+    // Menu Navigation: Up/Left
+    case KEY_NUM_4:
+    case KEY_LEFT:
+    case 'a':
+      if(!menuVisible_)
+        activeDJ_->MoveBackward();
+    case 'w':
+      if (menuVisible_)
+        menuSystems_.Up();
+      break;
+
+
+    // Menu Navigation: Down/Right. Special case D to handle menu movement and debug.
+    case KEY_NUM_6:
+    case KEY_RIGHT:
+      if(!menuVisible_)
+        activeDJ_->MoveForward();
+    case 's':
+      if (menuVisible_)
+        menuSystems_.Down();
+      break;
+    case 'd':
+      if (menuVisible_)
+        menuSystems_.Down();
+      else
+        showDebug_ = !showDebug_;
+      break;
+
+
+    // Song Skipping
     case ']':
     case '}':
     case '>':
     case '.':
     case 'e':
-    //case 'E':
     case KEY_TAB: 
-    case KEY_END: // Also capital O
       activeDJ_->SongNext();
       break;
     case '[':
@@ -218,19 +264,12 @@ namespace ASCIIPlayer
     case '<':
     case ',':
     case 'q':
-    //case 'Q':
-    case KEY_HOME: // also capital G
     case KEY_BACKSPACE: 
       activeDJ_->SongPrev();
       break;
-    case KEY_RIGHT:
-    case KEY_NUM_6:
-      activeDJ_->MoveForward();
-      break;
-    case KEY_LEFT:
-    case KEY_NUM_4:
-      activeDJ_->MoveBackward();
-      break;
+
+
+    // Volume Adjustments
     case '-':
     case KEY_PAGEDOWN: // also capital Q
       activeDJ_->VolumeDown();
@@ -241,14 +280,18 @@ namespace ASCIIPlayer
       activeDJ_->VolumeUp();
       break;
     case 'p':
-    case 'P':
-    case KEY_SPACE: // Pauses. Not another key afaik.
       activeDJ_->TogglePause();
       break;
-    case 'd':
-    case 'D':
-      showDebug_ = !showDebug_;
+    case KEY_SPACE: // Pauses. Not another key afaik.
+      if(!menuVisible_)
+        activeDJ_->TogglePause();
+    case KEY_ENTER:
+      if (menuVisible_)
+        menuSystems_.Select();
       break;
+
+
+    // UI or Info
     case 'u':
     case 'U':
     case 'i':

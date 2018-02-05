@@ -38,7 +38,6 @@ namespace ASCIIPlayer
     bool lobbyHosting_;
     bool menuVisible_;
 
-
     // Debug Related
     int averageFPS(long long start, long long end);
     size_t timesIndex_;
