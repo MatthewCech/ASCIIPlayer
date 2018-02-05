@@ -5,8 +5,10 @@
 #include <thread>
 
 #define MS_SINCE_EPOCH std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count()
-#define MENU_BASE "menuBase"
-
+#define ASCIIMENU_BASE "menuDefualt"
+#define ASCIIMENU_FILE "menuFile"
+#define ASCIIMENU_EDIT "menuEdit"
+#define ASCIIMENU_VISUALIZER "menuVisualizer"
 
 
 namespace ASCIIPlayer
@@ -49,11 +51,28 @@ namespace ASCIIPlayer
     activeDJ_ = Dj;
 
     // Configure menus
-    Container *mainMenu = Container::Create(MENU_BASE);
+    Container *mainMenu = Container::Create(ASCIIMENU_BASE);
     mainMenu->SetOrientation(ASCIIMenus::HORIZONTAL);
-    mainMenu->AddItem("  File  ", "");
-    mainMenu->AddItem(" Edit  ", "");
-    mainMenu->AddItem(" Quit  ", "", []() { exit(0); });
+    mainMenu->AddItem(" File  ", ASCIIMENU_FILE);
+    mainMenu->AddItem(" Edit  ", ASCIIMENU_EDIT);
+    mainMenu->AddItem(" Help  ", "");
+    mainMenu->AddItem(" Hide  ", "back");
+
+    Container *fileMenu = Container::Create(ASCIIMENU_FILE);
+    fileMenu->SetOrientation(ASCIIMenus::VERTICAL);
+    fileMenu->SetPosition(2, 1);
+    fileMenu->AddItem("Open", "");
+    fileMenu->AddItem("Save Settings", "");
+    fileMenu->AddItem("Info", ""); // Provides some info on ASCIIPlayer!
+    fileMenu->AddItem("Help", ""); // Provides help information.
+    fileMenu->AddItem("Quit ASCIIPlayer", "", []() { exit(0); });
+
+    Container *editMenu = Container::Create(ASCIIMENU_EDIT);
+    editMenu->SetOrientation(ASCIIMenus::VERTICAL);
+    editMenu->SetPosition(9, 1);
+    editMenu->AddItem("Edit Config", "");
+    editMenu->AddItem("Reset Config", "");
+    editMenu->AddItem("Set Visualizer", ASCIIMENU_VISUALIZER); 
   }
 
 
@@ -133,7 +152,7 @@ namespace ASCIIPlayer
       }
 
       // Finalize drawing for menu overlay
-      menuSystems_.Draw(0, 0);
+      menuSystems_.Draw(0, 0, true);
 
       // Write out and display all drawing
       RConsole::Canvas::Update();
@@ -216,8 +235,8 @@ namespace ASCIIPlayer
       if (menuVisible_)
         menuSystems_.Back();
       else
-        menuSystems_.Select(MENU_BASE);
-      menuVisible_ = !menuVisible_;
+        menuSystems_.Select(ASCIIMENU_BASE);
+      menuVisible_ = menuSystems_.IsVisible();
       break;
 
 
@@ -287,7 +306,10 @@ namespace ASCIIPlayer
         activeDJ_->TogglePause();
     case KEY_ENTER:
       if (menuVisible_)
+      {
         menuSystems_.Select();
+        menuVisible_ = menuSystems_.IsVisible();
+      }
       break;
 
 

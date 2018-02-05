@@ -190,13 +190,13 @@ public:
       stack_.push(c); 
   }
   
-  // Setters
   void SetColorSelected(RConsole::Color c)   { colorSelected_ = c;   }
   void SetColorUnselected(RConsole::Color c) { colorUnselected_ = c; }
-  
+  bool IsVisible() { return stack_.size() > 0;  }
+
   // Member functions
-  void Down() { stack_.top()->Next(); }
-  void Up()   { stack_.top()->Prev(); }
+  void Down() { if (stack_.size() > 0) stack_.top()->Next(); }
+  void Up()   { if (stack_.size() > 0) stack_.top()->Prev(); }
 
   // Selects the currently highlighted line from the menu on the top of the stack
   void Select() 
