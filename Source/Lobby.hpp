@@ -4,6 +4,7 @@
 #include "DJ.hpp"
 #include <string>
 #include <ArgParser/ArgParser.hpp>
+#include <ASCIIMenus/menu-system.hpp>
 
 
 
@@ -29,11 +30,15 @@ namespace ASCIIPlayer
     void startDJ();
     void stopDj();
     void setDJ(DJ *newDJ);
+    bool menuMoveCheckRight();
+    bool menuMoveCheckLeft();
 
     // Variables
     ArgParser argParser_;
     DJ *activeDJ_;
+    MenuSystem menuSystems_;
     bool lobbyHosting_;
+    bool menuVisible_;
 
     // Debug Related
     int averageFPS(long long start, long long end);

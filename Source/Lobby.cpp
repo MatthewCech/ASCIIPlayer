@@ -5,6 +5,10 @@
 #include <thread>
 
 #define MS_SINCE_EPOCH std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count()
+#define ASCIIMENU_BASE "menuDefualt"
+#define ASCIIMENU_FILE "menuFile"
+#define ASCIIMENU_EDIT "menuEdit"
+#define ASCIIMENU_VISUALIZER "menuVisualizer"
 
 
 namespace ASCIIPlayer
@@ -16,7 +20,9 @@ namespace ASCIIPlayer
   Lobby::Lobby(int argc, char** argv) 
     : argParser_(argc, argv)
     , activeDJ_(nullptr)
+    , menuSystems_("")
     , lobbyHosting_(true)
+    , menuVisible_(false)
     , timesIndex_(0)
     , times_()
     , showDebug_(false)
@@ -43,6 +49,30 @@ namespace ASCIIPlayer
 
     // Set activeDJ to our DJ
     activeDJ_ = Dj;
+
+    // Configure menus
+    Container *mainMenu = Container::Create(ASCIIMENU_BASE);
+    mainMenu->SetOrientation(ASCIIMenus::HORIZONTAL);
+    mainMenu->AddItem(" File  ", ASCIIMENU_FILE);
+    mainMenu->AddItem(" Edit  ", ASCIIMENU_EDIT);
+    mainMenu->AddItem(" Help  ", "");
+
+    Container *fileMenu = Container::Create(ASCIIMENU_FILE);
+    fileMenu->SetOrientation(ASCIIMenus::VERTICAL);
+    fileMenu->SetPosition(2, 1);
+    fileMenu->AddItem("Open", "");
+    fileMenu->AddItem("Save Settings", "");
+    fileMenu->AddItem("Info", ""); // Provides some info on ASCIIPlayer!
+    fileMenu->AddItem("Help", ""); // Provides help information.
+    fileMenu->AddItem("Hide", "back");
+    fileMenu->AddItem("Quit", "", []() { exit(0); });
+
+    Container *editMenu = Container::Create(ASCIIMENU_EDIT);
+    editMenu->SetOrientation(ASCIIMenus::VERTICAL);
+    editMenu->SetPosition(9, 1);
+    editMenu->AddItem("Edit Config", "");
+    editMenu->AddItem("Reset Config", "");
+    editMenu->AddItem("Set Visualizer", ASCIIMENU_VISUALIZER); 
   }
 
 
@@ -75,6 +105,7 @@ namespace ASCIIPlayer
 
     // While we're hosting stuff in the lobby
     size_t loops = 0;
+    double index_val = 0;
     while (lobbyHosting_)
     {
       fpsPrevStart_ = fpsStart_;
@@ -84,17 +115,28 @@ namespace ASCIIPlayer
       // Idle screen if necessary
       if (activeDJ_->GetPlaylistSize() == 0)
       {
-        const int osc[] = {'`', '*', '+', '_', ',', '.', '.', '.', '.', ',', '/', '^'};
-        const size_t index = loops / 30;
+        // Advance index value
+        const double numIndexesPerSecond = 12.5;
+        index_val += (static_cast<double>(fpsStart_ + 1) - static_cast<double>(fpsPrevStart_)) / 1000 * numIndexesPerSecond;
+
+        // Calculate index in array and mod value.
+        const int osc[] = {'`', '*', '+', '_', ',', '.', '.', '.', '.', '.', '.', '.', ',', '/', '^'};
+        const size_t index = static_cast<size_t>(index_val);
         const size_t mod = (sizeof(osc) / sizeof(*osc));
 
-        RConsole::Canvas::DrawString((std::string("Waiting for songs ") 
+        // Calcualte and wrap offsets for idle bar
+        std::string msg = "Waiting for songs ";
+        RConsole::Canvas::DrawString((msg
           + static_cast<char>(osc[(index) % mod])
           + static_cast<char>(osc[(index + 1) % mod])
           + static_cast<char>(osc[(index + 2) % mod])
           + static_cast<char>(osc[(index + 3) % mod])
-          + static_cast<char>(osc[(index + 4) % mod])
-          ).c_str(), 3, 3, RConsole::WHITE);
+          + static_cast<char>(osc[(index + 4) % mod])).c_str()
+          
+          // Posiitoning and color...
+          , static_cast<int>(RConsole::Canvas::GetConsoleWidht() / 2) - ((msg.size() + 5) / 2)
+          , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2 - 1)
+          , RConsole::WHITE);
       }
 
       // Actively run DJ
@@ -108,7 +150,7 @@ namespace ASCIIPlayer
           interpretChar(input);
         }
 
-      // Finalize drawing
+      // Finalize drawing for debug
       if (showDebug_)
       {
         float loc = 0;
@@ -121,7 +163,10 @@ namespace ASCIIPlayer
         RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(averageFPS(fpsPrevStart_, fpsEnd_)) + " per second").c_str(), 0.0f, loc++, RConsole::DARKGREY);
       }
 
-      // Finalize all drawing
+      // Finalize drawing for menu overlay
+      menuSystems_.Draw(0, 0, true);
+
+      // Write out and display all drawing
       RConsole::Canvas::Update();
 
       // Smol sleep. This makes most OSs extremely happy and reduces CPU load by like 30%.
@@ -196,14 +241,66 @@ namespace ASCIIPlayer
 
     switch (c)
     {
+    // Menu Show/Hide
+    case KEY_ESCAPE:
+    //case KEY_ALT_LEFT:
+      if (menuVisible_)
+        menuSystems_.Back();
+      else
+        menuSystems_.Select(ASCIIMENU_BASE);
+
+      menuVisible_ = menuSystems_.IsVisible();
+      break;
+
+
+    // Menu Navigation: Up/Left
+    case KEY_NUM_4:
+    case KEY_LEFT:
+    case 'a':
+      if(!menuVisible_)
+        activeDJ_->MoveBackward();
+      else
+        if(!menuMoveCheckLeft())
+          menuSystems_.Up();
+      break;
+    case 'w':
+      if (menuVisible_)
+        menuSystems_.Up();
+      break;
+
+
+    // Menu Navigation: Down/Right. Special case D to handle menu movement and debug.
+    case KEY_NUM_6:
+    case KEY_RIGHT:
+      if(!menuVisible_)
+        activeDJ_->MoveForward();
+      else
+      {
+        if(!menuMoveCheckRight())
+          menuSystems_.Down();
+      }
+    case 's':
+      if (menuVisible_)
+        menuSystems_.Down();
+      break;
+    case 'd':
+      if (menuVisible_)
+      {
+        if (!menuMoveCheckRight())
+          menuSystems_.Down();
+      }
+      else
+        showDebug_ = !showDebug_;
+      break;
+
+
+    // Song Skipping
     case ']':
     case '}':
     case '>':
     case '.':
     case 'e':
-    //case 'E':
     case KEY_TAB: 
-    case KEY_END: // Also capital O
       activeDJ_->SongNext();
       break;
     case '[':
@@ -211,19 +308,12 @@ namespace ASCIIPlayer
     case '<':
     case ',':
     case 'q':
-    //case 'Q':
-    case KEY_HOME: // also capital G
     case KEY_BACKSPACE: 
       activeDJ_->SongPrev();
       break;
-    case KEY_RIGHT:
-    case KEY_NUM_6:
-      activeDJ_->MoveForward();
-      break;
-    case KEY_LEFT:
-    case KEY_NUM_4:
-      activeDJ_->MoveBackward();
-      break;
+
+
+    // Volume Adjustments
     case '-':
     case KEY_PAGEDOWN: // also capital Q
       activeDJ_->VolumeDown();
@@ -234,14 +324,21 @@ namespace ASCIIPlayer
       activeDJ_->VolumeUp();
       break;
     case 'p':
-    case 'P':
-    case KEY_SPACE: // Pauses. Not another key afaik.
       activeDJ_->TogglePause();
       break;
-    case 'd':
-    case 'D':
-      showDebug_ = !showDebug_;
+    case KEY_SPACE: // Pauses. Not another key afaik.
+      if(!menuVisible_)
+        activeDJ_->TogglePause();
+    case KEY_ENTER:
+      if (menuVisible_)
+      {
+        menuSystems_.Select();
+        menuVisible_ = menuSystems_.IsVisible();
+      }
       break;
+
+
+    // UI or Info
     case 'u':
     case 'U':
     case 'i':
@@ -312,5 +409,31 @@ namespace ASCIIPlayer
     }
 
     activeDJ_ = newDJ;
+  }
+
+
+  bool Lobby::menuMoveCheckRight()
+  {
+    if (menuSystems_.MenuDepth() == 2)
+    {
+      menuSystems_.Back();
+      menuSystems_.Down();
+      menuSystems_.Select();
+      return true;
+    }
+    return false;
+  }
+
+
+  bool Lobby::menuMoveCheckLeft()
+  {
+    if (menuSystems_.MenuDepth() == 2)
+    {
+      menuSystems_.Back();
+      menuSystems_.Up();
+      menuSystems_.Select();
+      return true;
+    }
+    return false;
   }
 }
