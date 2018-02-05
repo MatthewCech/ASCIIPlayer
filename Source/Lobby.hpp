@@ -33,7 +33,10 @@ namespace ASCIIPlayer
     // Variables
     ArgParser argParser_;
     DJ *activeDJ_;
+    MenuSystem menus_;
     bool lobbyHosting_;
+    bool menuVisible_;
+
 
     // Debug Related
     int averageFPS(long long start, long long end);

@@ -1,6 +1,7 @@
 #include "Lobby.hpp"
 #include <FileIO/FileIO.hpp>
 #include <ConsoleInput/console-input.h>
+#include <ASCIIMenus/menu-system.hpp>
 #include <exception>
 #include <thread>
 
@@ -16,7 +17,9 @@ namespace ASCIIPlayer
   Lobby::Lobby(int argc, char** argv) 
     : argParser_(argc, argv)
     , activeDJ_(nullptr)
+    , menus_()
     , lobbyHosting_(true)
+    , menuVisible_(false)
     , timesIndex_(0)
     , times_()
     , showDebug_(false)
@@ -196,6 +199,11 @@ namespace ASCIIPlayer
 
     switch (c)
     {
+    case 'w':
+    case 'W':
+      if (menuVisible_)
+
+      break;
     case ']':
     case '}':
     case '>':
