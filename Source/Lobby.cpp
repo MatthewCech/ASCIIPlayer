@@ -105,6 +105,7 @@ namespace ASCIIPlayer
 
     // While we're hosting stuff in the lobby
     size_t loops = 0;
+    double index_val = 0;
     while (lobbyHosting_)
     {
       fpsPrevStart_ = fpsStart_;
@@ -114,17 +115,28 @@ namespace ASCIIPlayer
       // Idle screen if necessary
       if (activeDJ_->GetPlaylistSize() == 0)
       {
-        const int osc[] = {'`', '*', '+', '_', ',', '.', '.', '.', '.', ',', '/', '^'};
-        const size_t index = loops / 30;
+        // Advance index value
+        const double numIndexesPerSecond = 12.5;
+        index_val += (static_cast<double>(fpsStart_ + 1) - static_cast<double>(fpsPrevStart_)) / 1000 * numIndexesPerSecond;
+
+        // Calculate index in array and mod value.
+        const int osc[] = {'`', '*', '+', '_', ',', '.', '.', '.', '.', '.', '.', '.', ',', '/', '^'};
+        const size_t index = static_cast<size_t>(index_val);
         const size_t mod = (sizeof(osc) / sizeof(*osc));
 
-        RConsole::Canvas::DrawString((std::string("Waiting for songs ") 
+        // Calcualte and wrap offsets for idle bar
+        std::string msg = "Waiting for songs ";
+        RConsole::Canvas::DrawString((msg
           + static_cast<char>(osc[(index) % mod])
           + static_cast<char>(osc[(index + 1) % mod])
           + static_cast<char>(osc[(index + 2) % mod])
           + static_cast<char>(osc[(index + 3) % mod])
-          + static_cast<char>(osc[(index + 4) % mod])
-          ).c_str(), 3, 3, RConsole::WHITE);
+          + static_cast<char>(osc[(index + 4) % mod])).c_str()
+          
+          // Posiitoning and color...
+          , static_cast<int>(RConsole::Canvas::GetConsoleWidht() / 2) - ((msg.size() + 5) / 2)
+          , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2 - 1)
+          , RConsole::WHITE);
       }
 
       // Actively run DJ
