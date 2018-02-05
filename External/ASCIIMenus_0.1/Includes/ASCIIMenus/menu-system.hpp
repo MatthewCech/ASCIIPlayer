@@ -6,11 +6,12 @@
 
 @copyright (See LICENSE.md)
 *****************************************************************************/
-#include "console-utils.hpp"
+#pragma once
 #include <stack>
 #include <map>
 #include <string>
 #include <vector>
+#include <ConsoleUtils/console-utils.hpp>
 
 namespace ASCIIMenus 
 {
@@ -50,9 +51,6 @@ private:
   // Private variables
   static std::map<std::string, Container *> registry_;
 };
-
-// Static init
-std::map<std::string, Container *> MenuRegistry::registry_ = std::map<std::string, Container *>();
 
 
 
@@ -180,15 +178,14 @@ private:
 
 public:
   // Ctor
-  MenuSystem(std::string initial)
+  MenuSystem(std::string initial = "")
     : stack_()
     , colorSelected_(RConsole::MAGENTA)
     , colorUnselected_(RConsole::GREY)
   { 
     Container *c = MenuRegistry::GetContainer(initial);
-    if(c == nullptr)
-      throw "Verify the strings used for the intial menu choice!";
-    stack_.push(c); 
+    if(c != nullptr)
+      stack_.push(c); 
   }
   
   // Setters
