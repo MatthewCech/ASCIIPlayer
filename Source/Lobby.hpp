@@ -30,6 +30,8 @@ namespace ASCIIPlayer
     void startDJ();
     void stopDj();
     void setDJ(DJ *newDJ);
+    bool menuMoveCheckRight();
+    bool menuMoveCheckLeft();
 
     // Variables
     ArgParser argParser_;

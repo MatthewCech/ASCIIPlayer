@@ -193,6 +193,7 @@ public:
   void SetColorSelected(RConsole::Color c)   { colorSelected_ = c;   }
   void SetColorUnselected(RConsole::Color c) { colorUnselected_ = c; }
   bool IsVisible() { return stack_.size() > 0;  }
+  size_t MenuDepth() { return stack_.size(); }
 
   // Member functions
   void Down() { if (stack_.size() > 0) stack_.top()->Next(); }

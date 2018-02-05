@@ -56,7 +56,6 @@ namespace ASCIIPlayer
     mainMenu->AddItem(" File  ", ASCIIMENU_FILE);
     mainMenu->AddItem(" Edit  ", ASCIIMENU_EDIT);
     mainMenu->AddItem(" Help  ", "");
-    mainMenu->AddItem(" Hide  ", "back");
 
     Container *fileMenu = Container::Create(ASCIIMENU_FILE);
     fileMenu->SetOrientation(ASCIIMenus::VERTICAL);
@@ -65,7 +64,8 @@ namespace ASCIIPlayer
     fileMenu->AddItem("Save Settings", "");
     fileMenu->AddItem("Info", ""); // Provides some info on ASCIIPlayer!
     fileMenu->AddItem("Help", ""); // Provides help information.
-    fileMenu->AddItem("Quit ASCIIPlayer", "", []() { exit(0); });
+    fileMenu->AddItem("Hide", "back");
+    fileMenu->AddItem("Quit", "", []() { exit(0); });
 
     Container *editMenu = Container::Create(ASCIIMENU_EDIT);
     editMenu->SetOrientation(ASCIIMenus::VERTICAL);
@@ -248,6 +248,7 @@ namespace ASCIIPlayer
         menuSystems_.Back();
       else
         menuSystems_.Select(ASCIIMENU_BASE);
+
       menuVisible_ = menuSystems_.IsVisible();
       break;
 
@@ -258,6 +259,10 @@ namespace ASCIIPlayer
     case 'a':
       if(!menuVisible_)
         activeDJ_->MoveBackward();
+      else
+        if(!menuMoveCheckLeft())
+          menuSystems_.Up();
+      break;
     case 'w':
       if (menuVisible_)
         menuSystems_.Up();
@@ -269,13 +274,21 @@ namespace ASCIIPlayer
     case KEY_RIGHT:
       if(!menuVisible_)
         activeDJ_->MoveForward();
+      else
+      {
+        if(!menuMoveCheckRight())
+          menuSystems_.Down();
+      }
     case 's':
       if (menuVisible_)
         menuSystems_.Down();
       break;
     case 'd':
       if (menuVisible_)
-        menuSystems_.Down();
+      {
+        if (!menuMoveCheckRight())
+          menuSystems_.Down();
+      }
       else
         showDebug_ = !showDebug_;
       break;
@@ -396,5 +409,31 @@ namespace ASCIIPlayer
     }
 
     activeDJ_ = newDJ;
+  }
+
+
+  bool Lobby::menuMoveCheckRight()
+  {
+    if (menuSystems_.MenuDepth() == 2)
+    {
+      menuSystems_.Back();
+      menuSystems_.Down();
+      menuSystems_.Select();
+      return true;
+    }
+    return false;
+  }
+
+
+  bool Lobby::menuMoveCheckLeft()
+  {
+    if (menuSystems_.MenuDepth() == 2)
+    {
+      menuSystems_.Back();
+      menuSystems_.Up();
+      menuSystems_.Select();
+      return true;
+    }
+    return false;
   }
 }
