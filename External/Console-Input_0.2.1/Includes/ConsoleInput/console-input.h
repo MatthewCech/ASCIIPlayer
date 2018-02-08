@@ -1,20 +1,33 @@
 /*!**********************************************************************
 @file    console-input.h
-@author  rwmc
-@date    5/4/2016
+@author  Matthew C.
+@author  JohannesMP
+@author  R.W.
+
+@date    2/8/2018
 
 @brief
 A wrapper allowing _getch and _kbhit windows-style functionality on
 both windows and linux! Relevant functions are KeyHit() and GetKey().
 
+Includes some utilities for reading paths vs single key inputs as well.
+Depending on C vs C++ usage, either the InputParser class will be 
+available for C++, or for C there is a HandleInput method. All take
+callbacks to functions, passing the input as acquired.
+
 @copyright (See LICENSE.md)
 ************************************************************************/
+// Ease of use OS specific defines for compiling
 #if defined(_WIN32) || defined(WIN32) || defined(WINDOWS) || defined(_WIN32_)
 #define OS_WINDOWS
 #else
 #define OS_NON_WINDOWS
 #endif
-
+#ifdef __cplusplus
+#define LANGUAGE_CPP
+#else
+#define LANGUAGE_C
+#endif
 
 
 /////////////////////
@@ -78,6 +91,8 @@ both windows and linux! Relevant functions are KeyHit() and GetKey().
 
 
 
+
+
 /////////////////////////
 // Function Prototypes //
 /////////////////////////
@@ -92,6 +107,8 @@ inline int GetChar(void);
 
 
 
+
+
 ////////////////////////////
 // Windows Implementation //
 ////////////////////////////
@@ -99,13 +116,134 @@ inline int GetChar(void);
 #define _NO_OLDNAMES   // for MinGW
 #include <conio.h>     // getch and kbhit
 
+
 // standard kbhit, returns if character change is queued.
 inline int KeyHit(void) { return _kbhit(); }
 
-// Uses wch to handle additional cases.
+// Uses getch as a sandard, supporting commonly typed console characters.
+// Use wch to handle additional cases if you wish, tho know it changes codes.
 inline int GetChar(void) { return _getch(); }
 
+
+// C++ Specific additional functionality
+#ifdef LANGUAGE_CPP
+#include <string>     // std::string
+#include <functional> // std::function
+
+// Drag-in parser 
+class InputParser
+{
+public:
+  // Handle the input parsing and separation. This requires 
+  // references as inputs for keeping track of keypresses.
+  void HandleInput(std::function<void(char)> callbackSingleChar, std::function<void(std::string) > callbackFilepath)
+  {
+    int hit = KeyHit();
+    
+    // If there was a hit key, keep track of it.
+    // If a combination shows up, handle that as well.
+    if (hit)
+      do
+      {
+        lastChar_ = GetChar();
+        buffer_ += lastChar_;
+      } while (hit = KeyHit());
+    
+    // If there is currently not a hit key but there was one 
+    // last cycle when we checked...
+    else
+      if (lastChar_ != NoInput)
+      {
+        if (buffer_.size() > 1)
+          callbackFilepath(buffer_);
+        else
+          callbackSingleChar(lastChar_);
+
+        lastChar_ = NoInput;
+        buffer_.clear();
+      }
+  }
+
+  // A member-function supported version of the previous function.
+  // Uses the same variables as the other HandleInput function.
+  template <class T> void HandleInput(T *thisClass, void(T::*callbackSingleChar)(char), void(T::*callbackFilepath)(std::string))
+  {
+    int hit = KeyHit();
+    if (hit)
+      do
+      {
+        lastChar_ = GetChar();
+        buffer_ += lastChar_;
+      } while (hit = KeyHit());
+    else
+      if (lastChar_ != NoInput)
+      {
+        if (buffer_.size() > 1)
+          (*thisClass.*callbackFilepath)(buffer_);
+        else
+          (*thisClass.*callbackSingleChar)(lastChar_);
+
+        lastChar_ = NoInput;
+        buffer_.clear();
+      }
+  }
+
+
+private:
+  // Variables
+  const int NoInput = 0;    // A constant for defining a lack of input. 
+  int lastChar_ = NoInput;  // The last character we read. NoInput by default.
+  std::string buffer_ = ""; // So long as we recieve input without a break, we continue to store it here.
+
+};
+#endif // LANGUAGE_CPP
+
+// Additional functionality for C
+#ifdef LANGUAGE_C
+
+// Global internal variables for C
+int ci_internal_last_char_ = 0;
+int ci_internal_buffer_pos_ = 0;
+const int buffer_max = 255;
+char ci_internal_buffer_[buffer_max] = {};
+
+// Callback functions specified as necessary.
+void HandleInput(void(callbackSingleChar)(char), void(callbackFilepath)(const char *, int))
+{
+  int hit = KeyHit();
+
+  // If there was a hit key, keep track of it.
+  // If a combination shows up, handle that as well.
+  if (hit)
+    do
+    {
+      ci_internal_last_char_ = GetChar();
+      ci_internal_buffer_[ci_internal_buffer_pos_] = (char)ci_internal_last_char_;
+
+      if (ci_internal_buffer_pos_ < buffer_max)
+        ++ci_internal_buffer_pos_;
+
+    } while (hit = KeyHit());
+
+  // If there is currently not a hit key but there was one 
+  // last cycle when we checked...
+  else
+    if (ci_internal_last_char_ != 0)
+    {
+      if (ci_internal_buffer_pos_ > 1)
+        callbackFilepath(ci_internal_buffer_, ci_internal_buffer_pos_);
+      else
+        callbackSingleChar(ci_internal_last_char_);
+
+      ci_internal_last_char_ = 0;
+      ci_internal_buffer_pos_ = 0;
+      memset(ci_internal_buffer_, 0, buffer_max);
+    }
+}
+#endif // LANGUAGE_C
 #endif // OS_WINDOWS
+
+
 
 
 
@@ -137,7 +275,7 @@ inline int KeyHit(void)
   struct timeval tv;                // Timeval struct for small delays.
   int charCount = 0;                // Character count
 
-                                    // Set up console.
+  // Set up the console.
   tcgetattr(STDIN_FILENO, &oldTermios);           // Get old settings
   newTermios = oldTermios;                        // Transfer previous settings
   newTermios.c_oflag = 0;                         // Output mode
@@ -160,7 +298,7 @@ inline int KeyHit(void)
   return charCount;
 }
 
-// makes use of the getchar function. Effectively getc(stdin), 
+// Makes use of the getchar function. Effectively getc(stdin), 
 // with quick tweaks to the terminal to prevent oops.
 // getchar documentation: https://linux.die.net/man/3/getchar
 // If called without a character waiting for reading, 
@@ -185,3 +323,4 @@ inline int GetChar(void)
 }
 
 #endif // OS_NON_WINDOWS
+

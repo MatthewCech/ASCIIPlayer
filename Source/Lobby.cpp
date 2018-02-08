@@ -55,7 +55,7 @@ namespace ASCIIPlayer
     mainMenu->SetOrientation(ASCIIMenus::HORIZONTAL);
     mainMenu->AddItem(" File  ", ASCIIMENU_FILE);
     mainMenu->AddItem(" Edit  ", ASCIIMENU_EDIT);
-    mainMenu->AddItem(" Help  ", "");
+    mainMenu->AddItem(" Help  ", "", nullptr); // DO SOMETHING HERE FOR HELP
 
     Container *fileMenu = Container::Create(ASCIIMENU_FILE);
     fileMenu->SetOrientation(ASCIIMenus::VERTICAL);
@@ -63,7 +63,6 @@ namespace ASCIIPlayer
     fileMenu->AddItem("Open", "");
     fileMenu->AddItem("Save Settings", "");
     fileMenu->AddItem("Info", ""); // Provides some info on ASCIIPlayer!
-    fileMenu->AddItem("Help", ""); // Provides help information.
     fileMenu->AddItem("Hide", "back");
     fileMenu->AddItem("Quit", "", []() { exit(0); });
 
@@ -133,7 +132,7 @@ namespace ASCIIPlayer
           + static_cast<char>(osc[(index + 3) % mod])
           + static_cast<char>(osc[(index + 4) % mod])).c_str()
           
-          // Posiitoning and color...
+          // Positoning and color...
           , static_cast<int>(RConsole::Canvas::GetConsoleWidht() / 2) - ((msg.size() + 5) / 2)
           , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2 - 1)
           , RConsole::WHITE);
