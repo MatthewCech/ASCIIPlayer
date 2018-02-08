@@ -132,7 +132,7 @@ namespace ASCIIPlayer
           + static_cast<char>(osc[(index + 3) % mod])
           + static_cast<char>(osc[(index + 4) % mod])).c_str()
           
-          // Posiitoning and color...
+          // Positoning and color...
           , static_cast<int>(RConsole::Canvas::GetConsoleWidht() / 2) - ((msg.size() + 5) / 2)
           , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2 - 1)
           , RConsole::WHITE);
