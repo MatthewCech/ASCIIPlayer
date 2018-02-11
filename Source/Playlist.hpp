@@ -103,6 +103,9 @@ namespace ASCIIPlayer
   // If possible, will attempt to go to the next song.
   template<typename T> void Playlist<T>::Next()
   {
+    if (playlist_.size() == 0)
+      return;
+
     if (activeIndex_ < playlist_.size() - 1)
     {
       ++activeIndex_;
