@@ -206,7 +206,6 @@ namespace ASCIIPlayer
 
     AudioFile *test1 = new ASCIIPlayer::AudioFile(input);
     activeDJ_->AddSong(test1);
-    activeDJ_->Play();
   }
 
   void Lobby::interpretString(const std::string command)

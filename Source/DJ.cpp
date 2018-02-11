@@ -148,6 +148,10 @@ namespace ASCIIPlayer
     }
   }
 
+  bool DJ::IsPaused()
+  {
+    return paused_;
+  }
 
   // Toggles if it's paused or not
   void DJ::TogglePause()
@@ -189,8 +193,15 @@ namespace ASCIIPlayer
   // The DJ does NOT handle deallocation for you, in case you wanted to add this to other DJs.
   void DJ::AddSong(AudioFile *toAdd)
   {
+    bool start = false;
+    if (playlist_.GetPlaylistLength() == 0)
+      start = true;
+
     if(audioSystem_.PreloadFile(*toAdd))
       playlist_.Add(toAdd);
+
+    if (start)
+      Play();
   }
 
 

@@ -60,7 +60,8 @@ namespace ASCIIPlayer
   {
     playlist_.push_back(file);
 
-    if(playlist_.size() == 1)
+    // If we just added the first song...
+    //if(playlist_.size() == 1)
       listUpdateCallback();
   }
 
