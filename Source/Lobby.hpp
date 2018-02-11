@@ -5,7 +5,7 @@
 #include <string>
 #include <ArgParser/ArgParser.hpp>
 #include <ASCIIMenus/menu-system.hpp>
-
+#include <ConsoleInput/console-input.h>
 
 
 namespace ASCIIPlayer
@@ -19,14 +19,16 @@ namespace ASCIIPlayer
 
     // Member Functions
     void Run(); 
-    bool ParseCommand(std::string command); // Returns if it was a valid command after executing. If not, display error message.
+    void ParseCommand(std::string command); // Returns if it was a valid command after executing. If not, display error message.
     
   private:
     // Private methods
     std::string cleanCommand(std::string input);
     DJConfig readConfigFile();
-    bool interpretString(const std::string str);
-    bool interpretChar(const char key);
+    void displayIdle(long long curr_frametime, long long last_frametime);
+    void interpretString(const std::string str);
+    void interpretPath(const std::string str);
+    void interpretChar(char key);
     void startDJ();
     void stopDj();
     void setDJ(DJ *newDJ);
@@ -34,11 +36,13 @@ namespace ASCIIPlayer
     bool menuMoveCheckLeft();
 
     // Variables
+    InputParser keyParser_;
     ArgParser argParser_;
     DJ *activeDJ_;
     MenuSystem menuSystems_;
     bool lobbyHosting_;
     bool menuVisible_;
+    double idleIndex_; 
 
     // Debug Related
     int averageFPS(long long start, long long end);
