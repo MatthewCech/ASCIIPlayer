@@ -75,7 +75,7 @@ namespace ASCIIPlayer
     if (!hasShutdown_)
     {
       // Update the song and proceed if necessary
-      if (!audioSystem_.IsActive(*currSong_))
+      if (currSong_ && !audioSystem_.IsActive(*currSong_))
       {
         playlist_.Next();
 
@@ -96,7 +96,7 @@ namespace ASCIIPlayer
         }
 
         // Draw overlay after visualizer so it's "On top"
-        if (overlay_)
+        if (currSong_ && overlay_)
         {
           overlay_->Update(
             UIInfo(requestUIActive_
