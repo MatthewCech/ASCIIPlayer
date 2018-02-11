@@ -22,6 +22,7 @@ namespace ASCIIPlayer
     bool Update();
     void Play();
     void Pause();
+    bool IsPaused();
     void TogglePause();
     void ToggleRequestUIActive();
     void Shutdown();
@@ -41,7 +42,7 @@ namespace ASCIIPlayer
   private:
     // Callback
     void playlistUpdatedCallback();
-	void updateLastVolumeChange();
+	  void updateLastVolumeChange();
 
     // Variables
     Playlist<DJ> playlist_;       // Contains the AudioFile objects.

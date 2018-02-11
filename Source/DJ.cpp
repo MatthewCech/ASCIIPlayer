@@ -75,7 +75,7 @@ namespace ASCIIPlayer
     if (!hasShutdown_)
     {
       // Update the song and proceed if necessary
-      if (!audioSystem_.IsActive(*currSong_))
+      if (currSong_ && !audioSystem_.IsActive(*currSong_))
       {
         playlist_.Next();
 
@@ -96,7 +96,7 @@ namespace ASCIIPlayer
         }
 
         // Draw overlay after visualizer so it's "On top"
-        if (overlay_)
+        if (currSong_ && overlay_)
         {
           overlay_->Update(
             UIInfo(requestUIActive_
@@ -148,6 +148,10 @@ namespace ASCIIPlayer
     }
   }
 
+  bool DJ::IsPaused()
+  {
+    return paused_;
+  }
 
   // Toggles if it's paused or not
   void DJ::TogglePause()
@@ -189,8 +193,15 @@ namespace ASCIIPlayer
   // The DJ does NOT handle deallocation for you, in case you wanted to add this to other DJs.
   void DJ::AddSong(AudioFile *toAdd)
   {
+    bool start = false;
+    if (playlist_.GetPlaylistLength() == 0)
+      start = true;
+
     if(audioSystem_.PreloadFile(*toAdd))
       playlist_.Add(toAdd);
+
+    if (start)
+      Play();
   }
 
 

@@ -143,7 +143,7 @@ namespace ASCIIPlayer
 
     // @ToDo: Channel override may result in same song playing multiple times.
     // Test this and confirm if it is an issue that needs to be solved.
-    channelHandles_[audioFile.uniqueID_] = channel;
+    channelHandles_[audioFile.fileID_] = channel;
     audioFile.get(ID_)->BoundToChannel = true;
   }
 
@@ -162,7 +162,7 @@ namespace ASCIIPlayer
 
     // Toggle paused using !
     bool pausedStatus;
-    ChannelHandle ch = channelHandles_[audioFile.uniqueID_];
+    ChannelHandle ch = channelHandles_[audioFile.fileID_];
     FCheck(ch->getPaused(&pausedStatus));
 
     if (pausedState)
@@ -180,7 +180,7 @@ namespace ASCIIPlayer
   // Stops the audio file completely, removing the channel.
   void AudioSystem::StopFile(AudioFile &audioFile)
   {
-    ChannelHandle *ch = &channelHandles_[audioFile.uniqueID_];
+    ChannelHandle *ch = &channelHandles_[audioFile.fileID_];
     bool playing;
     (*ch)->isPlaying(&playing);
     if(playing)
@@ -233,14 +233,14 @@ namespace ASCIIPlayer
   bool AudioSystem::IsActive(AudioFile &audioFile)
   {
     bool status;
-    channelHandles_[audioFile.uniqueID_]->isPlaying(&status);
+    channelHandles_[audioFile.fileID_]->isPlaying(&status);
     return status;
   }
 
   bool AudioSystem::IsPaused(AudioFile &audioFile)
   {
     bool status;
-    channelHandles_[audioFile.uniqueID_]->getPaused(&status);
+    channelHandles_[audioFile.fileID_]->getPaused(&status);
     return status;
   }
 
@@ -260,7 +260,7 @@ namespace ASCIIPlayer
       return 0;
 
     unsigned int tu;
-    FCheck(channelHandles_[audioFile.uniqueID_]->getPosition(&tu, FMOD_TIMEUNIT_MS));
+    FCheck(channelHandles_[audioFile.fileID_]->getPosition(&tu, FMOD_TIMEUNIT_MS));
     return tu;
   }
 
@@ -275,7 +275,7 @@ namespace ASCIIPlayer
     if (length <= pos)
       pos = length - 1;
 
-    FCheck(channelHandles_[audioFile.uniqueID_]->setPosition(pos, FMOD_TIMEUNIT_MS));
+    FCheck(channelHandles_[audioFile.fileID_]->setPosition(pos, FMOD_TIMEUNIT_MS));
   }
 
 

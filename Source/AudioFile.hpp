@@ -40,6 +40,6 @@ namespace ASCIIPlayer
     std::unordered_map<APUnique, AudioHandleWrapper> loadedObjects_;   // Handle to the loaded object.
 
     // Static Variables
-    static APUnique uniqueID_; // ID for lookup in the audio system
+    static APUnique uniqueID_STATIC_VAR_; // ID for lookup in the audio system
 	};
 }

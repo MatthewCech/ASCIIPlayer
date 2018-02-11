@@ -4,13 +4,13 @@
 namespace ASCIIPlayer
 {
   // Static init.
-  APUnique AudioFile::uniqueID_ = 0; // ID for lookup in the audio system
+  APUnique AudioFile::uniqueID_STATIC_VAR_ = 0; // ID for lookup in the audio system
 
 
   // Constructor and Destructor
   AudioFile::AudioFile(std::string path) 
     : path_(path)
-    , fileID_(uniqueID_++)
+    , fileID_(uniqueID_STATIC_VAR_++)
     , loadedObjects_() // Assigned via lazy init later
   {  }
 

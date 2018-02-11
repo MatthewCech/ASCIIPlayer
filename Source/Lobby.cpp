@@ -198,7 +198,14 @@ namespace ASCIIPlayer
 
   void Lobby::interpretPath(const std::string str)
   {
+    std::string input = str;
+    if (str[0] == '"' && str[str.size() - 1] == '"')
+      input = str.substr(1, str.size() - 2);
+    if (str[0] == '\\' && str[str.size() - 1] == '"')
+      input = str.substr(2, str.size() - 4);
 
+    AudioFile *test1 = new ASCIIPlayer::AudioFile(input);
+    activeDJ_->AddSong(test1);
   }
 
   void Lobby::interpretString(const std::string command)
@@ -410,7 +417,7 @@ namespace ASCIIPlayer
     activeDJ_ = newDJ;
   }
 
-
+  // Move to the right in the menu
   bool Lobby::menuMoveCheckRight()
   {
     if (menuSystems_.MenuDepth() == 2)
@@ -423,7 +430,7 @@ namespace ASCIIPlayer
     return false;
   }
 
-
+  // Move to the left in the menu, wrapps the actions assoicated with it
   bool Lobby::menuMoveCheckLeft()
   {
     if (menuSystems_.MenuDepth() == 2)
