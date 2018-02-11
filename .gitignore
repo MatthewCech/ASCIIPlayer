@@ -21,3 +21,5 @@ make/
 project_*/
 documentation/
 .vs/
+
+Build/RH/ResourceHacker\.log

@@ -1,6 +1,5 @@
 #include "Lobby.hpp"
 #include <FileIO/FileIO.hpp>
-#include <ConsoleInput/console-input.h>
 #include <exception>
 #include <thread>
 
@@ -17,12 +16,18 @@ namespace ASCIIPlayer
    // Public //
   ////////////
   // Constructor and Destructor
-  Lobby::Lobby(int argc, char** argv) 
-    : argParser_(argc, argv)
+  Lobby::Lobby(int argc, char** argv)
+    
+    // Operation related
+    : keyParser_()
+    , argParser_(argc, argv)
     , activeDJ_(nullptr)
     , menuSystems_("")
     , lobbyHosting_(true)
     , menuVisible_(false)
+    , idleIndex_(0)
+
+    // Debug
     , timesIndex_(0)
     , times_()
     , showDebug_(false)
@@ -55,7 +60,7 @@ namespace ASCIIPlayer
     mainMenu->SetOrientation(ASCIIMenus::HORIZONTAL);
     mainMenu->AddItem(" File  ", ASCIIMENU_FILE);
     mainMenu->AddItem(" Edit  ", ASCIIMENU_EDIT);
-    mainMenu->AddItem(" Help  ", "");
+    mainMenu->AddItem(" Help  ", "", nullptr); // DO SOMETHING HERE FOR HELP
 
     Container *fileMenu = Container::Create(ASCIIMENU_FILE);
     fileMenu->SetOrientation(ASCIIMenus::VERTICAL);
@@ -63,7 +68,6 @@ namespace ASCIIPlayer
     fileMenu->AddItem("Open", "");
     fileMenu->AddItem("Save Settings", "");
     fileMenu->AddItem("Info", ""); // Provides some info on ASCIIPlayer!
-    fileMenu->AddItem("Help", ""); // Provides help information.
     fileMenu->AddItem("Hide", "back");
     fileMenu->AddItem("Quit", "", []() { exit(0); });
 
@@ -105,7 +109,6 @@ namespace ASCIIPlayer
 
     // While we're hosting stuff in the lobby
     size_t loops = 0;
-    double index_val = 0;
     while (lobbyHosting_)
     {
       fpsPrevStart_ = fpsStart_;
@@ -114,41 +117,14 @@ namespace ASCIIPlayer
 
       // Idle screen if necessary
       if (activeDJ_->GetPlaylistSize() == 0)
-      {
-        // Advance index value
-        const double numIndexesPerSecond = 12.5;
-        index_val += (static_cast<double>(fpsStart_ + 1) - static_cast<double>(fpsPrevStart_)) / 1000 * numIndexesPerSecond;
-
-        // Calculate index in array and mod value.
-        const int osc[] = {'`', '*', '+', '_', ',', '.', '.', '.', '.', '.', '.', '.', ',', '/', '^'};
-        const size_t index = static_cast<size_t>(index_val);
-        const size_t mod = (sizeof(osc) / sizeof(*osc));
-
-        // Calcualte and wrap offsets for idle bar
-        std::string msg = "Waiting for songs ";
-        RConsole::Canvas::DrawString((msg
-          + static_cast<char>(osc[(index) % mod])
-          + static_cast<char>(osc[(index + 1) % mod])
-          + static_cast<char>(osc[(index + 2) % mod])
-          + static_cast<char>(osc[(index + 3) % mod])
-          + static_cast<char>(osc[(index + 4) % mod])).c_str()
-          
-          // Posiitoning and color...
-          , static_cast<int>(RConsole::Canvas::GetConsoleWidht() / 2) - ((msg.size() + 5) / 2)
-          , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2 - 1)
-          , RConsole::WHITE);
-      }
+        displayIdle(fpsStart_, fpsPrevStart_);
 
       // Actively run DJ
       if (activeDJ_)
         activeDJ_->Update();
 
-      if (int num = KeyHit())
-        while (num-- > 0)
-        {
-          char input = static_cast<char>(GetChar());
-          interpretChar(input);
-        }
+      // Parse input
+      keyParser_.HandleInput(this, &Lobby::interpretChar, &Lobby::interpretPath);
 
       // Finalize drawing for debug
       if (showDebug_)
@@ -181,14 +157,14 @@ namespace ASCIIPlayer
 
 
   // Parse commands as we see fit. Assumes command has been consumed already.
-  bool Lobby::ParseCommand(std::string command)
+  void Lobby::ParseCommand(std::string command)
   {
     command = cleanCommand(command);
     
     if (command.size() == 0)
-      return false;
+      return;
 
-    return interpretString(command);
+    interpretString(command);
   }
 
 
@@ -220,21 +196,18 @@ namespace ASCIIPlayer
     return input;
   }
 
-
-  bool Lobby::interpretString(const std::string command)
+  void Lobby::interpretPath(const std::string str)
   {
-    if(command.size() <= 0)
-      return false;
 
-    return false;
-    //if(command == whatever)
-    //  doThing();
-    //...
-    // return true;
   }
 
+  void Lobby::interpretString(const std::string command)
+  {
+    if (command.size() <= 0)
+      return;
+  }
 
-  bool Lobby::interpretChar(const char c)
+  void Lobby::interpretChar(char c)
   {
     if (activeDJ_ == nullptr)
       throw "You should have an active DJ to issue character commands";
@@ -346,10 +319,8 @@ namespace ASCIIPlayer
       break;
     case '0': // Make it so the UI is requested.
     default:
-      return false;
+      return;
     }
-
-    return true;
   }
 
 
@@ -381,6 +352,34 @@ namespace ASCIIPlayer
         newConf.ParseLine(f[i]);
       return newConf;
     }
+  }
+
+
+  // Displays a little bouncing image in the last 
+  void Lobby::displayIdle(long long curr_frametime, long long last_frametime)
+  {
+    // Advance index value
+    const double numIndexesPerSecond = 12.5;
+    idleIndex_ += (static_cast<double>(curr_frametime + 1) - static_cast<double>(last_frametime)) / 1000 * numIndexesPerSecond;
+
+    // Calculate index in array and mod value.
+    const int osc[] = { '`', '*', '+', '_', ',', '.', '.', '.', '.', '.', '.', '.', ',', '/', '^' };
+    const size_t index = static_cast<size_t>(idleIndex_);
+    const size_t mod = (sizeof(osc) / sizeof(*osc));
+
+    // Calcualte and wrap offsets for idle bar
+    std::string msg = "Waiting for songs ";
+    RConsole::Canvas::DrawString((msg
+      + static_cast<char>(osc[(index) % mod])
+      + static_cast<char>(osc[(index + 1) % mod])
+      + static_cast<char>(osc[(index + 2) % mod])
+      + static_cast<char>(osc[(index + 3) % mod])
+      + static_cast<char>(osc[(index + 4) % mod])).c_str()
+
+      // Positoning and color...
+      , static_cast<int>(RConsole::Canvas::GetConsoleWidht() / 2) - ((msg.size() + 5) / 2)
+      , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2 - 1)
+      , RConsole::WHITE);
   }
 
 
