@@ -32,8 +32,8 @@ namespace ASCIIPlayer
     
     // Variables
     std::vector<AudioFile*> playlist_; // Holds songs to be played.
-    unsigned int activeIndex_;        // Active index into the playlist.
-    bool looping_;                    // Are we looping this playlist?
+    unsigned int activeIndex_;         // Active index into the playlist.
+    bool looping_;                     // Are we looping this playlist?
 
     // Callback info.
     void(T::*toCallOnUpdate_)();
@@ -58,10 +58,12 @@ namespace ASCIIPlayer
   // Adds a new audiofile to a playlist.
   template<typename T> void Playlist<T>::Add(AudioFile *file)
   {
+    
     playlist_.push_back(file);
-
-    if(playlist_.size() == 1)
-      listUpdateCallback();
+    
+    // Update to the added song and update the list
+    activeIndex_ = playlist_.size() - 1;
+    listUpdateCallback();
   }
 
 
@@ -103,6 +105,9 @@ namespace ASCIIPlayer
   // If possible, will attempt to go to the next song.
   template<typename T> void Playlist<T>::Next()
   {
+    if (playlist_.size() == 0)
+      return;
+
     if (activeIndex_ < playlist_.size() - 1)
     {
       ++activeIndex_;
