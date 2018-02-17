@@ -129,7 +129,7 @@ namespace ASCIIPlayer
   }
 
 
-  // Play a file. 
+  // Play a file and sort it into the correct channel set. 
   void AudioSystem::PlayFile(AudioFile &audioFile, bool playing)
   {
     if (audioFile.get(ID_)->LoadedObject == nullptr)
@@ -218,6 +218,7 @@ namespace ASCIIPlayer
   }
 
 
+
     //////////////////////////
    // Private member funcs //
   //////////////////////////
@@ -237,12 +238,15 @@ namespace ASCIIPlayer
     return status;
   }
 
+
+  // Returns wether or not the audio file is playing.
   bool AudioSystem::IsPaused(AudioFile &audioFile)
   {
     bool status;
     channelHandles_[audioFile.fileID_]->getPaused(&status);
     return status;
   }
+
 
   // Returns the length of the file in question in Milliseconds.
   unsigned int AudioSystem::GetLength(AudioFile &audioFile) const
