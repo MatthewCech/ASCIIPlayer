@@ -1,4 +1,4 @@
-#include "DefaultVisualizer.hpp"
+#include "VisualizerDefault.hpp"
 #include <math.h>
 #include <thread>
 

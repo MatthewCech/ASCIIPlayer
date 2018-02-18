@@ -1,4 +1,4 @@
-#include "CenterVisualizer.hpp"
+#include "VisualizerWisp.hpp"
 #include <math.h>
 
 
@@ -6,7 +6,7 @@
 namespace ASCIIPlayer
 {
   // Ctor - hide the cursor and set up.
-  CenterVisualizer::CenterVisualizer()
+  VisualizerWisp::VisualizerWisp()
     : ASCIIVisualizer(64, aSpectrum, "centerVisualizer")
     , lastWidth_(CONSOLE_WIDTH_FUNC)
     , lastHeight_(CONSOLE_HEIGHT_FUNC)
@@ -90,7 +90,7 @@ namespace ASCIIPlayer
 
 
   // Member functions
-  bool CenterVisualizer::Update(float* data)
+  bool VisualizerWisp::Update(float* data)
   {
     // Variables
     const int width{ CONSOLE_WIDTH_FUNC };                      // Console Width

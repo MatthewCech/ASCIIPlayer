@@ -1,11 +1,11 @@
-#include "ColorDefaultVisualizer.hpp"
+#include "VisualizerWaveform.hpp"
 //#include <ConsoleUtils\console-utils.hpp>
 
 
 namespace ASCIIPlayer
 {
   // Constructor
-  ColorDefaultVisualizer::ColorDefaultVisualizer()
+  VisualizerWaveform::VisualizerWaveform()
     : ASCIIVisualizer(RConsole::Canvas::GetConsoleWidht(), aWaveform, "colorDefault")
     , width_(RConsole::Canvas::GetConsoleWidht())
     , height_(RConsole::Canvas::GetConsoleHeight())
@@ -14,7 +14,7 @@ namespace ASCIIPlayer
   }
 
   // DrawBars
-  bool ColorDefaultVisualizer::Update(float* data)
+  bool VisualizerWaveform::Update(float* data)
   {
     int h2 = height_ / 2;
     for (int i = 0; i < width_; ++i)
