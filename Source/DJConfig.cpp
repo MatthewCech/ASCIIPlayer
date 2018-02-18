@@ -85,7 +85,7 @@ namespace ASCIIPlayer
        // Etc.
        << "\n\n"
        << "===[Notes]===\n"
-			 << "Available Visualizers - default horizontalWaveform colorDefault centerVisualizer\n";
+			 << "Available Visualizers - default waveform wisp\n";
     return ss.str();
   }
 }

@@ -6,11 +6,11 @@
 
 namespace ASCIIPlayer
 {
-  class CenterVisualizer : public ASCIIVisualizer
+  class VisualizerWisp : public ASCIIVisualizer
   {
   public:
     // Ctor
-    CenterVisualizer();
+    VisualizerWisp();
 
     // Member functions
     bool Update(float* data);

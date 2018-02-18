@@ -1,8 +1,7 @@
 #include "DJ.hpp"
-#include "Visualizers/DefaultVisualizer.hpp"
-#include "Visualizers/HorizontalWaveformVisualizer.hpp"
-#include "Visualizers/ColorDefaultVisualizer.hpp"
-#include "Visualizers/CenterVisualizer.hpp"
+#include "Visualizers/VisualizerDefault.hpp"
+#include "Visualizers/VisualizerWaveform.hpp"
+#include "Visualizers/VisualizerWisp.hpp"
 #include "Overlays/DefaultOverlay.hpp"
 #include <chrono>
 
@@ -32,12 +31,10 @@ namespace ASCIIPlayer
       overlay_ = new DefaultOverlay();
 
     //!TODO: HANDLE VISUALIZER CONFIGURATION
-    if (config_.DJVisualizerID == "horizontalWaveform")
-      visualizer_ = new HorizontalWaveformVisualizer();
-    else if (config_.DJVisualizerID == "colorDefault")
-      visualizer_ = new ColorDefaultVisualizer();
-    else if (config_.DJVisualizerID == "centerVisualizer")
-      visualizer_ = new CenterVisualizer();
+    if (config_.DJVisualizerID == "waveform")
+      visualizer_ = new VisualizerWaveform();
+    else if (config_.DJVisualizerID == "wisp")
+      visualizer_ = new VisualizerWisp();
     else // default
     {
       visualizer_ = new DefaultVisualizer();
@@ -88,9 +85,9 @@ namespace ASCIIPlayer
         if (visualizer_)
         {
           // Only fill if not paused
-          if(!paused_)
+          if (!paused_)
             FillSongData(visualizerDataArray_, visaulizerDataSize_, FMOD_DSP_FFT_WINDOW_RECT);
-
+          
           visualizer_->Update(visualizerDataArray_);
           visualizer_->UpdatePost();
         }

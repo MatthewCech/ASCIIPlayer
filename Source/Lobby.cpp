@@ -74,7 +74,7 @@ namespace ASCIIPlayer
     Container *editMenu = Container::Create(ASCIIMENU_EDIT);
     editMenu->SetOrientation(ASCIIMenus::VERTICAL);
     editMenu->SetPosition(9, 1);
-    editMenu->AddItem("Edit Config", "");
+    editMenu->AddItem("Edit Config", "", []() { system(".\\ASCIIPlayer.conf"); });
     editMenu->AddItem("Reset Config", "");
     editMenu->AddItem("Set Visualizer", ASCIIMENU_VISUALIZER); 
   }
@@ -214,122 +214,6 @@ namespace ASCIIPlayer
       return;
   }
 
-  void Lobby::interpretChar(char c)
-  {
-    if (activeDJ_ == nullptr)
-      throw "You should have an active DJ to issue character commands";
-
-    switch (c)
-    {
-    // Menu Show/Hide
-    case KEY_ESCAPE:
-    //case KEY_ALT_LEFT:
-      if (menuVisible_)
-        menuSystems_.Back();
-      else
-        menuSystems_.Select(ASCIIMENU_BASE);
-
-      menuVisible_ = menuSystems_.IsVisible();
-      break;
-
-
-    // Menu Navigation: Up/Left
-    case KEY_NUM_4:
-    case KEY_LEFT:
-    case 'a':
-      if(!menuVisible_)
-        activeDJ_->MoveBackward();
-      else
-        if(!menuMoveCheckLeft())
-          menuSystems_.Up();
-      break;
-    case 'w':
-      if (menuVisible_)
-        menuSystems_.Up();
-      break;
-
-
-    // Menu Navigation: Down/Right. Special case D to handle menu movement and debug.
-    case KEY_NUM_6:
-    case KEY_RIGHT:
-      if(!menuVisible_)
-        activeDJ_->MoveForward();
-      else
-      {
-        if(!menuMoveCheckRight())
-          menuSystems_.Down();
-      }
-    case 's':
-      if (menuVisible_)
-        menuSystems_.Down();
-      break;
-    case 'd':
-      if (menuVisible_)
-      {
-        if (!menuMoveCheckRight())
-          menuSystems_.Down();
-      }
-      else
-        showDebug_ = !showDebug_;
-      break;
-
-
-    // Song Skipping
-    case ']':
-    case '}':
-    case '>':
-    case '.':
-    case 'e':
-    case KEY_TAB: 
-      activeDJ_->SongNext();
-      break;
-    case '[':
-    case '{':
-    case '<':
-    case ',':
-    case 'q':
-    case KEY_BACKSPACE: 
-      activeDJ_->SongPrev();
-      break;
-
-
-    // Volume Adjustments
-    case '-':
-    case KEY_PAGEDOWN: // also capital Q
-      activeDJ_->VolumeDown();
-      break;
-    case '+':
-    case '=':
-    case KEY_PAGEUP: // also capital I
-      activeDJ_->VolumeUp();
-      break;
-    case 'p':
-      activeDJ_->TogglePause();
-      break;
-    case KEY_SPACE: // Pauses. Not another key afaik.
-      if(!menuVisible_)
-        activeDJ_->TogglePause();
-    case KEY_ENTER:
-      if (menuVisible_)
-      {
-        menuSystems_.Select();
-        menuVisible_ = menuSystems_.IsVisible();
-      }
-      break;
-
-
-    // UI or Info
-    case 'u':
-    case 'U':
-    case 'i':
-      activeDJ_->ToggleRequestUIActive();
-      break;
-    case '0': // Make it so the UI is requested.
-    default:
-      return;
-    }
-  }
-
 
   // Tries to open config file for the visualizer, generates one otherwise.
   DJConfig Lobby::readConfigFile()
@@ -441,5 +325,122 @@ namespace ASCIIPlayer
       return true;
     }
     return false;
+  }
+
+  // Interprets a single-character piece of input
+  void Lobby::interpretChar(char c)
+  {
+    if (activeDJ_ == nullptr)
+      throw "You should have an active DJ to issue character commands";
+
+    switch (c)
+    {
+      // Menu Show/Hide
+    case KEY_ESCAPE:
+      //case KEY_ALT_LEFT:
+      if (menuVisible_)
+        menuSystems_.Back();
+      else
+        menuSystems_.Select(ASCIIMENU_BASE);
+
+      menuVisible_ = menuSystems_.IsVisible();
+      break;
+
+
+      // Menu Navigation: Up/Left
+    case KEY_NUM_4:
+    case KEY_LEFT:
+    case 'a':
+      if (!menuVisible_)
+        activeDJ_->MoveBackward();
+      else
+        if (!menuMoveCheckLeft())
+          menuSystems_.Up();
+      break;
+    case 'w':
+      if (menuVisible_)
+        menuSystems_.Up();
+      break;
+
+
+      // Menu Navigation: Down/Right. Special case D to handle menu movement and debug.
+    case KEY_NUM_6:
+    case KEY_RIGHT:
+      if (!menuVisible_)
+        activeDJ_->MoveForward();
+      else
+      {
+        if (!menuMoveCheckRight())
+          menuSystems_.Down();
+      }
+    case 's':
+      if (menuVisible_)
+        menuSystems_.Down();
+      break;
+    case 'd':
+      if (menuVisible_)
+      {
+        if (!menuMoveCheckRight())
+          menuSystems_.Down();
+      }
+      else
+        showDebug_ = !showDebug_;
+      break;
+
+
+      // Song Skipping
+    case ']':
+    case '}':
+    case '>':
+    case '.':
+    case 'e':
+    case KEY_TAB:
+      activeDJ_->SongNext();
+      break;
+    case '[':
+    case '{':
+    case '<':
+    case ',':
+    case 'q':
+    case KEY_BACKSPACE:
+      activeDJ_->SongPrev();
+      break;
+
+
+      // Volume Adjustments
+    case '-':
+    case KEY_PAGEDOWN: // also capital Q
+      activeDJ_->VolumeDown();
+      break;
+    case '+':
+    case '=':
+    case KEY_PAGEUP: // also capital I
+      activeDJ_->VolumeUp();
+      break;
+    case 'p':
+      activeDJ_->TogglePause();
+      break;
+    case KEY_SPACE: // Pauses. Not another key afaik.
+      if (!menuVisible_)
+        activeDJ_->TogglePause();
+    case KEY_ENTER:
+      if (menuVisible_)
+      {
+        menuSystems_.Select();
+        menuVisible_ = menuSystems_.IsVisible();
+      }
+      break;
+
+
+      // UI or Info
+    case 'u':
+    case 'U':
+    case 'i':
+      activeDJ_->ToggleRequestUIActive();
+      break;
+    case '0': // Make it so the UI is requested.
+    default:
+      return;
+    }
   }
 }
