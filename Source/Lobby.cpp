@@ -151,7 +151,7 @@ namespace ASCIIPlayer
     fileMenu->AddItem("Open", "");
     fileMenu->AddItem("Save Settings", "");
     fileMenu->AddItem("Info", ""); // Provides some info on ASCIIPlayer!
-    fileMenu->AddItem("Hide", "back");
+    fileMenu->AddItem("Hide", "", []() {  });
     fileMenu->AddItem("Quit", "", []() { exit(0); });
 
     Container *editMenu = Container::Create(ASCIIMENU_EDIT);
@@ -261,6 +261,7 @@ namespace ASCIIPlayer
   }
 
 
+
     /////////////
    // Private //
   /////////////
@@ -279,6 +280,8 @@ namespace ASCIIPlayer
     return static_cast<int>(1000.0f / (total / size));
   }
 
+
+  // Cleaning string-based commands.
   std::string Lobby::cleanCommand(std::string input)
   {
     //DEBUG_PRINT("Cleaning " << input);
@@ -289,6 +292,8 @@ namespace ASCIIPlayer
     return input;
   }
 
+
+  // Interpret specific paths
   void Lobby::interpretPath(const std::string str)
   {
     std::string input = str;
@@ -301,129 +306,12 @@ namespace ASCIIPlayer
     activeDJ_->AddSong(test1);
   }
 
+
+  // Specific string interpretations
   void Lobby::interpretString(const std::string command)
   {
     if (command.size() <= 0)
       return;
-  }
-
-
-    switch (c)
-    {
-    // Menu Show/Hide
-    case KEY_ESCAPE:
-    //case KEY_ALT_LEFT:
-      if (menuVisible_)
-        menuSystems_.Back();
-      else
-        menuSystems_.Select(ASCIIMENU_BASE);
-
-      menuVisible_ = menuSystems_.IsVisible();
-      if (__is_displaying_help_menu)
-        __is_displaying_help_menu = false;
-      break;
-
-
-    // Menu Navigation: Up/Left
-    case 'a':
-      if(menuVisible_)
-        if (!menuMoveCheckLeft())
-          menuSystems_.Up();
-      break;
-    case KEY_NUM_4:
-    case KEY_LEFT:
-      if(!menuVisible_)
-        activeDJ_->MoveBackward();
-      else
-        if(!menuMoveCheckLeft())
-          menuSystems_.Up();
-      break;
-    case 'w':
-    case KEY_UP:
-      if (menuVisible_)
-        menuSystems_.Up();
-      break;
-
-
-    // Menu Navigation: Down/Right. Special case D to handle menu movement and debug.
-    case KEY_NUM_6:
-    case KEY_RIGHT:
-      if(!menuVisible_)
-        activeDJ_->MoveForward();
-      else
-        if(!menuMoveCheckRight())
-          menuSystems_.Down();
-      break;
-    case 's':
-    case KEY_DOWN:
-      if (menuVisible_)
-        menuSystems_.Down();
-      break;
-    case 'd':
-      if (menuVisible_)
-      {
-        if (!menuMoveCheckRight())
-          menuSystems_.Down();
-      }
-      else
-        showDebug_ = !showDebug_;
-      break;
-
-
-    // Song Skipping
-    case ']':
-    case '}':
-    case '>':
-    case '.':
-    case 'e':
-    case KEY_TAB: 
-      activeDJ_->SongNext();
-      break;
-    case '[':
-    case '{':
-    case '<':
-    case ',':
-    case 'q':
-    case KEY_BACKSPACE: 
-      activeDJ_->SongPrev();
-      break;
-
-
-    // Volume Adjustments
-    case '-':
-    case KEY_PAGEDOWN: // also capital Q
-      activeDJ_->VolumeDown();
-      break;
-    case '+':
-    case '=':
-    case KEY_PAGEUP: // also capital I
-      activeDJ_->VolumeUp();
-      break;
-    case 'p':
-      activeDJ_->TogglePause();
-      break;
-    case KEY_SPACE: // Pauses. Not another key afaik.
-      if(!menuVisible_)
-        activeDJ_->TogglePause();
-    case KEY_ENTER:
-      if (menuVisible_)
-      {
-        menuSystems_.Select();
-        menuVisible_ = menuSystems_.IsVisible();
-      }
-      break;
-
-
-    // UI or Info
-    case 'u':
-    case 'U':
-    case 'i':
-      activeDJ_->ToggleRequestUIActive();
-      break;
-    case '0': // Make it so the UI is requested.
-    default:
-      return;
-    }
   }
 
 
@@ -535,6 +423,7 @@ namespace ASCIIPlayer
     activeDJ_ = newDJ;
   }
 
+
   // Move to the right in the menu
   bool Lobby::menuMoveCheckRight()
   {
@@ -548,6 +437,7 @@ namespace ASCIIPlayer
     return false;
   }
 
+
   // Move to the left in the menu, wrapps the actions assoicated with it
   bool Lobby::menuMoveCheckLeft()
   {
@@ -560,6 +450,7 @@ namespace ASCIIPlayer
     }
     return false;
   }
+
 
   // Interprets a single-character piece of input
   void Lobby::interpretChar(char c)
@@ -578,13 +469,19 @@ namespace ASCIIPlayer
         menuSystems_.Select(ASCIIMENU_BASE);
 
       menuVisible_ = menuSystems_.IsVisible();
+      if (__is_displaying_help_menu)
+        __is_displaying_help_menu = false;
       break;
 
 
       // Menu Navigation: Up/Left
+    case 'a':
+      if (menuVisible_)
+        if (!menuMoveCheckLeft())
+          menuSystems_.Up();
+      break;
     case KEY_NUM_4:
     case KEY_LEFT:
-    case 'a':
       if (!menuVisible_)
         activeDJ_->MoveBackward();
       else
@@ -592,6 +489,7 @@ namespace ASCIIPlayer
           menuSystems_.Up();
       break;
     case 'w':
+    case KEY_UP:
       if (menuVisible_)
         menuSystems_.Up();
       break;
@@ -603,11 +501,11 @@ namespace ASCIIPlayer
       if (!menuVisible_)
         activeDJ_->MoveForward();
       else
-      {
         if (!menuMoveCheckRight())
           menuSystems_.Down();
-      }
+      break;
     case 's':
+    case KEY_DOWN:
       if (menuVisible_)
         menuSystems_.Down();
       break;
