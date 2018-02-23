@@ -3,15 +3,98 @@
 #include <exception>
 #include <thread>
 
+// General Defines
 #define MS_SINCE_EPOCH std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count()
+
+// Menu heiarchy overview and defines
 #define ASCIIMENU_BASE "menuDefualt"
-#define ASCIIMENU_FILE "menuFile"
-#define ASCIIMENU_EDIT "menuEdit"
-#define ASCIIMENU_VISUALIZER "menuVisualizer"
+  #define ASCIIMENU_FILE "menuFile"
+  #define ASCIIMENU_EDIT "menuEdit"
+    #define ASCIIMENU_VISUALIZER "menuVisualizerSelection"
+  #define ASCIIMENU_HELP "menuHelp"
+    #define ASCIIMENU_HELP_INFO_BOX "menuHelpInfoBox"
+
 
 
 namespace ASCIIPlayer
 {
+    ///////////////////////////
+   // File-specific Globals //
+  ///////////////////////////
+  // Static local variables for help menu
+  // ...not a brilliant solution, should use member function callback support.
+  static bool __is_displaying_help_menu = false;
+  static enum WhichDialogueEnum 
+  { 
+    GENERAL, 
+    CONFIG 
+  } __dialogue_type;
+
+  // Global popups using drawing system
+  static void DisplayInfobox(size_t maxWidth, std::string containerName, std::string str)
+  {
+    // Define widths
+    const unsigned int half_w             = maxWidth / 2;
+    const unsigned int str_width          = maxWidth - 3;
+    const unsigned int str_height         = static_cast<int>(str.size() / static_cast<float>(str_width) + 0.99);
+    const unsigned int half_h             = (str_height + 5) / 2;
+    const unsigned int half_screen_width  = RConsole::Canvas::GetConsoleWidth() / 2;
+    const unsigned int half_screen_height = RConsole::Canvas::GetConsoleHeight() / 2;
+
+    // Side calculations
+    const float left   = static_cast<float>(half_screen_width - half_w);
+    const float right  = static_cast<float>(half_screen_width + half_w);
+    const float top    = static_cast<float>(half_screen_height - half_h) - 1;
+    const float bottom = static_cast<float>(half_screen_height + half_h);
+
+    // Move menu options accordingly
+    Container *c = MenuRegistry::GetContainer(containerName);
+    c->SetPosition(static_cast<size_t>(right - c->GetSelected().Label.size() - 1)
+                 , static_cast<size_t>(bottom - 2));
+
+    // Draw box background
+    for (int i = static_cast<int>(left); i < right; ++i)
+      for (int j = static_cast<int>(top); j < bottom; ++j)
+        RConsole::Canvas::Draw(' ', i, j, RConsole::DARKGREY);
+
+    // Draw the string message
+    unsigned int offset = 0;
+    unsigned int cycles = 0;
+    while (offset < str.size())
+    {
+      if (*(str.c_str() + offset) == ' ')
+        offset += 1;
+
+      RConsole::Canvas::DrawString(std::string(str.c_str() + offset, str_width).c_str()
+          , static_cast<int>(left + 2)
+          , static_cast<int>(top + 2 + cycles)
+          , RConsole::WHITE);
+
+      offset += str_width;
+      ++cycles;
+    }
+
+    // Draw sides of the box and add corners
+    for (int i = static_cast<int>(left); i < right; ++i)
+    {
+      RConsole::Canvas::Draw(static_cast<unsigned char>(205), i, static_cast<int>(top), RConsole::WHITE);
+      RConsole::Canvas::Draw(static_cast<unsigned char>(205), i, static_cast<int>(bottom), RConsole::WHITE);
+    }
+    for (int i = static_cast<int>(top); i < bottom; ++i)
+    {
+      RConsole::Canvas::Draw(static_cast<unsigned char>(186), static_cast<int>(left), i, RConsole::WHITE);
+      RConsole::Canvas::Draw(static_cast<unsigned char>(186), static_cast<int>(right), i, RConsole::WHITE);
+    }
+
+    // Draw corners
+    RConsole::Canvas::Draw(static_cast<unsigned char>(187), right, top, RConsole::WHITE);
+    RConsole::Canvas::Draw(static_cast<unsigned char>(188), right, bottom, RConsole::WHITE);
+    RConsole::Canvas::Draw(static_cast<unsigned char>(201), left, top, RConsole::WHITE);
+    RConsole::Canvas::Draw(static_cast<unsigned char>(200), left, bottom, RConsole::WHITE); 
+  }
+
+
+
     ////////////
    // Public //
   ////////////
@@ -60,7 +143,7 @@ namespace ASCIIPlayer
     mainMenu->SetOrientation(ASCIIMenus::HORIZONTAL);
     mainMenu->AddItem(" File  ", ASCIIMENU_FILE);
     mainMenu->AddItem(" Edit  ", ASCIIMENU_EDIT);
-    mainMenu->AddItem(" Help  ", "", nullptr); // DO SOMETHING HERE FOR HELP
+    mainMenu->AddItem(" Help  ", ASCIIMENU_HELP);
 
     Container *fileMenu = Container::Create(ASCIIMENU_FILE);
     fileMenu->SetOrientation(ASCIIMenus::VERTICAL);
@@ -77,6 +160,16 @@ namespace ASCIIPlayer
     editMenu->AddItem("Edit Config", "");
     editMenu->AddItem("Reset Config", "");
     editMenu->AddItem("Set Visualizer", ASCIIMENU_VISUALIZER); 
+
+    Container *helpMenu = Container::Create(ASCIIMENU_HELP);
+    helpMenu->SetOrientation(ASCIIMenus::VERTICAL);
+    helpMenu->SetPosition(16, 1);
+    helpMenu->AddItem("General Info", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = GENERAL; });
+    helpMenu->AddItem("Config Info", ASCIIMENU_HELP_INFO_BOX,  []() { __is_displaying_help_menu = true; __dialogue_type = CONFIG; });
+
+    Container *helpMenuPopup = Container::Create(ASCIIMENU_HELP_INFO_BOX);
+    helpMenuPopup->SetOrientation(ASCIIMenus::HORIZONTAL);
+    helpMenuPopup->AddItem("[ Ok ]", "back", []() { __is_displaying_help_menu = false; });
   }
 
 
@@ -100,7 +193,6 @@ namespace ASCIIPlayer
 
     if (activeDJ_)
       DEBUG_PRINT("DJ Has prepped " << activeDJ_->GetPlaylistSize() << " songs!");
-    
 
     // Set up to start entering the primary loop
     RConsole::Canvas::ForceClearEverything();
@@ -139,7 +231,8 @@ namespace ASCIIPlayer
         RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(averageFPS(fpsPrevStart_, fpsEnd_)) + " per second").c_str(), 0.0f, loc++, RConsole::DARKGREY);
       }
 
-      // Finalize drawing for menu overlay
+      // Draw menus and finalize drawing for menu overlay.
+      displayExtraMenus();
       menuSystems_.Draw(0, 0, true);
 
       // Write out and display all drawing
@@ -230,13 +323,19 @@ namespace ASCIIPlayer
         menuSystems_.Select(ASCIIMENU_BASE);
 
       menuVisible_ = menuSystems_.IsVisible();
+      if (__is_displaying_help_menu)
+        __is_displaying_help_menu = false;
       break;
 
 
     // Menu Navigation: Up/Left
+    case 'a':
+      if(menuVisible_)
+        if (!menuMoveCheckLeft())
+          menuSystems_.Up();
+      break;
     case KEY_NUM_4:
     case KEY_LEFT:
-    case 'a':
       if(!menuVisible_)
         activeDJ_->MoveBackward();
       else
@@ -244,6 +343,7 @@ namespace ASCIIPlayer
           menuSystems_.Up();
       break;
     case 'w':
+    case KEY_UP:
       if (menuVisible_)
         menuSystems_.Up();
       break;
@@ -255,11 +355,11 @@ namespace ASCIIPlayer
       if(!menuVisible_)
         activeDJ_->MoveForward();
       else
-      {
         if(!menuMoveCheckRight())
           menuSystems_.Down();
-      }
+      break;
     case 's':
+    case KEY_DOWN:
       if (menuVisible_)
         menuSystems_.Down();
       break;
@@ -382,11 +482,33 @@ namespace ASCIIPlayer
       + static_cast<char>(osc[(index + 2) % mod])
       + static_cast<char>(osc[(index + 3) % mod])
       + static_cast<char>(osc[(index + 4) % mod])).c_str()
-
       // Positoning and color...
-      , static_cast<int>(RConsole::Canvas::GetConsoleWidht() / 2) - ((msg.size() + 5) / 2)
-      , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2 - 1)
+      , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - ((msg.size() + 5) / 2)
+      , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2 - 2)
       , RConsole::WHITE);
+
+    std::string submsg = "(press ESC for menu)";
+    RConsole::Canvas::DrawString(submsg.c_str()
+      , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (submsg.size() / 2)
+      , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2));
+  }
+
+
+  // Displays additional menus
+  void Lobby::displayExtraMenus()
+  {
+    if (__is_displaying_help_menu)
+    {
+      std::string message = "Hmm, no message was set for this menu. You shouldn't see this!";
+
+      if (__dialogue_type == GENERAL)
+        message = "ASCIIPlayer is a command-line program navigated exclusively by keyboard. If you want to play a song, you can drag it in to add it to the playlist, or select multiple and pass them as command line aguments!";
+      else if (__dialogue_type == CONFIG)
+        message = "Not all configurations can be edited by the menu. ASCIIPlayer.conf is located next to the program executable, and can be opened with your default text editor via the menu 'EDIT' menu or by hand in the program folder.";
+
+      DisplayInfobox(40, ASCIIMENU_HELP_INFO_BOX, message);
+
+    }
   }
 
 

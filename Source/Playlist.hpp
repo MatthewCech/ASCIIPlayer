@@ -129,6 +129,9 @@ namespace ASCIIPlayer
   // Head back in the playlist if possible.
   template<typename T> void Playlist<T>::Back()
   {
+    if (playlist_.size() == 0)
+      return;
+
     if (activeIndex_ > 0)
     {
       --activeIndex_;

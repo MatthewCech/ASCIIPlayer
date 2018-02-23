@@ -1014,7 +1014,7 @@ namespace RConsole
     static void CropRaster(FILE *fp = stdout, char toTrim = ' ');
 
     // Data related calls
-    static unsigned int GetConsoleWidht();
+    static unsigned int GetConsoleWidth();
     static unsigned int GetConsoleHeight();
   private:
     // Hidden Constructors- no instantiating publicly!
@@ -1401,7 +1401,7 @@ namespace RConsole
 
 
   // Gets the width of the console
-  inline unsigned int Canvas::GetConsoleWidht()
+  inline unsigned int Canvas::GetConsoleWidth()
   {
     return width_;
   }
