@@ -157,8 +157,13 @@ namespace ASCIIPlayer
     Container *editMenu = Container::Create(ASCIIMENU_EDIT);
     editMenu->SetOrientation(ASCIIMenus::VERTICAL);
     editMenu->SetPosition(9, 1);
-    editMenu->AddItem("Edit Config", "", []() { system(".\\ASCIIPlayer.conf"); });
-    editMenu->AddItem("Reset Config", "");
+
+	//@TODO: Templatize the AddItem function in order to allow it to access member function content!
+	// Why? Well, this will let this function use 'this' as a capture group, and from there the
+	// contents of this class can be used! This will be awesome for live-reloading ASCIIPlayer
+	// if the config file changed.
+    editMenu->AddItem("Edit Config", "", []() { system(".\\ASCIIPlayer.conf"); }); 
+    editMenu->AddItem("Reset Config", "");//, []() { system("del .\\ASCIIPlayer.conf"); });
     editMenu->AddItem("Set Visualizer", ASCIIMENU_VISUALIZER); 
 
     Container *helpMenu = Container::Create(ASCIIMENU_HELP);
