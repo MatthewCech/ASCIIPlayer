@@ -20,12 +20,13 @@ namespace ASCIIPlayer
     // Member Functions
     void Run(); 
     void ParseCommand(std::string command); // Returns if it was a valid command after executing. If not, display error message.
-    
+
   private:
     // Private methods
     std::string cleanCommand(std::string input);
     DJConfig readConfigFile();
     void displayIdle(long long curr_frametime, long long last_frametime);
+    void displayExtraMenus();
     void interpretString(const std::string str);
     void interpretPath(const std::string str);
     void interpretChar(char key);
