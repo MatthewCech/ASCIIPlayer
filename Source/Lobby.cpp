@@ -121,11 +121,6 @@ namespace ASCIIPlayer
   { 
     // Make DJ, don't autoplay.
     DJ *Dj = new DJ(readConfigFile(), false);
-    
-    // Handle all of the flags
-    std::vector<std::string> cmds = argParser_.StartsWith("-");
-    for (unsigned int i = 0; i < cmds.size(); ++i)
-      ParseCommand(cmds[i]);
 
     // Just loop through and see if anything happens to be a song to load.
     std::vector<std::string> args = argParser_.GetAllArgs();
@@ -254,19 +249,6 @@ namespace ASCIIPlayer
   }
 
 
-  // Parse commands as we see fit. Assumes command has been consumed already.
-  void Lobby::ParseCommand(std::string command)
-  {
-    command = cleanCommand(command);
-    
-    if (command.size() == 0)
-      return;
-
-    interpretString(command);
-  }
-
-
-
     /////////////
    // Private //
   /////////////
@@ -283,40 +265,6 @@ namespace ASCIIPlayer
       total += times_[i];
 
     return static_cast<int>(1000.0f / (total / size));
-  }
-
-
-  // Cleaning string-based commands.
-  std::string Lobby::cleanCommand(std::string input)
-  {
-    //DEBUG_PRINT("Cleaning " << input);
-    //Strip whitespace
-    //Stirp command indicator if present
-    //Return
-    //input.substr(1, input.size() - 1);
-    return input;
-  }
-
-
-  // Interpret specific paths
-  void Lobby::interpretPath(const std::string str)
-  {
-    std::string input = str;
-    if (str[0] == '"' && str[str.size() - 1] == '"')
-      input = str.substr(1, str.size() - 2);
-    if (str[0] == '\\' && str[str.size() - 1] == '"')
-      input = str.substr(2, str.size() - 4);
-
-    AudioFile *test1 = new ASCIIPlayer::AudioFile(input);
-    activeDJ_->AddSong(test1);
-  }
-
-
-  // Specific string interpretations
-  void Lobby::interpretString(const std::string command)
-  {
-    if (command.size() <= 0)
-      return;
   }
 
 
