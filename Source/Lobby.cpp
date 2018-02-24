@@ -1,5 +1,4 @@
 #include "Lobby.hpp"
-#include <FileIO/FileIO.hpp>
 #include <exception>
 #include <thread>
 
@@ -31,7 +30,7 @@ namespace ASCIIPlayer
   } __dialogue_type;
 
   // Global popups using drawing system
-  static void DisplayInfobox(size_t maxWidth, std::string containerName, std::string str)
+  static void __Display_Infobox(size_t maxWidth, std::string containerName, std::string str)
   {
     // Define widths
     const unsigned int half_w             = maxWidth / 2;
@@ -252,53 +251,6 @@ namespace ASCIIPlayer
     /////////////
    // Private //
   /////////////
-  // Private methods
-  int Lobby::averageFPS(long long start, long long end)
-  {
-    size_t size = sizeof(times_) / sizeof(long long);
-    times_[timesIndex_++] = end - start;
-    if (timesIndex_ >= size)
-      timesIndex_ = 0;
-
-    float total = 0;
-    for (size_t i = 0; i < size; ++i)
-      total += times_[i];
-
-    return static_cast<int>(1000.0f / (total / size));
-  }
-
-
-  // Tries to open config file for the visualizer, generates one otherwise.
-  DJConfig Lobby::readConfigFile()
-  {
-    std::string arg0 = argParser_[0];
-    size_t loc = arg0.find_last_of('\\');
-    std::string filepath = "";
-    if (loc != std::string::npos)
-      filepath = arg0.substr(0, loc);
-
-    DEBUG_PRINT("This is our arg0: " << arg0);
-    DEBUG_PRINT("This is our path: " << filepath);
-
-    FileUtil::File f(filepath + "\\ASCIIPlayer.conf");
-    if (f.GetLineCount() == 0)
-    {
-      DJConfig def;
-      std::string str = def.ToString();
-      f.Write(str);
-      f.Save();
-      return def;
-    }
-    else
-    {
-      DJConfig newConf;
-      for (unsigned int i = 0; i < f.GetLineCount(); ++i)
-        newConf.ParseLine(f[i]);
-      return newConf;
-    }
-  }
-
-
   // Displays a little bouncing image in the last 
   void Lobby::displayIdle(long long curr_frametime, long long last_frametime)
   {
@@ -343,71 +295,30 @@ namespace ASCIIPlayer
       else if (__dialogue_type == CONFIG)
         message = "Not all configurations can be edited by the menu. ASCIIPlayer.conf is located next to the program executable, and can be opened with your default text editor via the menu 'EDIT' menu or by hand in the program folder.";
 
-      DisplayInfobox(40, ASCIIMENU_HELP_INFO_BOX, message);
+      __Display_Infobox(40, ASCIIMENU_HELP_INFO_BOX, message);
 
     }
   }
 
 
-  // Begins playing the DJ.
-  void Lobby::startDJ()
+  // Interpret specific paths
+  void Lobby::interpretPath(const std::string str)
   {
-    activeDJ_->Play();
-  }
+    std::string input = str;
+    if (str[0] == '"' && str[str.size() - 1] == '"')
+      input = str.substr(1, str.size() - 2);
+    if (str[0] == '\\' && str[str.size() - 1] == '"')
+      input = str.substr(2, str.size() - 4);
 
-
-  // Stops playing the DJ
-  void Lobby::stopDj()
-  {
-    activeDJ_->Pause();
-  }
-
-
-  // Sets current DJ
-  void Lobby::setDJ(DJ *newDJ)
-  {
-    if (activeDJ_)
-    {
-      activeDJ_->Pause();
-      activeDJ_->Shutdown();
-      delete activeDJ_;
-    }
-
-    activeDJ_ = newDJ;
-  }
-
-
-  // Move to the right in the menu
-  bool Lobby::menuMoveCheckRight()
-  {
-    if (menuSystems_.MenuDepth() == 2)
-    {
-      menuSystems_.Back();
-      menuSystems_.Down();
-      menuSystems_.Select();
-      return true;
-    }
-    return false;
-  }
-
-
-  // Move to the left in the menu, wrapps the actions assoicated with it
-  bool Lobby::menuMoveCheckLeft()
-  {
-    if (menuSystems_.MenuDepth() == 2)
-    {
-      menuSystems_.Back();
-      menuSystems_.Up();
-      menuSystems_.Select();
-      return true;
-    }
-    return false;
+    AudioFile *test1 = new ASCIIPlayer::AudioFile(input);
+    activeDJ_->AddSong(test1);
   }
 
 
   // Interprets a single-character piece of input
   void Lobby::interpretChar(char c)
   {
+    // Ensure we have a DJ active before any character commands are parsed!
     if (activeDJ_ == nullptr)
       throw "You should have an active DJ to issue character commands";
 
@@ -425,7 +336,6 @@ namespace ASCIIPlayer
       if (__is_displaying_help_menu)
         __is_displaying_help_menu = false;
       break;
-
 
       // Menu Navigation: Up/Left
     case 'a':
@@ -446,7 +356,6 @@ namespace ASCIIPlayer
       if (menuVisible_)
         menuSystems_.Up();
       break;
-
 
       // Menu Navigation: Down/Right. Special case D to handle menu movement and debug.
     case KEY_NUM_6:
@@ -472,7 +381,6 @@ namespace ASCIIPlayer
         showDebug_ = !showDebug_;
       break;
 
-
       // Song Skipping
     case ']':
     case '}':
@@ -490,7 +398,6 @@ namespace ASCIIPlayer
     case KEY_BACKSPACE:
       activeDJ_->SongPrev();
       break;
-
 
       // Volume Adjustments
     case '-':
@@ -515,7 +422,6 @@ namespace ASCIIPlayer
         menuVisible_ = menuSystems_.IsVisible();
       }
       break;
-
 
       // UI or Info
     case 'u':
