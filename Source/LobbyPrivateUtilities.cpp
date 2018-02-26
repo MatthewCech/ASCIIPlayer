@@ -5,9 +5,9 @@
 
 namespace ASCIIPlayer
 {
-    /////////////
-   // Private //
-  /////////////
+    //////////////////////////////////////
+   // Private - Utility and Management //
+  //////////////////////////////////////
   // Calculates average framerate based on the start and stop provided. 
   int Lobby::averageFPS(long long start, long long end)
   {

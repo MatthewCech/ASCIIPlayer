@@ -5,7 +5,7 @@
 #include <string>
 #include <ArgParser/ArgParser.hpp>
 #include <ASCIIMenus/menu-system.hpp>
-#include <ConsoleInput/console-input.h>
+#include <ConsoleInput/console-input.hpp>
 
 
 namespace ASCIIPlayer
@@ -17,34 +17,35 @@ namespace ASCIIPlayer
     Lobby(int argc, char** argv);
     ~Lobby();
 
-    // Member Functions
+    // Public Member Functions
     void Run(); 
 
   private:
-    // Private methods
-    std::string cleanCommand(std::string input);
-    DJConfig readConfigFile();
+    // Private methods - Parsing and Overlays
     void displayIdle(long long curr_frametime, long long last_frametime);
     void displayExtraMenus();
     void interpretPath(const std::string str);
     void interpretChar(char key);
+    
+    // Private methods - Utility and Management
+    int averageFPS(long long start, long long end);
+    DJConfig readConfigFile();
     void startDJ();
     void stopDj();
     void setDJ(DJ *newDJ);
     bool menuMoveCheckRight();
     bool menuMoveCheckLeft();
 
-    // Variables
+    // Core Variables
     InputParser keyParser_;
     ArgParser argParser_;
     DJ *activeDJ_;
     MenuSystem menuSystems_;
     bool lobbyHosting_;
     bool menuVisible_;
-    double idleIndex_; 
 
-    // Debug Related
-    int averageFPS(long long start, long long end);
+    // Debug or Idle Related
+    double idleIndex_; 
     size_t timesIndex_;
     long long times_[200];
     bool showDebug_;

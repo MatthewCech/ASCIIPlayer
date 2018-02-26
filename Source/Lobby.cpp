@@ -296,7 +296,6 @@ namespace ASCIIPlayer
         message = "Not all configurations can be edited by the menu. ASCIIPlayer.conf is located next to the program executable, and can be opened with your default text editor via the menu 'EDIT' menu or by hand in the program folder.";
 
       __Display_Infobox(40, ASCIIMENU_HELP_INFO_BOX, message);
-
     }
   }
 
