@@ -1,5 +1,4 @@
 #include <Lobby.hpp>
-#include <FileIO/FileIO.hpp>
 
 
 
@@ -21,37 +20,6 @@ namespace ASCIIPlayer
       total += times_[i];
 
     return static_cast<int>(1000.0f / (total / size));
-  }
-
-
-  // Tries to open config file for the visualizer, generates one otherwise.
-  DJConfig Lobby::readConfigFile()
-  {
-    std::string arg0 = argParser_[0];
-    size_t loc = arg0.find_last_of('\\');
-    std::string filepath = "";
-    if (loc != std::string::npos)
-      filepath = arg0.substr(0, loc);
-
-    DEBUG_PRINT("This is our arg0: " << arg0);
-    DEBUG_PRINT("This is our path: " << filepath);
-
-    FileUtil::File f(filepath + "\\ASCIIPlayer.conf");
-    if (f.GetLineCount() == 0)
-    {
-      DJConfig def;
-      std::string str = def.ToString();
-      f.Write(str);
-      f.Save();
-      return def;
-    }
-    else
-    {
-      DJConfig newConf;
-      for (unsigned int i = 0; i < f.GetLineCount(); ++i)
-        newConf.ParseLine(f[i]);
-      return newConf;
-    }
   }
 
 

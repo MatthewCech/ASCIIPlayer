@@ -20,8 +20,12 @@ namespace ASCIIPlayer
 
     //std::string DefaultFolder; // Default folder to load music from.
 
-    // Attempts to parse a line of a file.
+    // Public member functions for config management
     void ParseLine(std::string line);
     std::string ToString();
+
+    // Static member funcs
+    static DJConfig Read(std::string path);
+    static void Write(DJConfig d, std::string path);
   };
 }

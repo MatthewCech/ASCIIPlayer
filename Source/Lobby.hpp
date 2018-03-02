@@ -3,7 +3,7 @@
 #include "DJConfig.hpp"
 #include "DJ.hpp"
 #include <string>
-#include <ArgParser/ArgParser.hpp>
+#include <ArgParser/ArgParser.hpp>  
 #include <ASCIIMenus/menu-system.hpp>
 #include <ConsoleInput/console-input.hpp>
 
@@ -29,7 +29,6 @@ namespace ASCIIPlayer
     
     // Private methods - Utility and Management
     int averageFPS(long long start, long long end);
-    DJConfig readConfigFile();
     void startDJ();
     void stopDj();
     void setDJ(DJ *newDJ);
