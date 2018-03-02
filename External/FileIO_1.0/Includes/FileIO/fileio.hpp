@@ -374,6 +374,7 @@ namespace FileUtil
   inline void File::Clear()
   {
     fileLines_.clear();
+    lastModifiedLine_ = 0;
   }
 
 
