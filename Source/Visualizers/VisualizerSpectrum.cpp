@@ -5,12 +5,12 @@
 namespace ASCIIPlayer
 {
   VisualizerSpectrum::VisualizerSpectrum() 
-    : ASCIIVisualizer(RConsole::Canvas::GetConsoleWidth(), AUDIODATA_SPECTRUM, "visualizerSpectrum")
+    : ASCIIVisualizer(64, AUDIODATA_SPECTRUM, "visualizerSpectrum")
   {
 
   }
 
-  // DrawBars
+  // Draw vertical spectrum based on frequencies
   bool VisualizerSpectrum::Update(float* data)
   {
     return true;
