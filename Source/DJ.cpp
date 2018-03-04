@@ -15,7 +15,7 @@ namespace ASCIIPlayer
     , visualizer_(nullptr)
     , overlay_(nullptr)
     , visaulizerDataSize_(64) // Not magic number, just default width
-    , visualizerDataStyle_(aNO_STYLE)
+    , visualizerDataStyle_(AUDIODATA_NO_STYLE)
     , config_(config)
     , hasShutdown_(false)
     , currSong_(false)
@@ -284,10 +284,10 @@ namespace ASCIIPlayer
   // Fills the array provided with the active spectrum.
   void DJ::FillSongData(float* toFill, unsigned int size, FMOD_DSP_FFT_WINDOW window)
   {
-    if(visualizerDataStyle_ == aWaveform)
-      audioSystem_.FillWithAudioData(toFill, size, 0, window, aWaveform);
+    if(visualizerDataStyle_ == AUDIODATA_WAVEFORM)
+      audioSystem_.FillWithAudioData(toFill, size, 0, window, AUDIODATA_WAVEFORM);
     else
-      audioSystem_.FillWithAudioData(toFill, size, 0, window, aSpectrum);
+      audioSystem_.FillWithAudioData(toFill, size, 0, window, AUDIODATA_SPECTRUM);
   }
 
 
