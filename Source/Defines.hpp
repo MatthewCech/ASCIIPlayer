@@ -3,7 +3,6 @@
 #include <iostream>
 
 
-
   //////////////////////////////
  // OS and Compiler-Specific //
 //////////////////////////////
@@ -25,16 +24,18 @@ using APUnique      = unsigned long long;
 #define ABSTRACT =0
 #define SONG_TIME_SCALE_FOR_SECONDS 1000
 
+
   ///////////
  // Enums //
 ///////////
 enum AudioDataStyle
 {
-  aSpectrum = 0,
-  aWaveform = 1,
+  AUDIODATA_SPECTRUM = 0,
+  AUDIODATA_WAVEFORM = 1,
   
-  aNO_STYLE
+  AUDIODATA_NO_STYLE
 };
+
 
   //////////////////////////
  // Debug printing, etc. //

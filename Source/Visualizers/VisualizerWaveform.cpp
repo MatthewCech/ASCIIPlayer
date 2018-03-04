@@ -6,7 +6,7 @@ namespace ASCIIPlayer
 {
   // Constructor
   VisualizerWaveform::VisualizerWaveform()
-    : ASCIIVisualizer(RConsole::Canvas::GetConsoleWidth(), aWaveform, "colorDefault")
+    : ASCIIVisualizer(RConsole::Canvas::GetConsoleWidth(), AUDIODATA_WAVEFORM, "visualizerWaveform")
     , width_(RConsole::Canvas::GetConsoleWidth())
     , height_(RConsole::Canvas::GetConsoleHeight())
   {

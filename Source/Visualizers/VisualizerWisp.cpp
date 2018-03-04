@@ -7,7 +7,7 @@ namespace ASCIIPlayer
 {
   // Ctor - hide the cursor and set up.
   VisualizerWisp::VisualizerWisp()
-    : ASCIIVisualizer(64, aSpectrum, "centerVisualizer")
+    : ASCIIVisualizer(64, AUDIODATA_SPECTRUM, "visualizerWisp")
     , lastWidth_(CONSOLE_WIDTH_FUNC)
     , lastHeight_(CONSOLE_HEIGHT_FUNC)
     , frameDelayMax_(5)

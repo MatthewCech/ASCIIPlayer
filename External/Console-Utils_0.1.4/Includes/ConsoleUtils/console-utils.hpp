@@ -285,17 +285,6 @@ RLUTIL_INLINE void setColor(int c) {
 #endif
 }
 
-/// Function: cls
-/// Clears screen and moves cursor home.
-RLUTIL_INLINE void cls(void) {
-#if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
-	// TODO: This is cheating...
-	system("cls");
-#else
-	RLUTIL_PRINT("\033[2J\033[H");
-#endif
-}
-
 /// Function: locate
 /// Sets the cursor position to 1-based x,y.
 RLUTIL_INLINE void locate(int x, int y) {
@@ -409,6 +398,18 @@ RLUTIL_INLINE int tcols(void) {
 #endif // _WIN32
 }	
 	
+/// Function: cls
+/// Clears screen and moves cursor home.
+RLUTIL_INLINE void cls(void) {
+  if (trows() == 0 || tcols() == 0) 
+    return;
+
+#if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
+    system("cls");
+#else
+  RLUTIL_PRINT("\033[2J\033[H");
+#endif
+}
 
 #ifndef min
 /// Function: min
@@ -699,6 +700,7 @@ namespace RConsole
     : index_(0)
     , width_(w)
     , height_(h)
+    , data_(nullptr)
   {
     data_ = new T[w * h];
     Zero();
@@ -729,7 +731,10 @@ namespace RConsole
   inline Field2D<T>::Field2D(const Field2D<T> &rhs)
   {
     if (data_)
+    {
       delete[] data_;
+      data_ = nullptr;
+    }
 
     data_ = new T[rhs.width_ * rhs.height_];
     width_ = rhs.width_;
@@ -747,7 +752,10 @@ namespace RConsole
     if (&rhs != this)
     {
       if (data_)
+      {
         delete[] data_;
+        data_ = nullptr;
+      }
       
       data_ = new T[rhs.width_ * rhs.height_];
       width_ = rhs.width_;
@@ -765,7 +773,9 @@ namespace RConsole
   template <typename T>
   inline Field2D<T>::~Field2D()
   {
+    index_ = 0;
     delete[] data_;
+    data_ = nullptr;
   }
 
 
@@ -1203,6 +1213,12 @@ namespace RConsole
   // Setup with width and height. Can be re-init
   inline void Canvas::ReInit(unsigned int width, unsigned int height)
   {
+    std::cout << std::flush;
+    if (width == 0) 
+      width = 1;
+    if (height == 0)
+      height = 1;
+
     width_ = width;
     height_ = height;
     r_ = CanvasRaster(width, height);
@@ -1255,23 +1271,28 @@ namespace RConsole
 	  if (len <= 0) return;
 
     #ifdef RConsole_CLIP_CONSOLE
-
     // Bounds check.
     if (xStart > width_) return;
     if (yStart > height_) return;
+    if (xStart < 0) return;
+    if (yStart < 0) return;
 
 	  // Set the memory we are using to modified.
 	  modified_.GoTo(static_cast<int>(xStart), static_cast<int>(yStart));
 	  unsigned int index = modified_.GetIndex();
-    if (xStart > width_) return;
+
+    // Trim index if past the end
+    if (index + len + 1 > modified_.Length()) 
+      return;
 
     // Checks the length and adjusts if it will be past.
     int writeLen = static_cast<int>(len);
-    if (writeLen + index > modified_.Length())
-      writeLen = modified_.Length() - index;
+    if (writeLen + index >= modified_.Length())
+      writeLen = static_cast<int>(modified_.Length()) - static_cast<int>(index);
 
     // If our length plus the index we are at exceeds the end of the buffer,
-    memset(modified_.GetHead() + index, true, writeLen);
+    if(writeLen > 0)
+      memset(modified_.GetHead() + index, true, static_cast<size_t>(writeLen));
 
     #else
 
