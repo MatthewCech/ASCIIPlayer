@@ -5,13 +5,14 @@
 
 namespace ASCIIPlayer
 {
-  class HorizontalWaveformVisualizer : public ASCIIVisualizer
+  class VisualizerSpectrum : public ASCIIVisualizer
   {
   public:
     // Constructor
-    HorizontalWaveformVisualizer();
+    VisualizerSpectrum();
 
     // DrawBars
     bool Update(float* data);
   };
 }
+

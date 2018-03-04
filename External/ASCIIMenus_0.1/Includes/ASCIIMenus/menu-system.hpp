@@ -212,6 +212,12 @@ public:
     pushContainer(MenuRegistry::GetContainer(manualInput));
   }
 
+  // Attempts to close all menus
+  void CloseAll() {
+    while(stack_.size() > 0)
+      stack_.pop();
+  }
+
   // Goes back. Returns if it did go back or not.
   bool Back() {
     if (stack_.size() > 0)

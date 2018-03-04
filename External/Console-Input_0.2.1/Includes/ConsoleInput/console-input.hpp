@@ -169,6 +169,8 @@ public:
   template <class T> void HandleInput(T *thisClass, void(T::*callbackSingleChar)(char), void(T::*callbackFilepath)(std::string))
   {
     int hit = KeyHit();
+    const char modifier_key = static_cast<unsigned char>(224);
+
     if (hit)
       do
       {
@@ -179,7 +181,15 @@ public:
       if (lastChar_ != NoInput)
       {
         if (buffer_.size() > 1)
-          (*thisClass.*callbackFilepath)(buffer_);
+        {
+          if (buffer_.size() == 2)
+          {
+            if (buffer_[0] == modifier_key)
+              (*thisClass.*callbackSingleChar)(buffer_[1]);
+          }
+          else
+            (*thisClass.*callbackFilepath)(buffer_);
+        }
         else
           (*thisClass.*callbackSingleChar)(lastChar_);
 

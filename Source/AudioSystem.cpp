@@ -129,7 +129,7 @@ namespace ASCIIPlayer
   }
 
 
-  // Play a file. 
+  // Play a file and sort it into the correct channel set. 
   void AudioSystem::PlayFile(AudioFile &audioFile, bool playing)
   {
     if (audioFile.get(ID_)->LoadedObject == nullptr)
@@ -211,11 +211,12 @@ namespace ASCIIPlayer
   // Fills a provided array of floats with the spectrum in question.
   void AudioSystem::FillWithAudioData(float *arr, int numVals, int channelOffset, FMOD_DSP_FFT_WINDOW window, AudioDataStyle style)
   {
-    if(style == aWaveform)
+    if(style == AUDIODATA_WAVEFORM)
       FCheck(fmodSystem_->getWaveData(arr, numVals, channelOffset));
     else
       FCheck(fmodSystem_->getSpectrum(arr, numVals, channelOffset, window));
   }
+
 
 
     //////////////////////////
@@ -237,12 +238,15 @@ namespace ASCIIPlayer
     return status;
   }
 
+
+  // Returns wether or not the audio file is playing.
   bool AudioSystem::IsPaused(AudioFile &audioFile)
   {
     bool status;
     channelHandles_[audioFile.fileID_]->getPaused(&status);
     return status;
   }
+
 
   // Returns the length of the file in question in Milliseconds.
   unsigned int AudioSystem::GetLength(AudioFile &audioFile) const

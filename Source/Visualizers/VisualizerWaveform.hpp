@@ -4,11 +4,11 @@
 
 namespace ASCIIPlayer
 {
-  class ColorDefaultVisualizer : public ASCIIVisualizer
+  class VisualizerWaveform : public ASCIIVisualizer
   {
   public:
     // Constructor
-		ColorDefaultVisualizer();// : Visualizer(32, aWaveform, "colorDefault") { };
+		VisualizerWaveform();// : Visualizer(32, aWaveform, "colorDefault") { };
 
     // DrawBars
 		bool Update(float* data);// { return false; };

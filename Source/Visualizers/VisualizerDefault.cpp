@@ -1,4 +1,4 @@
-#include "DefaultVisualizer.hpp"
+#include "VisualizerDefault.hpp"
 #include <math.h>
 #include <thread>
 
@@ -8,7 +8,7 @@ namespace ASCIIPlayer
 {
   // Constructor
   DefaultVisualizer::DefaultVisualizer()
-    : ASCIIVisualizer(32, aWaveform, "default")
+    : ASCIIVisualizer(32, AUDIODATA_WAVEFORM, "visualizerDefault")
   {  }
 
   // Draw waveform based on updating

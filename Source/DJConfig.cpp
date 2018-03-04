@@ -1,10 +1,13 @@
 #include <sstream>
 #include <cstring>
+#include <FileIO/FileIO.hpp>
 #include "Defines.hpp"
 #include "DJConfig.hpp"
 
 #define NAME_STR_LINE(var) #var << ": " << var << "\n"
 #define PARSE_CONTINUE(var, toCompare, func) if(toCompare == #var) { var = func ; break; }
+#define CONFIG_FILE_NAME "ASCIIPlayer.conf"
+
 
 namespace ASCIIPlayer
 {
@@ -85,7 +88,55 @@ namespace ASCIIPlayer
        // Etc.
        << "\n\n"
        << "===[Notes]===\n"
-			 << "Available Visualizers - default horizontalWaveform colorDefault centerVisualizer\n";
+			 << "Available Visualizers - default waveform wisp\n";
     return ss.str();
+  }
+
+  // Tries to open config file for the visualizer, generates one otherwise.
+  // Uses the specified path to do so.
+  DJConfig DJConfig::Read(std::string path)
+  {
+    std::string arg0 = path;
+    size_t loc = arg0.find_last_of('\\');
+    std::string filepath = "";
+    if (loc != std::string::npos)
+      filepath = arg0.substr(0, loc);
+
+    FileUtil::File f(filepath + "\\" + CONFIG_FILE_NAME);
+
+    // If there is no file...
+    if (f.GetLineCount() == 0)
+    {
+      DJConfig def;
+      std::string str = def.ToString();
+      f.Write(str);
+      f.Save();
+      return def;
+    }
+    else
+    {
+      DJConfig newConf;
+      for (unsigned int i = 0; i < f.GetLineCount(); ++i)
+        newConf.ParseLine(f[i]);
+      return newConf;
+    }
+  }
+
+
+  void DJConfig::Write(DJConfig d, std::string path)
+  {
+    std::string arg0 = path;
+    size_t loc = arg0.find_last_of('\\');
+    std::string filepath = "";
+    if (loc != std::string::npos)
+      filepath = arg0.substr(0, loc);
+
+    // If there is no line count, we couldn't find the file, so just write it.
+    // We really don't care about hosing what's there if we're given the order
+    // to write at this point and it's valid.
+    FileUtil::File f(filepath + "\\" + CONFIG_FILE_NAME);
+    f.Clear();
+    f.Write(d.ToString());
+    f.Save();
   }
 }
