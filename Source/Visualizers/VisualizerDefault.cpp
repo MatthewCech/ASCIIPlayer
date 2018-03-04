@@ -7,12 +7,12 @@
 namespace ASCIIPlayer
 {
   // Constructor
-  DefaultVisualizer::DefaultVisualizer()
+  VisualizerDefault::VisualizerDefault()
     : ASCIIVisualizer(32, AUDIODATA_WAVEFORM, "visualizerDefault")
   {  }
 
   // Draw waveform based on updating
-  bool DefaultVisualizer::Update(float* data)
+  bool VisualizerDefault::Update(float* data)
   {
     for (unsigned int i = 0; i < GetAudioDataSize(); ++i)
     {

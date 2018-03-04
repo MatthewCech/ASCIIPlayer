@@ -169,6 +169,9 @@ namespace ASCIIPlayer
     Container *helpMenuPopup = Container::Create(ASCIIMENU_HELP_INFO_BOX);
     helpMenuPopup->SetOrientation(ASCIIMenus::HORIZONTAL);
     helpMenuPopup->AddItem("[ Ok ]", "back", []() { __is_displaying_help_menu = false; });
+
+    // Set colors
+    menuSystems_.SetColorSelected(RConsole::LIGHTCYAN);
   }
 
 
