@@ -2,6 +2,7 @@
 #include "Visualizers/VisualizerDefault.hpp"
 #include "Visualizers/VisualizerWaveform.hpp"
 #include "Visualizers/VisualizerWisp.hpp"
+#include "Visualizers/VisualizerSpectrum.hpp"
 #include "Overlays/DefaultOverlay.hpp"
 #include <chrono>
 
@@ -16,6 +17,7 @@ namespace ASCIIPlayer
     , overlay_(nullptr)
     , visaulizerDataSize_(64) // Not magic number, just default width
     , visualizerDataStyle_(AUDIODATA_NO_STYLE)
+    , visualizerDataArray_(nullptr)
     , config_(config)
     , hasShutdown_(false)
     , currSong_(false)
@@ -25,24 +27,20 @@ namespace ASCIIPlayer
     , requestUIActive_(false)
   {
     //!TODO: HANDLE OVERLAY CONFIRGUATION
-    if (config_.DJVisualizerID == "some name or something")
+    if (config_.DJOverlayID == "some name or something")
       overlay_ = new DefaultOverlay();
     else // default
       overlay_ = new DefaultOverlay();
 
     //!TODO: HANDLE VISUALIZER CONFIGURATION
     if (config_.DJVisualizerID == "waveform")
-      visualizer_ = new VisualizerWaveform();
+      setVisualizer<VisualizerWaveform>();
     else if (config_.DJVisualizerID == "wisp")
-      visualizer_ = new VisualizerWisp();
+      setVisualizer<VisualizerWisp>();
+    else if (config_.DJVisualizerID == "spectrum")
+      setVisualizer<VisualizerSpectrum>();
     else // default
-    {
-      visualizer_ = new DefaultVisualizer();
-    }
-    visaulizerDataSize_ = visualizer_->GetAudioDataSize();
-    visualizerDataStyle_ = visualizer_->GetAudioDataStyle();
-    visualizerDataArray_ = new float[visaulizerDataSize_];
-    memset(visualizerDataArray_, 0, visaulizerDataSize_);
+      setVisualizer<VisualizerDefault>();
 
     // Looping?
     if (config_.DJLooping)

@@ -61,5 +61,24 @@ namespace ASCIIPlayer
     AudioDataStyle visualizerDataStyle_; // The style of data for the audio visualizer
     float *visualizerDataArray_;         // Data used for the visualizer;
 	  long long lastVolumeChange_;         // The last time the volume was changed, in ms
+
+    // Visualizer Switching w/ templates
+    template <typename T>
+    void setVisualizer()
+    {
+      // Clean up as necessary
+      if (visualizer_)
+        delete visualizer_;
+      if (visualizerDataArray_)
+        delete[] visualizerDataArray_;
+
+      visualizer_ = new T();
+
+      // Set some internal variables
+      visaulizerDataSize_ = visualizer_->GetAudioDataSize();
+      visualizerDataStyle_ = visualizer_->GetAudioDataStyle();
+      visualizerDataArray_ = new float[visaulizerDataSize_];
+      memset(visualizerDataArray_, 0, visaulizerDataSize_);
+    }
   };
 }
