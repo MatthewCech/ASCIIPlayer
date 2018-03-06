@@ -2,6 +2,7 @@
 #include "Visualizers/VisualizerDefault.hpp"
 #include "Visualizers/VisualizerWaveform.hpp"
 #include "Visualizers/VisualizerWisp.hpp"
+#include "Visualizers/VisualizerSpectrum.hpp"
 #include "Overlays/DefaultOverlay.hpp"
 #include <chrono>
 
@@ -26,7 +27,7 @@ namespace ASCIIPlayer
     , requestUIActive_(false)
   {
     //!TODO: HANDLE OVERLAY CONFIRGUATION
-    if (config_.DJVisualizerID == "some name or something")
+    if (config_.DJOverlayID == "some name or something")
       overlay_ = new DefaultOverlay();
     else // default
       overlay_ = new DefaultOverlay();
@@ -36,6 +37,8 @@ namespace ASCIIPlayer
       setVisualizer<VisualizerWaveform>();
     else if (config_.DJVisualizerID == "wisp")
       setVisualizer<VisualizerWisp>();
+    else if (config_.DJVisualizerID == "spectrum")
+      setVisualizer<VisualizerSpectrum>();
     else // default
       setVisualizer<VisualizerDefault>();
 
