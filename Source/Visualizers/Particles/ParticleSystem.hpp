@@ -67,7 +67,7 @@ public:
   // Adds a particle
   void AddParticle()
   {
-    Particle<T> p1 = Particle<T>(default_, posX_, posY_, 0, 1);
+    Particle<T> p1 = Particle<T>(default_, posX_, posY_, 0, 1, maxLife_);
     AdjustParticle(p1);
     particles_.push_back(p1);
   }
