@@ -7,6 +7,9 @@
 #include "Visualizers/VisualizerDefault.hpp"
 #include "DJConfig.hpp"
 #include "Overlays/ASCIIOverlay.hpp"
+#include <vector>
+#include <string>
+
 
 
 namespace ASCIIPlayer
@@ -35,6 +38,9 @@ namespace ASCIIPlayer
     void VolumeUp();
     void VolumeDown();
     void VolumeSet(const float newVolume);
+    bool VisualizerSet(const std::string &name);
+    void VisualizerNext();
+    void VisualizerPrev();
 	  long long GetLastVolumeChange();
     unsigned int GetPlaylistSize();
     void FillSongData(float* toFill, unsigned int size, FMOD_DSP_FFT_WINDOW window);
@@ -80,5 +86,11 @@ namespace ASCIIPlayer
       visualizerDataArray_ = new float[visaulizerDataSize_];
       memset(visualizerDataArray_, 0, visaulizerDataSize_);
     }
+    struct VisualizerInfo
+    {
+      std::string Name;
+      std::function<void(DJ&)> Func;
+    };
+    std::vector<VisualizerInfo> visualizers_;
   };
 }

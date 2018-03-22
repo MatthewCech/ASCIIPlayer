@@ -6,10 +6,28 @@
 #include "Visualizers/VisualizerParticle.hpp"
 #include "Overlays/DefaultOverlay.hpp"
 #include <chrono>
+#include <typeindex>
+#include <vector>
+#include "Defines.hpp"
 
+
+#define REGISTER_VISUALIZER(n, t) do{ visualizers_.push_back({ n, [](DJ& dj) { dj.setVisualizer<t>(); } }); } while(0)
 
 namespace ASCIIPlayer
 {
+  // Returns if it succeeded in finding the specified visualizer.
+  bool DJ::VisualizerSet(const std::string &name)
+  {
+    for (VisualizerInfo &v : visualizers_)
+      if (name == v.Name)
+      {
+        v.Func(*this);
+        return true;
+      }
+
+    return false;
+  }
+
   // Constructor
   DJ::DJ(DJConfig config, bool startPaused)
     : playlist_(&DJ::playlistUpdatedCallback, this)
@@ -33,16 +51,13 @@ namespace ASCIIPlayer
     else // default
       overlay_ = new DefaultOverlay();
 
-    //!TODO: HANDLE VISUALIZER CONFIGURATION
-    if (config_.DJVisualizerID == "waveform")
-      setVisualizer<VisualizerWaveform>();
-    else if (config_.DJVisualizerID == "wisp")
-      setVisualizer<VisualizerWisp>();
-    else if (config_.DJVisualizerID == "spectrum")
-      setVisualizer<VisualizerSpectrum>();
-    else if (config_.DJVisualizerID == "particle")
-      setVisualizer<VisualizerParticle>();
-    else // default
+    REGISTER_VISUALIZER("waveform", VisualizerWaveform);
+    REGISTER_VISUALIZER("wisp", VisualizerWisp);
+    REGISTER_VISUALIZER("spectrum", VisualizerSpectrum);
+    REGISTER_VISUALIZER("particle", VisualizerParticle);
+    REGISTER_VISUALIZER("default", VisualizerDefault);
+
+    if(!VisualizerSet(config_.DJVisualizerID))
       setVisualizer<VisualizerDefault>();
 
     // Looping?
