@@ -3,7 +3,7 @@
 #include "AudioSystem.hpp"
 #include "Defines.hpp"
 #include "Playlist.hpp"
-#include "ASCIIVisualizer.hpp"
+#include "Visualizers/ASCIIVisualizer.hpp"
 #include "Visualizers/VisualizerDefault.hpp"
 #include "DJConfig.hpp"
 #include "Overlays/ASCIIOverlay.hpp"

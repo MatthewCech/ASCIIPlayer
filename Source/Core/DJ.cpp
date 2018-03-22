@@ -3,6 +3,7 @@
 #include "Visualizers/VisualizerWaveform.hpp"
 #include "Visualizers/VisualizerWisp.hpp"
 #include "Visualizers/VisualizerSpectrum.hpp"
+#include "Visualizers/VisualizerParticle.hpp"
 #include "Overlays/DefaultOverlay.hpp"
 #include <chrono>
 
@@ -39,6 +40,8 @@ namespace ASCIIPlayer
       setVisualizer<VisualizerWisp>();
     else if (config_.DJVisualizerID == "spectrum")
       setVisualizer<VisualizerSpectrum>();
+    else if (config_.DJVisualizerID == "particle")
+      setVisualizer<VisualizerParticle>();
     else // default
       setVisualizer<VisualizerDefault>();
 
