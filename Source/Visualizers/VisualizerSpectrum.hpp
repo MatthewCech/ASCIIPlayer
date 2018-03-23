@@ -1,5 +1,7 @@
 #pragma once
 #include "ASCIIVisualizer.hpp"
+#include <chrono>
+
 
 
 namespace ASCIIPlayer
@@ -19,7 +21,8 @@ namespace ASCIIPlayer
     float pos_1_y_;
     float pos_2_x_;
     float pos_2_y_;
-    int oscilation_location_;
+    double oscilation_location_;
+    long long lastTime_;
   };
 }
 

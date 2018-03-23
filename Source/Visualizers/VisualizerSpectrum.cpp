@@ -3,6 +3,8 @@
 
 #define DATA_SIZE 256
 #define OSCILATION_CAP 2048.0f
+#define MS_SINCE_EP std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count()
+
 
 namespace ASCIIPlayer
 {
@@ -16,6 +18,7 @@ namespace ASCIIPlayer
     , pos_2_x_(static_cast<float>(width_ - side_offset_))
     , pos_2_y_(static_cast<float>(0))
     , oscilation_location_(-128)
+    , lastTime_(MS_SINCE_EP)
   { 
     RConsole::Canvas::SetCursorVisible(false);
   }
@@ -23,13 +26,20 @@ namespace ASCIIPlayer
   // Draw vertical spectrum based on frequencies
   bool VisualizerSpectrum::Update(float* data)
   {
+    // Calculate delays and update last time and current time variables.
+    long long curr_time = MS_SINCE_EP;
+    const double delay = (static_cast<double>(curr_time) - static_cast<double>(lastTime_)) / 1000.0;
+    lastTime_ = curr_time;
+
+    // Calcualte constants for visualizer
     const int vertical_offset = height_ / 2;
     const int dropped_bars = 2;
     const int vertical_scalar = 700;
-    
+
+    // Handle vertical offsets
     pos_1_y_ = vertical_offset + sin(static_cast<float>(oscilation_location_) / (OSCILATION_CAP / 2) * 3.14159f) * vertical_offset;
     pos_2_y_ = height_ - pos_1_y_;
-
+    
     // Characters to draw!
     const unsigned char symbol_up = static_cast<unsigned>(174);// 'u';
     const unsigned char symbol_down = static_cast<unsigned>(175);// 'n';
@@ -68,8 +78,10 @@ namespace ASCIIPlayer
       }
       y_pos += slope;
     }
-      
-    if (++oscilation_location_ > OSCILATION_CAP)
+
+    // Normalize by DT then add too oscilation locaiton. Loop as necessary.
+    oscilation_location_ += delay * 125;
+    if (oscilation_location_ > OSCILATION_CAP)
       oscilation_location_ = 0;
 
     return true;
