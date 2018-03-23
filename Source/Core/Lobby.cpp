@@ -282,7 +282,8 @@ namespace ASCIIPlayer
     std::string submsg = "(press ESC for menu)";
     RConsole::Canvas::DrawString(submsg.c_str()
       , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (submsg.size() / 2)
-      , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2));
+      , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2)
+      , RConsole::WHITE);
   }
 
 
@@ -432,6 +433,12 @@ namespace ASCIIPlayer
       activeDJ_->ToggleRequestUIActive();
       break;
     case '0': // Make it so the UI is requested.
+
+      // Visualizer stepping
+    case 'v':
+    case 'V':
+      activeDJ_->VisualizerNext();
+
     default:
       return;
     }
