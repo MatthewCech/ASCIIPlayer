@@ -39,11 +39,15 @@ namespace ASCIIPlayer
     else // default
       overlay_ = new DefaultOverlay();
 
+    // Register Visualizers
     REGISTER_VISUALIZER("default", VisualizerDefault);
     REGISTER_VISUALIZER("waveform", VisualizerWaveform);
     REGISTER_VISUALIZER("wisp", VisualizerWisp);
     REGISTER_VISUALIZER("spectrum", VisualizerSpectrum);
     REGISTER_VISUALIZER("particle", VisualizerParticle);
+
+    // Set visualizer
+    VisualizerSet(config_.DJVisualizerID);
 
     // Looping?
     if (config_.DJLooping)
@@ -321,7 +325,7 @@ namespace ASCIIPlayer
     for (size_t i = 0; i < visualizers_.size(); ++i)
       if (visualizers_[i].Name == visualizerName_)
       {
-        if (i - 1 >= 0)
+        if (i > 0)
         {
           visualizers_[i - 1].Func(*this);
           visualizerName_ = visualizers_[i - 1].Name;
