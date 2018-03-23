@@ -4,7 +4,6 @@
 #include "Defines.hpp"
 #include "Playlist.hpp"
 #include "Visualizers/ASCIIVisualizer.hpp"
-#include "Visualizers/VisualizerDefault.hpp"
 #include "DJConfig.hpp"
 #include "Overlays/ASCIIOverlay.hpp"
 #include <vector>
@@ -38,7 +37,7 @@ namespace ASCIIPlayer
     void VolumeUp();
     void VolumeDown();
     void VolumeSet(const float newVolume);
-    bool VisualizerSet(const std::string &name);
+    void VisualizerSet(const std::string &name);
     void VisualizerNext();
     void VisualizerPrev();
 	  long long GetLastVolumeChange();

@@ -432,6 +432,12 @@ namespace ASCIIPlayer
       activeDJ_->ToggleRequestUIActive();
       break;
     case '0': // Make it so the UI is requested.
+
+      // Visualizer stepping
+    case 'v':
+    case 'V':
+      activeDJ_->VisualizerNext();
+
     default:
       return;
     }

@@ -87,8 +87,8 @@ namespace ASCIIPlayer
 
        // Etc.
        << "\n\n"
-       << "===[Notes]===\n"
-			 << "Available Visualizers - default waveform wisp\n";
+       << "===[ Notes ]===\n"
+			 << "Available Visualizers - default, waveform, wisp, spectrum, particle\n";
     return ss.str();
   }
 
