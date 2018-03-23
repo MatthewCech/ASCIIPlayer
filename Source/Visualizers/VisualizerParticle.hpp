@@ -7,13 +7,15 @@
 
 namespace ASCIIPlayer
 {
-  class VisualSystem : public ParticleSystem<RConsole::Color>
+  class VisualSystem : public ParticleSystem<std::pair<RConsole::Color, char>>
   {
   public:
     VisualSystem(float x, float y);
 
     void OnUpdateEnd();
-    void AdjustParticle(Particle<RConsole::Color> &p);
+    void AdjustParticle(Particle<std::pair<RConsole::Color, char>> &p);
+
+    int index_;
   };
 
   class VisualizerParticle : public ASCIIVisualizer
@@ -28,5 +30,7 @@ namespace ASCIIPlayer
     int height_;
     VisualSystem vs1_;
     VisualSystem vs2_;
+    
   };
+    
 }
