@@ -6,7 +6,7 @@ namespace ASCIIPlayer
 {
   // Constructor
   VisaulizerSpotted::VisaulizerSpotted()
-    : ASCIIVisualizer(RConsole::Canvas::GetConsoleWidth(), AUDIODATA_SPECTRUM, "visualizerSpotted")
+    : ASCIIVisualizer(RConsole::Canvas::GetConsoleWidth(), AUDIODATA_SPECTRUM)
   {
 
   }

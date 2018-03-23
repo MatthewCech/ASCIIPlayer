@@ -7,7 +7,7 @@
 namespace ASCIIPlayer
 {
   VisualizerSpectrum::VisualizerSpectrum() 
-    : ASCIIVisualizer(DATA_SIZE, AUDIODATA_SPECTRUM, "visualizerSpectrum")
+    : ASCIIVisualizer(DATA_SIZE, AUDIODATA_SPECTRUM)
     , width_(RConsole::Canvas::GetConsoleWidth())
     , height_(RConsole::Canvas::GetConsoleHeight())
     , side_offset_(2)
