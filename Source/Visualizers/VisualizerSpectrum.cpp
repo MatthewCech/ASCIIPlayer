@@ -9,7 +9,7 @@
 namespace ASCIIPlayer
 {
   VisualizerSpectrum::VisualizerSpectrum() 
-    : ASCIIVisualizer(DATA_SIZE, AUDIODATA_SPECTRUM, "visualizerSpectrum")
+    : ASCIIVisualizer(DATA_SIZE, AUDIODATA_SPECTRUM)
     , width_(RConsole::Canvas::GetConsoleWidth())
     , height_(RConsole::Canvas::GetConsoleHeight())
     , side_offset_(2)
@@ -31,12 +31,12 @@ namespace ASCIIPlayer
     const double delay = (static_cast<double>(curr_time) - static_cast<double>(lastTime_)) / 1000.0;
     lastTime_ = curr_time;
 
-    // Calcualte constants for visualizer
+    // Establish offsets and constants
     const int vertical_offset = height_ / 2;
     const int dropped_bars = 2;
     const int vertical_scalar = 700;
-
-    // Handle vertical offsets
+    
+    // Shift y positions of both Ys
     pos_1_y_ = vertical_offset + sin(static_cast<float>(oscilation_location_) / (OSCILATION_CAP / 2) * 3.14159f) * vertical_offset;
     pos_2_y_ = height_ - pos_1_y_;
     
@@ -45,26 +45,27 @@ namespace ASCIIPlayer
     const unsigned char symbol_down = static_cast<unsigned>(175);// 'n';
     
     // Slope calculation
-    float ydiff = pos_2_y_ - pos_1_y_;
+    const float ydiff = pos_2_y_ - pos_1_y_;
     float xdiff = pos_2_x_ - pos_1_x_;
     if (xdiff < .1 && xdiff > -0.1)
       xdiff = 0.1f;
 
     // Slope and current offset calculation
-    float slope =  ydiff / xdiff;
+    const float slope =  ydiff / xdiff;
+    const int width = static_cast<int>(abs(pos_1_x_ - pos_2_x_));
     float y_pos = pos_1_y_;
-    int width = static_cast<int>(abs(pos_1_x_ - pos_2_x_));
 
     // Draw the lines
     for (int i = 0; i < width && i < DATA_SIZE; ++i)
     {
       const float value = data[i];
-      float height = log(value * vertical_scalar) * 2;
+      float height = roundf(log(value * vertical_scalar) * (value * 200) / 20.0f);
       if (height < 0)
         height = 0;
 
       RConsole::Color color = RConsole::LIGHTBLUE;
 
+      // Goes a certain distance in either direction!
       for (int j = 0; j < height; ++j)
       {
         if (j > height - (height / 1.5))
@@ -76,6 +77,7 @@ namespace ASCIIPlayer
         RConsole::Canvas::Draw(symbol_up, pos_1_x_ + i, y_pos + j, color);
         RConsole::Canvas::Draw(symbol_down, pos_2_x_ - i, height_ - y_pos - j, color);
       }
+
       y_pos += slope;
     }
 

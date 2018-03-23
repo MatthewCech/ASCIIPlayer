@@ -10,6 +10,9 @@
   //#define AP_DEBUG // As in, ascii-player debug
 #endif
 
+#ifdef _WIN32
+  #define OS_WINDOWS
+#endif
 
   //////////////////////////
  // Types and "Keywords" //
