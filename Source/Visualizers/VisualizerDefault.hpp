@@ -14,6 +14,9 @@ namespace ASCIIPlayer
 
     // DrawBars
     bool Update(float* data);
+
+  private:
+    size_t height_;
   };
 }
 

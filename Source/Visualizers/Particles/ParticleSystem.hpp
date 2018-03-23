@@ -80,8 +80,12 @@ public:
   virtual void OnUpdateStart() { }
   virtual void OnUpdateEnd() { }
 
-  // Allows access to all particles.
+  // Allows access to things
   std::list<Particle<T>> &Particles() { return particles_; }
+  float GetPosX() { return posX_; }
+  float GetPosY() { return posY_; }
+  void SetPosX(float x) { posX_ = x; }
+  void SetPosY(float x) { posY_ = y; }
 
 protected:
   // Variables
