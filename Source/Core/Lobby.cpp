@@ -2,8 +2,6 @@
 #include <exception>
 #include <thread>
 
-// General Defines
-#define MS_SINCE_EPOCH std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count()
 
 // Menu heiarchy overview and defines
 #define ASCIIMENU_BASE "menuDefualt"
@@ -20,13 +18,23 @@ namespace ASCIIPlayer
     ///////////////////////////
    // File-specific Globals //
   ///////////////////////////
-  // Static local variables for help menu
+  //!TODO: Make this entire section not a thing.
+  //
   // ...not a brilliant solution, should use member function callback support.
-  static bool __is_displaying_help_menu = false;
+  // Do not keep adding to this, just rework the menu system to include member functions,
+  // like it honestly should do anyways.
+  //
+
+  // Static local variables for this file only.
+  static bool __is_displaying_help_menu = false; // For displaying the help menu.
+  static DJ* __current_dj = nullptr;             // A pointer to the current DJ exposed.
+
+  // Enums
   static enum WhichDialogueEnum 
   { 
     GENERAL, 
-    CONFIG 
+    CONFIG,
+    OPEN
   } __dialogue_type;
 
   // Global popups using drawing system
@@ -142,23 +150,26 @@ namespace ASCIIPlayer
     Container *fileMenu = Container::Create(ASCIIMENU_FILE);
     fileMenu->SetOrientation(ASCIIMenus::VERTICAL);
     fileMenu->SetPosition(2, 1);
-    fileMenu->AddItem("Open", "");
+    fileMenu->AddItem("Open", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = OPEN; });
     fileMenu->AddItem("Save Settings", "");
-    fileMenu->AddItem("Info", ""); // Provides some info on ASCIIPlayer!
+    fileMenu->AddItem("Info", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = GENERAL; });
     fileMenu->AddItem("Hide", "", []() {  });
-    fileMenu->AddItem("Quit", "", []() { exit(0); });
+    fileMenu->AddItem("Quit", "", []() { exit(0); }); //!TODO Confirmation of Destructive Action - Dialogue that takes lambda for yes.
 
     Container *editMenu = Container::Create(ASCIIMENU_EDIT);
     editMenu->SetOrientation(ASCIIMenus::VERTICAL);
     editMenu->SetPosition(9, 1);
 
-    //@TODO: Templatize the AddItem function in order to allow it to access member function content!
+    //!TODO: Templatize the AddItem function in order to allow it to access member function content!
     // Why? Well, this will let this function use 'this' as a capture group, and from there the
     // contents of this class can be used! This will be awesome for live-reloading ASCIIPlayer
     // if the config file changed.
     editMenu->AddItem("Edit Config", "", []() { system(".\\ASCIIPlayer.conf"); }); 
-    editMenu->AddItem("Reset Config", "");//, []() { system("del .\\ASCIIPlayer.conf"); });
-    editMenu->AddItem("Set Visualizer", ASCIIMENU_VISUALIZER); 
+    //!TODO editMenu->AddItem("Reset Config", "");//, []() { system("del .\\ASCIIPlayer.conf"); }); // Deletes / resets existing config.
+    //!TODO editMenu->AddItem("Set Visualizer", ASCIIMENU_VISUALIZER); // Lets you set the visualizer from a list of them!
+    editMenu->AddItem("Next Visualizer", "", []() { if (__current_dj != nullptr) __current_dj->VisualizerNext(); });
+    editMenu->AddItem("Prev Visualizer", "", []() { if (__current_dj != nullptr) __current_dj->VisualizerPrev(); });
+    editMenu->AddItem("Force Clearscreen", "", []() { RConsole::Canvas::ForceClearEverything(); });
 
     Container *helpMenu = Container::Create(ASCIIMENU_HELP);
     helpMenu->SetOrientation(ASCIIMenus::VERTICAL);
@@ -169,6 +180,9 @@ namespace ASCIIPlayer
     Container *helpMenuPopup = Container::Create(ASCIIMENU_HELP_INFO_BOX);
     helpMenuPopup->SetOrientation(ASCIIMenus::HORIZONTAL);
     helpMenuPopup->AddItem("[ Ok ]", "back", []() { __is_displaying_help_menu = false; });
+
+    // Set colors
+    menuSystems_.SetColorSelected(RConsole::LIGHTCYAN);
   }
 
 
@@ -202,6 +216,7 @@ namespace ASCIIPlayer
     size_t loops = 0;
     while (lobbyHosting_)
     {
+      __current_dj = activeDJ_; //!TODO: Make this line not a thing.
       fpsPrevStart_ = fpsStart_;
       fpsStart_ = MS_SINCE_EPOCH;
       // ============================ Start primary loop ============================
@@ -279,7 +294,8 @@ namespace ASCIIPlayer
     std::string submsg = "(press ESC for menu)";
     RConsole::Canvas::DrawString(submsg.c_str()
       , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (submsg.size() / 2)
-      , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2));
+      , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2)
+      , RConsole::WHITE);
   }
 
 
@@ -294,6 +310,8 @@ namespace ASCIIPlayer
         message = "ASCIIPlayer is a command-line program navigated exclusively by keyboard. If you want to play a song, you can drag it in to add it to the playlist, or select multiple and pass them as command line aguments!";
       else if (__dialogue_type == CONFIG)
         message = "Not all configurations can be edited by the menu. ASCIIPlayer.conf is located next to the program executable, and can be opened with your default text editor via the menu 'EDIT' menu or by hand in the program folder.";
+      else if (__dialogue_type == OPEN)
+        message = "Opening files with a dialogue box is not currently supported, but you can drag and drop single files into ASCIIPlayer to add them to the current playlist!";
 
       __Display_Infobox(40, ASCIIMENU_HELP_INFO_BOX, message);
     }
@@ -429,6 +447,12 @@ namespace ASCIIPlayer
       activeDJ_->ToggleRequestUIActive();
       break;
     case '0': // Make it so the UI is requested.
+
+      // Visualizer stepping
+    case 'v':
+    case 'V':
+      activeDJ_->VisualizerNext();
+
     default:
       return;
     }

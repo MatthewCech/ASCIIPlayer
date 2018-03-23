@@ -6,14 +6,17 @@
 
 namespace ASCIIPlayer
 {
-  class DefaultVisualizer : public ASCIIVisualizer
+  class VisualizerDefault : public ASCIIVisualizer
   {
   public:
     // Constructor
-    DefaultVisualizer();
+    VisualizerDefault();
 
     // DrawBars
     bool Update(float* data);
+
+  private:
+    size_t height_;
   };
 }
 

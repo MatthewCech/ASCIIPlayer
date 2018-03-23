@@ -3,10 +3,12 @@
 #include "AudioSystem.hpp"
 #include "Defines.hpp"
 #include "Playlist.hpp"
-#include "ASCIIVisualizer.hpp"
-#include "Visualizers/VisualizerDefault.hpp"
+#include "Visualizers/ASCIIVisualizer.hpp"
 #include "DJConfig.hpp"
 #include "Overlays/ASCIIOverlay.hpp"
+#include <vector>
+#include <string>
+
 
 
 namespace ASCIIPlayer
@@ -35,6 +37,9 @@ namespace ASCIIPlayer
     void VolumeUp();
     void VolumeDown();
     void VolumeSet(const float newVolume);
+    void VisualizerSet(const std::string &name);
+    void VisualizerNext();
+    void VisualizerPrev();
 	  long long GetLastVolumeChange();
     unsigned int GetPlaylistSize();
     void FillSongData(float* toFill, unsigned int size, FMOD_DSP_FFT_WINDOW window);
@@ -47,6 +52,7 @@ namespace ASCIIPlayer
     // Variables
     Playlist<DJ> playlist_;       // Contains the AudioFile objects.
     AudioSystem audioSystem_;     // The sound system to play the audio files.
+    std::string visualizerName_;  // The name of the current visualizer.
     ASCIIVisualizer *visualizer_; // The visualizer to display the playing data.
     ASCIIOverlay *overlay_;       // The overlay for the visualizer
     DJConfig config_;             // The proivded config for the DJ.
@@ -61,5 +67,30 @@ namespace ASCIIPlayer
     AudioDataStyle visualizerDataStyle_; // The style of data for the audio visualizer
     float *visualizerDataArray_;         // Data used for the visualizer;
 	  long long lastVolumeChange_;         // The last time the volume was changed, in ms
+
+    // Visualizer Switching w/ templates
+    template <typename T>
+    void setVisualizer()
+    {
+      // Clean up as necessary
+      if (visualizer_)
+        delete visualizer_;
+      if (visualizerDataArray_)
+        delete[] visualizerDataArray_;
+
+      visualizer_ = new T();
+
+      // Set some internal variables
+      visaulizerDataSize_ = visualizer_->GetAudioDataSize();
+      visualizerDataStyle_ = visualizer_->GetAudioDataStyle();
+      visualizerDataArray_ = new float[visaulizerDataSize_];
+      memset(visualizerDataArray_, 0, visaulizerDataSize_);
+    }
+    struct VisualizerInfo
+    {
+      std::string Name;
+      std::function<void(DJ&)> Func;
+    };
+    std::vector<VisualizerInfo> visualizers_;
   };
 }

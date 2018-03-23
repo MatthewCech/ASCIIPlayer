@@ -1,6 +1,8 @@
 #pragma once
-#include "FMOD/fmod.hpp"
-#include <iostream>
+#include "FMOD/fmod.hpp" // Audio types
+#include <iostream>      // Debug printing
+#include <chrono>        // MS_SINCE_EPOCH
+
 
 
   //////////////////////////////
@@ -10,10 +12,15 @@
   //#define AP_DEBUG // As in, ascii-player debug
 #endif
 
+#ifdef _WIN32
+  #define OS_WINDOWS
+#endif
 
-  //////////////////////////
- // Types and "Keywords" //
-//////////////////////////
+
+
+  ///////////////////////////////////
+ // Types, "Keywords", and Values //
+///////////////////////////////////
 // Using
 using ChannelHandle = FMOD::Channel*;     // Channel handle for FMOD
 using AudioHandle   = FMOD::Sound;        // Sound object handle for FMOD
@@ -23,6 +30,8 @@ using APUnique      = unsigned long long;
 // Defines
 #define ABSTRACT =0
 #define SONG_TIME_SCALE_FOR_SECONDS 1000
+#define MS_SINCE_EPOCH (std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count())
+
 
 
   ///////////
@@ -37,6 +46,7 @@ enum AudioDataStyle
 };
 
 
+
   //////////////////////////
  // Debug printing, etc. //
 //////////////////////////
@@ -46,4 +56,3 @@ enum AudioDataStyle
 #else
   #define DEBUG_PRINT(x) do{ } while (0)
 #endif
-

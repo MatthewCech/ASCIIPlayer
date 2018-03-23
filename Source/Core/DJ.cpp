@@ -2,8 +2,16 @@
 #include "Visualizers/VisualizerDefault.hpp"
 #include "Visualizers/VisualizerWaveform.hpp"
 #include "Visualizers/VisualizerWisp.hpp"
+#include "Visualizers/VisualizerSpectrum.hpp"
+#include "Visualizers/VisualizerParticle.hpp"
 #include "Overlays/DefaultOverlay.hpp"
 #include <chrono>
+#include <typeindex>
+#include <vector>
+#include "Defines.hpp"
+
+#define REGISTER_VISUALIZER(n, t) do{ visualizers_.push_back({ n, [](DJ& dj) { dj.setVisualizer<t>(); } }); } while(0)
+
 
 
 namespace ASCIIPlayer
@@ -16,6 +24,7 @@ namespace ASCIIPlayer
     , overlay_(nullptr)
     , visaulizerDataSize_(64) // Not magic number, just default width
     , visualizerDataStyle_(AUDIODATA_NO_STYLE)
+    , visualizerDataArray_(nullptr)
     , config_(config)
     , hasShutdown_(false)
     , currSong_(false)
@@ -25,24 +34,20 @@ namespace ASCIIPlayer
     , requestUIActive_(false)
   {
     //!TODO: HANDLE OVERLAY CONFIRGUATION
-    if (config_.DJVisualizerID == "some name or something")
+    if (config_.DJOverlayID == "some name or something")
       overlay_ = new DefaultOverlay();
     else // default
       overlay_ = new DefaultOverlay();
 
-    //!TODO: HANDLE VISUALIZER CONFIGURATION
-    if (config_.DJVisualizerID == "waveform")
-      visualizer_ = new VisualizerWaveform();
-    else if (config_.DJVisualizerID == "wisp")
-      visualizer_ = new VisualizerWisp();
-    else // default
-    {
-      visualizer_ = new DefaultVisualizer();
-    }
-    visaulizerDataSize_ = visualizer_->GetAudioDataSize();
-    visualizerDataStyle_ = visualizer_->GetAudioDataStyle();
-    visualizerDataArray_ = new float[visaulizerDataSize_];
-    memset(visualizerDataArray_, 0, visaulizerDataSize_);
+    // Register Visualizers
+    REGISTER_VISUALIZER("default", VisualizerDefault);
+    REGISTER_VISUALIZER("waveform", VisualizerWaveform);
+    REGISTER_VISUALIZER("wisp", VisualizerWisp);
+    REGISTER_VISUALIZER("spectrum", VisualizerSpectrum);
+    REGISTER_VISUALIZER("particle", VisualizerParticle);
+
+    // Set visualizer
+    VisualizerSet(config_.DJVisualizerID);
 
     // Looping?
     if (config_.DJLooping)
@@ -267,10 +272,79 @@ namespace ASCIIPlayer
   }
 
 
+  // Returns if it succeeded in finding the specified visualizer.
+  void DJ::VisualizerSet(const std::string &name)
+  {
+    for (VisualizerInfo &v : visualizers_)
+      if (name == v.Name)
+      {
+        v.Func(*this);
+        visualizerName_ = name;
+        return;
+      }
+
+    // Recursively set the visualizer to default. There should always be a default.
+    VisualizerSet("default");
+
+    //!TODO: Replace with logging system for errors.
+    throw("Incorrect visualizer config provided!");
+  }
+
+
+  // Attempts to find the current visualizer then go to the next that's in the array.
+  void DJ::VisualizerNext()
+  {
+    if (visualizers_.size() <= 1)
+      return;
+
+    for (size_t i = 0; i < visualizers_.size(); ++i)
+      if (visualizers_[i].Name == visualizerName_)
+      {
+        if (i + 1 < visualizers_.size())
+        {
+          visualizers_[i + 1].Func(*this);
+          visualizerName_ = visualizers_[i + 1].Name;
+        }
+        else
+        {
+          visualizers_[0].Func(*this);
+          visualizerName_ = visualizers_[0].Name;
+        }
+
+        return;
+      }
+  }
+
+
+  // Attempts to find the current visualizer then go to the previous that's in the array.
+  void DJ::VisualizerPrev()
+  {
+    if (visualizers_.size() <= 1)
+      return;
+
+    for (size_t i = 0; i < visualizers_.size(); ++i)
+      if (visualizers_[i].Name == visualizerName_)
+      {
+        if (i > 0)
+        {
+          visualizers_[i - 1].Func(*this);
+          visualizerName_ = visualizers_[i - 1].Name;
+        }
+        else
+        {
+          visualizers_[visualizers_.size() - 1].Func(*this);
+          visualizerName_ = visualizers_[visualizers_.size() - 1].Name;
+        }
+
+        return;
+      }
+  }
+
+
   // Gets the last time the volume changed.
   long long DJ::GetLastVolumeChange()
   {
-	  return lastVolumeChange_;
+    return lastVolumeChange_;
   }
 
 
@@ -284,11 +358,12 @@ namespace ASCIIPlayer
   // Fills the array provided with the active spectrum.
   void DJ::FillSongData(float* toFill, unsigned int size, FMOD_DSP_FFT_WINDOW window)
   {
-    if(visualizerDataStyle_ == AUDIODATA_WAVEFORM)
+    if (visualizerDataStyle_ == AUDIODATA_WAVEFORM)
       audioSystem_.FillWithAudioData(toFill, size, 0, window, AUDIODATA_WAVEFORM);
     else
       audioSystem_.FillWithAudioData(toFill, size, 0, window, AUDIODATA_SPECTRUM);
   }
+
 
 
     //////////////////////////////
