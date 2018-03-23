@@ -11,7 +11,7 @@ namespace ASCIIPlayer
 {
   // Constructor
   VisualizerDefault::VisualizerDefault()
-    : ASCIIVisualizer(RConsole::Canvas::GetConsoleHeight() - (VERTICAL_PADDING * 2), AUDIODATA_WAVEFORM, "visualizerDefault")
+    : ASCIIVisualizer(RConsole::Canvas::GetConsoleHeight() - (VERTICAL_PADDING * 2), AUDIODATA_WAVEFORM)
     , height_(RConsole::Canvas::GetConsoleHeight())
   {
     RConsole::Canvas::SetCursorVisible(false);
