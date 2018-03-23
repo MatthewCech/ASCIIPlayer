@@ -26,6 +26,7 @@ namespace ASCIIPlayer
     bool Update(float* data);
     int width_;
     int height_;
-    VisualSystem vs_;
+    VisualSystem vs1_;
+    VisualSystem vs2_;
   };
 }

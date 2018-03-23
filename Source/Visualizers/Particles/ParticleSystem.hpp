@@ -44,7 +44,7 @@ public:
     }
 
     // Update all
-    for (auto&& p : particles_)
+    for (auto& p : particles_)
     {
       if (--p.Life < 0)
         p.Active = false;
@@ -82,10 +82,14 @@ public:
 
   // Allows access to things
   std::list<Particle<T>> &Particles() { return particles_; }
-  float GetPosX() { return posX_; }
-  float GetPosY() { return posY_; }
-  void SetPosX(float x) { posX_ = x; }
-  void SetPosY(float x) { posY_ = y; }
+  float GetPosX()                     { return posX_; }
+  float GetPosY()                     { return posY_; }
+  size_t GetMaxParticles()            { return maxParticles_; }
+  int GetSpawnDelay()                 { return spawnDelay_; }
+  void SetPosX(float x)               { posX_ = x; }
+  void SetPosY(float y)               { posY_ = y; }
+  void SetMaxParticles(size_t max)    { maxParticles_ = max; }
+  void SetSpawnDelay(int delay)       { spawnDelay_ = delay; }
 
 protected:
   // Variables

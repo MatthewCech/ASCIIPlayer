@@ -37,7 +37,7 @@ namespace ASCIIPlayer
     if (config_.DJVisualizerID == "waveform")
       setVisualizer<VisualizerWaveform>();
     else if (config_.DJVisualizerID == "wisp")
-      setVisualizer<VisualizerDefault>();
+      setVisualizer<VisualizerParticle>();
     else if (config_.DJVisualizerID == "spectrum")
       setVisualizer<VisualizerSpectrum>();
     else if (config_.DJVisualizerID == "particle")
