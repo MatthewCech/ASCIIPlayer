@@ -12,9 +12,8 @@ namespace ASCIIPlayer
   {
   public:
     // Constructor
-    ASCIIVisualizer(unsigned int ads, AudioDataStyle style, std::string tag) 
-      : visualizerTag_(tag)
-      , audioSize_(ads)
+    ASCIIVisualizer(unsigned int ads, AudioDataStyle style) 
+      : audioSize_(ads)
       , audioStyle_(style)
     {  }
 
@@ -29,11 +28,9 @@ namespace ASCIIPlayer
     virtual bool UpdatePost() { return true; };
     virtual unsigned int GetAudioDataSize() { return audioSize_; }
     virtual AudioDataStyle GetAudioDataStyle() { return audioStyle_; }
-    virtual std::string GetTag() { return visualizerTag_; }
 
   protected:
     // Variables
-    std::string visualizerTag_;
     unsigned int audioSize_;
     AudioDataStyle audioStyle_;
   };

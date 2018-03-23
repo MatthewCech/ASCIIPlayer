@@ -22,10 +22,61 @@ namespace ASCIIPlayer
       if (name == v.Name)
       {
         v.Func(*this);
+        visualizerName_ = name;
         return true;
       }
 
+    setVisualizer<VisualizerDefault>();
+    visualizerName_ = "default";
     return false;
+  }
+
+  // Attempts to find the current visualizer then go to the next that's in the array.
+  void DJ::VisualizerNext()
+  {
+    if (visualizers_.size() <= 1)
+      return;
+
+    for(size_t i = 0; i < visualizers_.size(); ++i)
+      if (visualizers_[i].Name == visualizerName_)
+      {
+        if (i + 1 < visualizers_.size())
+        {
+          visualizers_[i + 1].Func(*this);
+          visualizerName_ = visualizers_[i + 1].Name;
+        }
+        else
+        {
+          visualizers_[0].Func(*this);
+          visualizerName_ = visualizers_[0].Name;
+        }
+
+        return;
+      }
+  }
+
+  // Attempts to find the current visualizer then go to the previous that's in the array.
+  void DJ::VisualizerPrev()
+  {
+    if (visualizers_.size() <= 1)
+      return;
+
+    for (size_t i = 0; i < visualizers_.size(); ++i)
+      if (visualizers_[i].Name == visualizerName_)
+      {
+        if (i - 1 >= 0)
+        {
+          visualizers_[i - 1].Func(*this);
+          visualizerName_ = visualizers_[i - 1].Name;
+        }
+        else
+        {
+          visualizers_[visualizers_.size() - 1].Func(*this);
+          visualizerName_ = visualizers_[visualizers_.size() - 1].Name;
+        }
+
+        return;
+      }
   }
 
   // Constructor
@@ -57,8 +108,8 @@ namespace ASCIIPlayer
     REGISTER_VISUALIZER("particle", VisualizerParticle);
     REGISTER_VISUALIZER("default", VisualizerDefault);
 
-    if(!VisualizerSet(config_.DJVisualizerID))
-      setVisualizer<VisualizerDefault>();
+    if (!VisualizerSet(config_.DJVisualizerID))
+      throw("Incorrect visualizer config provided!");
 
     // Looping?
     if (config_.DJLooping)

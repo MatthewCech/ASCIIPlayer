@@ -53,6 +53,7 @@ namespace ASCIIPlayer
     // Variables
     Playlist<DJ> playlist_;       // Contains the AudioFile objects.
     AudioSystem audioSystem_;     // The sound system to play the audio files.
+    std::string visualizerName_;  // The name of the current visualizer.
     ASCIIVisualizer *visualizer_; // The visualizer to display the playing data.
     ASCIIOverlay *overlay_;       // The overlay for the visualizer
     DJConfig config_;             // The proivded config for the DJ.

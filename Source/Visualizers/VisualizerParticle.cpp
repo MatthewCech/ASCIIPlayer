@@ -31,7 +31,7 @@ namespace ASCIIPlayer
 
   // Constructor
   VisualizerParticle::VisualizerParticle()
-    : ASCIIVisualizer(DATA_SIZE, AUDIODATA_SPECTRUM, "visualizerParticle")
+    : ASCIIVisualizer(DATA_SIZE, AUDIODATA_SPECTRUM)
     , width_(RConsole::Canvas::GetConsoleWidth())
     , height_(RConsole::Canvas::GetConsoleHeight())
     , vs_(10, 10)
