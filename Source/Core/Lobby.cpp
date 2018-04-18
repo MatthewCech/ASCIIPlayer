@@ -327,8 +327,8 @@ namespace ASCIIPlayer
     if (str[0] == '\\' && str[str.size() - 1] == '"')
       input = str.substr(2, str.size() - 4);
 
-    AudioFile *test1 = new ASCIIPlayer::AudioFile(input);
-    activeDJ_->AddSong(test1);
+    AudioFile *new_song = new ASCIIPlayer::AudioFile(input);
+    activeDJ_->AddSong(new_song);
   }
 
 

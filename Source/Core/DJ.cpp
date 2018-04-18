@@ -204,6 +204,14 @@ namespace ASCIIPlayer
 
     if (start)
       Play();
+
+    // Cycling play and pause if it is currently paused in order to acquire a valid 
+    // piece of inital data for spectrum purposes. This is not ideal, but works well enough.
+    if (paused_)
+    {
+      Play();
+      Pause();
+    }
   }
 
 
