@@ -24,7 +24,7 @@ namespace ASCIIPlayer
     // Private methods - Parsing and Overlays
     void displayIdle(long long curr_frametime, long long last_frametime);
     void displayExtraMenus();
-    void interpretPath(const std::string str);
+    void interpretMultiCharInput(const std::string str);
     void interpretChar(char key);
     
     // Private methods - Utility and Management

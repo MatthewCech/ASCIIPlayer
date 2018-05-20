@@ -230,7 +230,7 @@ namespace ASCIIPlayer
         activeDJ_->Update();
 
       // Parse input
-      keyParser_.HandleInput(this, &Lobby::interpretChar, &Lobby::interpretPath);
+      keyParser_.HandleInput(this, &Lobby::interpretChar, &Lobby::interpretMultiCharInput);
 
       // Finalize drawing for debug
       if (showDebug_)
@@ -251,10 +251,6 @@ namespace ASCIIPlayer
 
       // Write out and display all drawing
       RConsole::Canvas::Update();
-
-      // Smol sleep. This makes most OSs extremely happy and reduces CPU load by like 30%.
-      std::this_thread::sleep_for(std::chrono::microseconds(500)); 
-
 
       // ============================ End primary loop ============================
       fpsEnd_ = MS_SINCE_EPOCH;
@@ -319,13 +315,17 @@ namespace ASCIIPlayer
 
 
   // Interpret specific paths
-  void Lobby::interpretPath(const std::string str)
+  void Lobby::interpretMultiCharInput(const std::string str)
   {
     std::string input = str;
     if (str[0] == '"' && str[str.size() - 1] == '"')
       input = str.substr(1, str.size() - 2);
     if (str[0] == '\\' && str[str.size() - 1] == '"')
       input = str.substr(2, str.size() - 4);
+
+#pragma warning (disable: 4309)
+    if (str[0] == static_cast<signed char>(224))
+      interpretChar(str[1]);
 
     AudioFile *new_song = new ASCIIPlayer::AudioFile(input);
     activeDJ_->AddSong(new_song);
