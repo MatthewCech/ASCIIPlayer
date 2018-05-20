@@ -47,6 +47,7 @@ namespace ASCIIPlayer
         PARSE_CONTINUE(DJOverlayAlwaysOn, name, stoi(val) > 0 ? true : false)
 
         // Ints
+        PARSE_CONTINUE(DJCPULoadReductionDelay, name, stoi(val))
         PARSE_CONTINUE(SkipForwardSeconds, name, stoi(val))
         PARSE_CONTINUE(SkipBackwardSeconds, name, stoi(val))
         PARSE_CONTINUE(DJChannelCount, name, stoi(val))
@@ -77,6 +78,7 @@ namespace ASCIIPlayer
        << NAME_STR_LINE(DJOverlayAlwaysOn)
 
        // Ints
+       << NAME_STR_LINE(DJCPULoadReductionDelay)
        << NAME_STR_LINE(SkipForwardSeconds)
        << NAME_STR_LINE(SkipBackwardSeconds)
        << NAME_STR_LINE(DJChannelCount)

@@ -252,10 +252,6 @@ namespace ASCIIPlayer
       // Write out and display all drawing
       RConsole::Canvas::Update();
 
-      // Smol sleep. This makes most OSs extremely happy and reduces CPU load by like 30%.
-      std::this_thread::sleep_for(std::chrono::microseconds(500)); 
-
-
       // ============================ End primary loop ============================
       fpsEnd_ = MS_SINCE_EPOCH;
       ++loops;

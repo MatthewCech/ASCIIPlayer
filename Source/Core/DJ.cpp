@@ -87,9 +87,18 @@ namespace ASCIIPlayer
       }
       else
       {
+        
+        if (!paused_)
+        {
+          // Smol sleep recommended, someodd like 500. 
+          // just half a millisecond makes most OSs extremely happy and reduces CPU load by like 30%.
+          if(config_.DJCPULoadReductionDelay > 0)
+            std::this_thread::sleep_for(std::chrono::microseconds(config_.DJCPULoadReductionDelay));
+        }
+
         if (visualizer_)
         {
-          // Only fill if not paused
+          // Only fill visualizer data if not paused.
           if (!paused_)
             FillSongData(visualizerDataArray_, visaulizerDataSize_, FMOD_DSP_FFT_WINDOW_RECT);
           
