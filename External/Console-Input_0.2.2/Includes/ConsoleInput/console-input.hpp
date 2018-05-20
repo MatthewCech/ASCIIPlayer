@@ -136,73 +136,52 @@ class InputParser
 public:
   // Handle the input parsing and separation. This requires 
   // references as inputs for keeping track of keypresses.
-  void HandleInput(std::function<void(char)> callbackSingleChar, std::function<void(std::string) > callbackFilepath)
+  void HandleInput(std::function<void(char)> callbackSingleChar, std::function<void(std::string) > callbackMultiChar)
   {
-    int hit = KeyHit();
-    
-    // If there was a hit key, keep track of it.
-    // If a combination shows up, handle that as well.
-    if (hit)
-      do
-      {
-        lastChar_ = GetChar();
-        buffer_ += lastChar_;
-      } while (hit = KeyHit());
-    
-    // If there is currently not a hit key but there was one 
-    // last cycle when we checked...
-    else
-      if (lastChar_ != NoInput)
-      {
-        if (buffer_.size() > 1)
-          callbackFilepath(buffer_);
-        else
-          callbackSingleChar(lastChar_);
+    while (KeyHit())
+    {
+      int character = GetChar();
+      if (character != NoInput) // Character input for a looks like: 97 0
+        buffer_ += character;
+    }
 
-        lastChar_ = NoInput;
-        buffer_.clear();
-      }
+    if (buffer_.size() > 0)
+    {
+      if (buffer_.size() > 1)
+        callbackMultiChar(buffer_);
+      else
+        callbackSingleChar(buffer_[0]);
+
+      buffer_.clear();
+    }
   }
 
   // A member-function supported version of the previous function.
   // Uses the same variables as the other HandleInput function.
-  template <class T> void HandleInput(T *thisClass, void(T::*callbackSingleChar)(char), void(T::*callbackFilepath)(std::string))
+  template <class T> void HandleInput(T *thisClass, void(T::*callbackSingleChar)(char), void(T::*callbackMultiChar)(std::string))
   {
-    int hit = KeyHit();
-    const char modifier_key = static_cast<unsigned char>(224);
+    while (KeyHit())
+    {
+      int character = GetChar();
+      if (character != NoInput) // Character input for a looks like: 97 0
+        buffer_ += character;
+    }
 
-    if (hit)
-      do
-      {
-        lastChar_ = GetChar();
-        buffer_ += lastChar_;
-      } while (hit = KeyHit());
-    else
-      if (lastChar_ != NoInput)
-      {
-        if (buffer_.size() > 1)
-        {
-          if (buffer_.size() == 2)
-          {
-            if (buffer_[0] == modifier_key)
-              (*thisClass.*callbackSingleChar)(buffer_[1]);
-          }
-          else
-            (*thisClass.*callbackFilepath)(buffer_);
-        }
-        else
-          (*thisClass.*callbackSingleChar)(lastChar_);
+    if (buffer_.size() > 0)
+    {
+      if(buffer_.size() > 1)
+        (*thisClass.*callbackMultiChar)(buffer_);
+      else
+        (*thisClass.*callbackSingleChar)(buffer_[0]);
 
-        lastChar_ = NoInput;
-        buffer_.clear();
-      }
+      buffer_.clear();
+    }
   }
 
 
 private:
   // Variables
   const int NoInput = 0;    // A constant for defining a lack of input. 
-  int lastChar_ = NoInput;  // The last character we read. NoInput by default.
   std::string buffer_ = ""; // So long as we recieve input without a break, we continue to store it here.
 
 };
