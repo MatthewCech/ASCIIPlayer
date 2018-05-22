@@ -234,7 +234,7 @@ namespace ASCIIPlayer
   // Previous song in playlist
   void DJ::SongPrev()
   {
-    playlist_.Back();
+    playlist_.Back(audioSystem_);
   }
 
 

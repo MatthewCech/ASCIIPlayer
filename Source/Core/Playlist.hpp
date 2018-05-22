@@ -19,7 +19,7 @@ namespace ASCIIPlayer
     const std::vector<const AudioFile *> PeekAll();
     void GoToBeginning();
     void Next();
-    void Back(); 
+    void Back(AudioSystem &audioSystem);
     void Scramble();
     void SetLooping(bool isLooping);
     AudioFile *GetCurrent();
@@ -105,9 +105,12 @@ namespace ASCIIPlayer
   // If possible, will attempt to go to the next song.
   template<typename T> void Playlist<T>::Next()
   {
+    // Handle empty playlist case
     if (playlist_.size() == 0)
       return;
 
+    // Move forward to the next song regardless of our position in the current song.
+    // If we're looping, go back to the start as necessary.
     if (activeIndex_ < playlist_.size() - 1)
     {
       ++activeIndex_;
@@ -127,11 +130,21 @@ namespace ASCIIPlayer
 
 
   // Head back in the playlist if possible.
-  template<typename T> void Playlist<T>::Back()
+  template<typename T> void Playlist<T>::Back(AudioSystem &audioSystem)
   {
+    // Handle a lack of any content in the playlist.
     if (playlist_.size() == 0)
       return;
 
+    // Specifically handle being within a few seconds of the start
+    const double delay = 3;
+    if (audioSystem.GetCurrentPosition(*GetCurrent()) > delay * 1000)
+    {
+      audioSystem.SetCurrentPosition(*GetCurrent(), 0);
+      return;
+    }
+
+    // Return back to the last song otherwise, and loop if that's something we have enabled.
     if (activeIndex_ > 0)
     {
       --activeIndex_;
@@ -172,7 +185,7 @@ namespace ASCIIPlayer
   }
 
 
-  // Sets the proram to loop.
+  // Sets whether or not the playlist is looping.
   template<typename T> void Playlist<T>::SetLooping(bool isLooping)
   {
     looping_ = isLooping;

@@ -257,7 +257,7 @@ namespace ASCIIPlayer
   }
 
 
-  // Returns our current location in the file.
+  // Returns our current location in the file, in milliseconds.
   unsigned int AudioSystem::GetCurrentPosition(AudioFile &audioFile)
   {
     if (audioFile.get(ID_)->LoadedObject == nullptr)
