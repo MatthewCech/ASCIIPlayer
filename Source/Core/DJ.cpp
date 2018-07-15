@@ -368,7 +368,7 @@ namespace ASCIIPlayer
   // Returns the number of songs in the playlist.
   unsigned int DJ::GetPlaylistSize()
   {
-    return playlist_.GetPlaylistLength();
+    return static_cast<unsigned int>(playlist_.GetPlaylistLength());
   }
 
 

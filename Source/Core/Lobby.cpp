@@ -41,8 +41,8 @@ namespace ASCIIPlayer
   static void __Display_Infobox(size_t maxWidth, std::string containerName, std::string str)
   {
     // Define widths
-    const unsigned int half_w             = maxWidth / 2;
-    const unsigned int str_width          = maxWidth - 3;
+    const unsigned int half_w             = static_cast<unsigned int>(maxWidth / 2);
+    const unsigned int str_width          = static_cast<unsigned int>(maxWidth - 3);
     const unsigned int str_height         = static_cast<int>(str.size() / static_cast<float>(str_width) + 0.99);
     const unsigned int half_h             = (str_height + 5) / 2;
     const unsigned int half_screen_width  = RConsole::Canvas::GetConsoleWidth() / 2;
@@ -283,13 +283,13 @@ namespace ASCIIPlayer
       + static_cast<char>(osc[(index + 3) % mod])
       + static_cast<char>(osc[(index + 4) % mod])).c_str()
       // Positoning and color...
-      , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - ((msg.size() + 5) / 2)
+      , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>((msg.size() + 5)) / 2)
       , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2 - 2)
       , RConsole::WHITE);
 
     std::string submsg = "(press ESC for menu)";
     RConsole::Canvas::DrawString(submsg.c_str()
-      , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (submsg.size() / 2)
+      , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>(submsg.size()) / 2)
       , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2)
       , RConsole::WHITE);
   }

@@ -44,7 +44,7 @@ namespace ASCIIPlayer
 
       // Format and print buffer. Use sprintf
       sprintf(buffer, "%.*s\n", dv, buffer_bar);
-      RConsole::Canvas::DrawString(buffer, 0, i + VERTICAL_PADDING, RConsole::LIGHTCYAN);
+      RConsole::Canvas::DrawString(buffer, 0, static_cast<unsigned int>(i + VERTICAL_PADDING), RConsole::LIGHTCYAN);
     }
 
     // We're good! Return true!

@@ -23,3 +23,5 @@ documentation/
 .vs/
 
 Build/RH/ResourceHacker\.log
+
+Build/RH/ResourceHacker\.ini

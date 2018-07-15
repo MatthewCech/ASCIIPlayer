@@ -23,8 +23,8 @@ namespace ASCIIPlayer
     void Scramble();
     void SetLooping(bool isLooping);
     AudioFile *GetCurrent();
-    unsigned int GetPlaylistLength();
-    unsigned int GetPlaylistPos();
+    size_t GetPlaylistLength();
+    size_t GetPlaylistPos();
 
   private:
     // Private member functions
@@ -32,7 +32,7 @@ namespace ASCIIPlayer
     
     // Variables
     std::vector<AudioFile*> playlist_; // Holds songs to be played.
-    unsigned int activeIndex_;         // Active index into the playlist.
+    std::size_t activeIndex_;          // Active index into the playlist.
     bool looping_;                     // Are we looping this playlist?
 
     // Callback info.
@@ -205,14 +205,14 @@ namespace ASCIIPlayer
 
 
   // Get the legnth of the playlist. (song count)
-  template<typename T> unsigned int Playlist<T>::GetPlaylistLength()
+  template<typename T> size_t Playlist<T>::GetPlaylistLength()
   {
     return static_cast<unsigned int>(playlist_.size());
   }
 
 
   // Get the current song's location in the playlist.
-  template<typename T> unsigned int Playlist<T>::GetPlaylistPos()
+  template<typename T> size_t Playlist<T>::GetPlaylistPos()
   {
     return activeIndex_;
   }
