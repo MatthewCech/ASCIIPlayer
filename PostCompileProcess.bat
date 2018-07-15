@@ -1,4 +1,5 @@
 @echo off
+:: Previously called "AddIconMoveResourcesvs2017.bat"
 echo -- [ APPLYING TO 32-BIT DEBUG ] --
 IF EXIST bin_x86_Debug_vs2017 (
   call "Build/RH/ResourceHacker.exe" -addoverwrite "bin_x86_Debug_vs2017/ascii_player.exe", "bin_x86_Debug_vs2017/ascii_player.exe", "Resources/ASCII_Player.ico", ICONGROUP, MAINICON, 0
