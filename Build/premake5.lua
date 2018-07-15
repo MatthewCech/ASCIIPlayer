@@ -2,6 +2,11 @@
 -- Based on Premake GLFW demo courtesy of JohannesMP
 -- https://github.com/JohannesMP
 
+function os.winSdkVersion()
+  local reg_arch = iif( os.is64bit(), "\\Wow6432Node\\", "\\" )
+  local sdk_version = os.getWindowsRegistry( "HKLM:SOFTWARE" .. reg_arch .."Microsoft\\Microsoft SDKs\\Windows\\v10.0\\ProductVersion" )
+  if sdk_version ~= nil then return sdk_version end
+end
 
 -- Variable definition: CHANGE THESE TO MODIFY PROJECT NAME
 -- Brief reminder: This is actual lua, functions and whatnot are totally allowed.
@@ -52,8 +57,8 @@ workspace "ASCII_Player"                      -- Solution Name
         linkoptions { "-rpath @executable_path/lib" }
     
     filter {"system:windows", "action:vs*"}
-        linkoptions   { "/ignore:4099" }      -- Ignore library pdb warnings when running in debug
-        systemversion("10.0.15063.0") -- windows 10 SDK
+        linkoptions   { "/ignore:4099" }          -- Ignore library pdb warnings when running in debug
+        systemversion(os.winSdkVersion() .. ".0") -- windows 10 SDK
 
     filter {} -- clear filter   
 

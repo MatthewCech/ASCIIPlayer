@@ -2,5 +2,11 @@ A lightweight command-line audio visualizer allowing you to play all music forma
 
 Looking for a stable build? Head over to www.asciiplayer.com! This repo is acively in-work, and may not necessarily be functional at any given time on its own.
 
-ToDo:
-- Add usage instructions (Drag and drop onto the executable, really)
+
+Internal Wishlist / ToDo:
+- Move default overlay to ASCII class
+- Create "Clould-esque" visualizer
+
+User-facing Wishlist / ToDo:
+- Add usage instructions in-app (Drag and drop onto the executable, really)
+- Remotely pulls update and version information for asciiplayer!
