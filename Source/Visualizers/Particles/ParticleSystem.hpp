@@ -86,6 +86,7 @@ public:
   float GetPosY()                     { return posY_; }
   size_t GetMaxParticles()            { return maxParticles_; }
   int GetSpawnDelay()                 { return spawnDelay_; }
+  void SetPos(float x, float y)       { posX_ = x; posY_ = y; }
   void SetPosX(float x)               { posX_ = x; }
   void SetPosY(float y)               { posY_ = y; }
   void SetMaxParticles(size_t max)    { maxParticles_ = max; }

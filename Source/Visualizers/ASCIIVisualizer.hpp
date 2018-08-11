@@ -21,7 +21,7 @@ namespace ASCIIPlayer
 
     // Member Functions
     virtual bool Update(float* data) ABSTRACT;
-    virtual void OnResize(int newWidth, int newHeight) {  } // Implement this some day.
+    virtual void OnResize(int newWidth, int newHeight) {  } // Implement this some day. Used for more than just resizing - call from the constructor too perhaps to init it? This is effectively a re-init.
 
     // Pre-defined, but virtual functions. 
     // Can be fiddled with if you want, but defaults are reasonable.
