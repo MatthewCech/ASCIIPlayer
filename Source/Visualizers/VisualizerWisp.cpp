@@ -2,7 +2,6 @@
 #include <math.h>
 
 
-
 namespace ASCIIPlayer
 {
   // Ctor - hide the cursor and set up.
@@ -89,7 +88,6 @@ namespace ASCIIPlayer
   }
 
 
-  // Member functions
   bool VisualizerWisp::Update(float* data)
   {
     // Variables

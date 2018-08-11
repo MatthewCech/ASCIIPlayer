@@ -2,7 +2,6 @@
 #include "ASCIIVisualizer.hpp"
 
 
-
 namespace ASCIIPlayer
 {
   class VisualizerWaveform : public ASCIIVisualizer
@@ -15,6 +14,5 @@ namespace ASCIIPlayer
 		bool Update(float* data);
     int width_;
     int height_;
-
   };
 }

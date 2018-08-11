@@ -6,6 +6,7 @@
 
 namespace ASCIIPlayer
 {
+  // Derived system from base particle system.
   VisualSystem::VisualSystem(float x, float y)
     : ParticleSystem <std::pair<RConsole::Color, char>>(30, 200, 10, true, std::make_pair(RConsole::GREY, 'p'))
     , index_(0)
@@ -14,6 +15,7 @@ namespace ASCIIPlayer
     posY_ = y;
   }
 
+  // Run at the end of particle systems
   void VisualSystem::OnUpdateEnd()
   {
     for (auto& part : ParticleSystem<std::pair<RConsole::Color, char>>::particles_)
@@ -30,6 +32,7 @@ namespace ASCIIPlayer
     }
   }
 
+
   // Run once
   void VisualSystem::AdjustParticle(Particle<std::pair<RConsole::Color, char>> &p)
   {
@@ -38,6 +41,7 @@ namespace ASCIIPlayer
 
     p.Data.second = static_cast<unsigned char>((rand() % (255 - 32)) + 32);
   }
+
 
   // Constructor
   VisualizerParticle::VisualizerParticle()

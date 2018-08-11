@@ -7,6 +7,7 @@
 
 namespace ASCIIPlayer
 {
+  // Custom particle system class for current visualizer
   class VisualSystem : public ParticleSystem<std::pair<RConsole::Color, char>>
   {
   public:
@@ -18,6 +19,8 @@ namespace ASCIIPlayer
     int index_;
   };
 
+
+  // A visualizer with a particle system driven by the music
   class VisualizerParticle : public ASCIIVisualizer
   {
   public:
@@ -30,7 +33,5 @@ namespace ASCIIPlayer
     int height_;
     VisualSystem vs1_;
     VisualSystem vs2_;
-    
   };
-    
 }

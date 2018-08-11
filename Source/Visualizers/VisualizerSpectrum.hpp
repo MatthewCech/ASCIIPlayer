@@ -2,7 +2,6 @@
 #include "ASCIIVisualizer.hpp"
 
 
-
 namespace ASCIIPlayer
 {
   class VisualizerSpectrum : public ASCIIVisualizer

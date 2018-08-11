@@ -2,10 +2,8 @@
 #include "VisualizerSpectrum.hpp"
 #include "Defines.hpp"
 
-
 #define DATA_SIZE 256
 #define OSCILATION_CAP 2048.0f
-
 
 
 namespace ASCIIPlayer

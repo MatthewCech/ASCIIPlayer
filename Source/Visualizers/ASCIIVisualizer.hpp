@@ -5,7 +5,6 @@
 #include <ConsoleUtils\console-utils.hpp>
 
 
-
 namespace ASCIIPlayer
 {
   class ASCIIVisualizer
