@@ -11,8 +11,10 @@ namespace ASCIIPlayer
     // Constructor
     VisualizerSpectrum();
 
-    // DrawBars
+    // Functions
     bool Update(float* data);
+    
+    // Internal Variables
     int width_;
     int height_;
     int side_offset_;
