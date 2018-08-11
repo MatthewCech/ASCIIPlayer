@@ -11,7 +11,7 @@ namespace ASCIIPlayer
 		VisualizerWaveform();// : Visualizer(32, aWaveform, "colorDefault") { };
 
     // DrawBars
-		bool Update(float* data);// { return false; };
+		bool Update(float* data);
     int width_;
     int height_;
   };

@@ -1,11 +1,11 @@
 #include "VisualizerDefault.hpp"
 #include <math.h>
-#include <thread>
 
 #define VERTICAL_PADDING 4
 #ifdef OS_WINDOWS
   #pragma warning(disable : 4996)
 #endif
+
 
 namespace ASCIIPlayer
 {

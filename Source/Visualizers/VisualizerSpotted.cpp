@@ -1,7 +1,6 @@
 #include "VisualizerSpotted.hpp"
 
 
-
 namespace ASCIIPlayer
 {
   // Constructor

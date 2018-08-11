@@ -1,5 +1,4 @@
 #include "VisualizerWaveform.hpp"
-//#include <ConsoleUtils\console-utils.hpp>
 
 
 namespace ASCIIPlayer
@@ -13,16 +12,27 @@ namespace ASCIIPlayer
     RConsole::Canvas::SetCursorVisible(false); 
   }
 
-  // DrawBars
+
+  // Draw Bars
+  // NOTE(mcech): Until there is a callback of sorts for the change of bars, I don't 
+  // intend to add any resize stuff on the grounds that this one should be as fast as possible.
   bool VisualizerWaveform::Update(float* data)
   {
-    int h2 = height_ / 2;
+    const char symbol = static_cast<unsigned char>(219); // Solid box character on windows. This doesn't really work well on different OSs.
+    const int halfHeight = height_ / 2;                  // Half-way point on the console visually
+    const int heightScalar = 6;                          // Arbitrary value determining the max vertical offset
+    const int heightMinimum = 2;                         // Arbitrary value determining smallest vertical offset
+
+    // For every X position, calculate the Y position based on waveform data and variables above.
     for (int i = 0; i < width_; ++i)
-      for (int j = 0; j < data[i] * 6 + 2; ++j)
+    {
+      for (int j = 0; j < data[i] * heightScalar + heightMinimum; ++j) // Y position
       {
-        RConsole::Canvas::Draw(static_cast<unsigned char>(219), static_cast<float>(i), static_cast<float>(h2 + j), RConsole::BLUE);
-        RConsole::Canvas::Draw(static_cast<unsigned char>(219), static_cast<float>(i), static_cast<float>(h2 - j), RConsole::LIGHTBLUE);
+        const int xPos = i;
+        RConsole::Canvas::Draw(symbol, i, halfHeight + j, RConsole::BLUE);
+        RConsole::Canvas::Draw(symbol, i, halfHeight - j, RConsole::LIGHTBLUE);
       }
+    }
 
     return true;
   }

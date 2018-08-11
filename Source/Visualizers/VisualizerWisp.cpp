@@ -2,7 +2,6 @@
 #include <math.h>
 
 
-
 namespace ASCIIPlayer
 {
   // Ctor - hide the cursor and set up.
@@ -89,7 +88,6 @@ namespace ASCIIPlayer
   }
 
 
-  // Member functions
   bool VisualizerWisp::Update(float* data)
   {
     // Variables
@@ -104,6 +102,7 @@ namespace ASCIIPlayer
       rlutil::cls();
       lastHeight_ = height;
       lastWidth_ = width;
+      RConsole::Canvas::SetCursorVisible(false);
       return false;
     }
 
@@ -143,10 +142,10 @@ namespace ASCIIPlayer
 		  }
 		  else if (frameDeleay_ == frameDelayMax_)
 		  {
-		  prev1_ = static_cast<float *>(memcpy(prev1_, data, prevSize_));
-				  offsetX1_ = offsetX_;
-				  offsetY1_ = offsetY_;
-		  frameDeleay_ = 0;
+		    prev1_ = static_cast<float *>(memcpy(prev1_, data, prevSize_));
+		    offsetX1_ = offsetX_;
+			  offsetY1_ = offsetY_;
+		    frameDeleay_ = 0;
 		  }
     }
 
