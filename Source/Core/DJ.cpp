@@ -32,8 +32,10 @@ namespace ASCIIPlayer
     , isJumpingPos_(false)
 	  , lastVolumeChange_(0)
     , requestUIActive_(false)
+    , windowWidth_()
+    , windowHeight_()
   {
-    //!TODO: HANDLE OVERLAY CONFIRGUATION
+    // TODO(mcech): HANDLE OVERLAY CONFIRGUATION
     if (config_.DJOverlayID == "some name or something")
       overlay_ = new DefaultOverlay();
     else // default
@@ -49,6 +51,7 @@ namespace ASCIIPlayer
     // Set visualizer
     VisualizerSet(config_.DJVisualizerID);
 
+
     // Looping?
     if (config_.DJLooping)
       playlist_.SetLooping(true);
@@ -57,6 +60,13 @@ namespace ASCIIPlayer
 
     // Set volume
     VolumeSet(config_.VolumeDefault);
+
+    // Now that it's all done, get the width and height
+    if (visualizer_ != nullptr)
+    {
+      windowWidth_ = visualizer_->Width();
+      windowHeight_ = visualizer_->Height();
+    }
 
     // Done!
     DEBUG_PRINT("== DJ done with setup- Ready to accept song requests! ==");
@@ -102,6 +112,17 @@ namespace ASCIIPlayer
           if (!paused_)
             FillSongData(visualizerDataArray_, visaulizerDataSize_, FMOD_DSP_FFT_WINDOW_RECT);
           
+          // Determine if the window size changed at all.
+          int width = visualizer_->Width();
+          int height = visualizer_->Height();
+          if (windowWidth_ != width || windowHeight_ != height)
+          {
+            windowWidth_ = width;
+            windowHeight_ = height;
+            visualizer_->OnResize(width, height);
+          }
+
+          // Update and post-update functions
           visualizer_->Update(visualizerDataArray_);
           visualizer_->UpdatePost();
         }

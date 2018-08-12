@@ -1,5 +1,5 @@
 #pragma once
-#include "ASCIIVisualizer.hpp"
+#include "Visualizers/ASCIIVisualizer.hpp"
 #include "Particles/ParticleSystem.hpp"
 #include "Particles/Particle.hpp"
 #include <vector>

@@ -1,7 +1,6 @@
 // Default vizualizer if nothing else is defined.
 #pragma once
-#include "ASCIIVisualizer.hpp"
-
+#include "Visualizers/ASCIIVisualizer.hpp"
 
 
 namespace ASCIIPlayer

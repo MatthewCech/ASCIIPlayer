@@ -3,7 +3,7 @@
 #include "AudioSystem.hpp"
 #include "Defines.hpp"
 #include "Playlist.hpp"
-#include "Visualizers/ASCIIVisualizer.hpp"
+#include "Visualizers/Visualizer.hpp"
 #include "DJConfig.hpp"
 #include "Overlays/ASCIIOverlay.hpp"
 #include <vector>
@@ -53,7 +53,7 @@ namespace ASCIIPlayer
     Playlist<DJ> playlist_;       // Contains the AudioFile objects.
     AudioSystem audioSystem_;     // The sound system to play the audio files.
     std::string visualizerName_;  // The name of the current visualizer.
-    ASCIIVisualizer *visualizer_; // The visualizer to display the playing data.
+    Visualizer *visualizer_;      // The visualizer to display the playing data.
     ASCIIOverlay *overlay_;       // The overlay for the visualizer
     DJConfig config_;             // The proivded config for the DJ.
 
@@ -67,6 +67,8 @@ namespace ASCIIPlayer
     AudioDataStyle visualizerDataStyle_; // The style of data for the audio visualizer
     float *visualizerDataArray_;         // Data used for the visualizer;
 	  long long lastVolumeChange_;         // The last time the volume was changed, in ms
+    int windowWidth_;                    // Width of the display window the DJ is operating in
+    int windowHeight_;                   // Height of the display window the DJ is operating in
 
     // Visualizer Switching w/ templates
     template <typename T>
@@ -86,11 +88,15 @@ namespace ASCIIPlayer
       visualizerDataArray_ = new float[visaulizerDataSize_];
       memset(visualizerDataArray_, 0, visaulizerDataSize_);
     }
+
+    // Keeps track of a given visualizer
     struct VisualizerInfo
     {
       std::string Name;
       std::function<void(DJ&)> Func;
     };
+
+    // Holds visualizer information
     std::vector<VisualizerInfo> visualizers_;
   };
 }
