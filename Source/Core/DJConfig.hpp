@@ -13,8 +13,8 @@ namespace ASCIIPlayer
     bool         DJLooping               = true;      // Does it loop?
     bool         DJOverlayAlwaysOn       = false;     // A request for having the UI on all the time.
     unsigned int DJCPULoadReductionDelay = 400;       // Specifies number of microseconds to sleep each loop.
-    unsigned int SkipForwardSeconds      = 20;        // Seconds to go forwards when skipping. 
-    unsigned int SkipBackwardSeconds     = 20;        // Seconds to go backwards when skipping.
+    unsigned int SkipForwardSeconds      = 15;        // Seconds to go forwards when skipping. 
+    unsigned int SkipBackwardSeconds     = 15;        // Seconds to go backwards when skipping.
     unsigned int DJChannelCount          = 10;        // The number of channels for the DJ to have.
     std::string  DJVisualizerID          = "wisp";    // ID of the visualizer to use.
     std::string  DJOverlayID             = "default"; // ID of the info overlay to use.
