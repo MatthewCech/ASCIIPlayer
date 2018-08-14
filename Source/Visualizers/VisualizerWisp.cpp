@@ -7,8 +7,8 @@ namespace ASCIIPlayer
   // Ctor - hide the cursor and set up.
   VisualizerWisp::VisualizerWisp()
     : ASCIIVisualizer(64, AUDIODATA_SPECTRUM)
-    , lastWidth_(CONSOLE_WIDTH_FUNC)
-    , lastHeight_(CONSOLE_HEIGHT_FUNC)
+    , width_(CONSOLE_WIDTH_FUNC)
+    , height_(CONSOLE_HEIGHT_FUNC)
     , frameDelayMax_(5)
     , frameDeleay_(0)
     , offsetX_(0)
@@ -87,29 +87,21 @@ namespace ASCIIPlayer
     }
   }
 
-  void OnResize(int newWidth, int newHeight)
+  // Called when resizing
+  void VisualizerWisp::OnResize(int newWidth, int newHeight)
   {
-
+    RConsole::Canvas::ReInit(newWidth, newHeight);
+    RConsole::Canvas::ForceClearEverything();
+    width_ = newWidth;
+    height_ = newHeight;
+    RConsole::Canvas::SetCursorVisible(false);
   }
 
   // Updates the visualizer w/ new audiodata
   bool VisualizerWisp::Update(float* data)
   {
     // Variables
-    const int width{ CONSOLE_WIDTH_FUNC };                      // Console Width
-    const int height{ CONSOLE_HEIGHT_FUNC };                    // Console Height
     const int dataSize{ static_cast<int>(GetAudioDataSize()) }; // Width of data for this loop
-
-    // Re-init if needed
-    if (lastHeight_ != height || lastWidth_ != width)
-    {
-      RConsole::Canvas::ReInit(width, height);
-      rlutil::cls();
-      lastHeight_ = height;
-      lastWidth_ = width;
-      RConsole::Canvas::SetCursorVisible(false);
-      return false;
-    }
 
     // Draw primary shape with 3 frames of fade, fade drawn from most to least faded.
 	  const float lowBinValues { (data[0] + data[1]) / 2 };
@@ -117,10 +109,10 @@ namespace ASCIIPlayer
 	  offsetY_ += rand2_ * (lowBinValues) * .2f;
 	  offsetX_ *= .985f;
 	  offsetY_ *= .985f;
-    DrawSplit(dataSize, prev3_, width, height, static_cast<unsigned char>(176), offsetX3_, offsetY3_, 1.4f, 1.0f); // most faded
-    DrawSplit(dataSize, prev2_, width, height, static_cast<unsigned char>(177), offsetX2_, offsetY2_, 1.1f, .8f); // mid faded
-    DrawSplit(dataSize, prev1_, width, height, static_cast<unsigned char>(178), offsetX1_, offsetY1_, .8f, .6f); // least faded
-    DrawSplit(dataSize, data, width, height, static_cast<unsigned char>(219), offsetX_, offsetY_, .5f, .4f);   // current
+    DrawSplit(dataSize, prev3_, width_, height_, static_cast<unsigned char>(176), offsetX3_, offsetY3_, 1.4f, 1.0f); // most faded
+    DrawSplit(dataSize, prev2_, width_, height_, static_cast<unsigned char>(177), offsetX2_, offsetY2_, 1.1f, .8f); // mid faded
+    DrawSplit(dataSize, prev1_, width_, height_, static_cast<unsigned char>(178), offsetX1_, offsetY1_, .8f, .6f); // least faded
+    DrawSplit(dataSize, data, width_, height_, static_cast<unsigned char>(219), offsetX_, offsetY_, .5f, .4f);   // current
 
     // Delayed updating 
 	  if (++moveDelay_ > moveDelayMax_)

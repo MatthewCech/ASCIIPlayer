@@ -18,8 +18,8 @@ namespace ASCIIPlayer
 
   private:
     // Variables
-    int lastWidth_;
-    int lastHeight_;
+    int width_;
+    int height_;
     
 	  // Previous info
     float *prev1_;
