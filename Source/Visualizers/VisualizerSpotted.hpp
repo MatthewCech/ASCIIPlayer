@@ -11,8 +11,9 @@ namespace ASCIIPlayer
     // Constructor
     VisaulizerSpotted();
 
-    // DrawBars
+    // Member functions
     bool Update(float* data);
+    void OnResize(int newWidth, int newHeight);
   };
 }
 

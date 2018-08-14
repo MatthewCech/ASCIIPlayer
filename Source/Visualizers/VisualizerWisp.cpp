@@ -34,7 +34,7 @@ namespace ASCIIPlayer
   // Draw the split center formation
   void DrawSplit(int dataSize, float *data, int width, int height, unsigned char drawChar, float offsetX = 0, float offsetY = 0, float SCALAR_TO_CHANGE = 1.5, float horizontalScalar = 1.0f)
   { 
-	// Calculate dependant values and precompute values.
+	  // Calculate dependant values and precompute values.
     const int audioDataWidth{ static_cast<int>(dataSize / 2.5 - 1) };                              // Audio data width we use
     const int centerOffsetH = (width - audioDataWidth) / 2 < 0 ? 0 : (width - audioDataWidth) / 2; // Horizontal Offset
     const int halfHeight{ height / 2 };                                                            // Vertical Offset
@@ -87,7 +87,12 @@ namespace ASCIIPlayer
     }
   }
 
+  void OnResize(int newWidth, int newHeight)
+  {
 
+  }
+
+  // Updates the visualizer w/ new audiodata
   bool VisualizerWisp::Update(float* data)
   {
     // Variables
@@ -117,6 +122,7 @@ namespace ASCIIPlayer
     DrawSplit(dataSize, prev1_, width, height, static_cast<unsigned char>(178), offsetX1_, offsetY1_, .8f, .6f); // least faded
     DrawSplit(dataSize, data, width, height, static_cast<unsigned char>(219), offsetX_, offsetY_, .5f, .4f);   // current
 
+    // Delayed updating 
 	  if (++moveDelay_ > moveDelayMax_)
 	  {
 		  rand1_ = static_cast<float>(rand() % 20 - 10);

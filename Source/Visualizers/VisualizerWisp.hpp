@@ -14,6 +14,7 @@ namespace ASCIIPlayer
 
     // Member functions
     bool Update(float* data);
+    void OnResize(int newWidth, int newHeight);
 
   private:
     // Variables

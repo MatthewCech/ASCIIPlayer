@@ -8,7 +8,7 @@
 
 namespace ASCIIPlayer
 {
-  //Constructor
+  // Constructor
   VisualizerSpectrum::VisualizerSpectrum() 
     : ASCIIVisualizer(DATA_SIZE, AUDIODATA_SPECTRUM)
     , width_(RConsole::Canvas::GetConsoleWidth())
@@ -24,6 +24,19 @@ namespace ASCIIPlayer
     RConsole::Canvas::SetCursorVisible(false);
   }
 
+  // Handles window resizing
+  void VisualizerSpectrum::OnResize(int newWidth, int newHeight)
+  {
+    RConsole::Canvas::ReInit(newWidth, newHeight);
+    RConsole::Canvas::ForceClearEverything();
+    height_ = newWidth;
+    width_ = newHeight;
+    pos_1_x_ = (static_cast<float>(side_offset_));
+    pos_1_y_ = (static_cast<float>(height_ - 1));
+    pos_2_x_ = (static_cast<float>(width_ - side_offset_));
+    pos_2_y_ = (static_cast<float>(0));
+    RConsole::Canvas::SetCursorVisible(false);
+  }
 
   // Draw vertical spectrum based on frequencies
   bool VisualizerSpectrum::Update(float* data)
@@ -32,23 +45,6 @@ namespace ASCIIPlayer
     long long curr_time = MS_SINCE_EPOCH;
     const double delay = (static_cast<double>(curr_time) - static_cast<double>(lastTime_)) / 1000.0;
     lastTime_ = curr_time;
-
-    // Re-init if needed
-    const int consoleWidth{ CONSOLE_WIDTH_FUNC };
-    const int consoleHeight{ CONSOLE_HEIGHT_FUNC };
-    if (width_ != consoleWidth || height_ != consoleHeight)
-    {
-      RConsole::Canvas::ReInit(consoleWidth, consoleHeight);
-      rlutil::cls();
-      height_ = consoleHeight;
-      width_ = consoleWidth;
-      pos_1_x_ = (static_cast<float>(side_offset_));
-      pos_1_y_ = (static_cast<float>(height_ - 1));
-      pos_2_x_ = (static_cast<float>(width_ - side_offset_));
-      pos_2_y_ = (static_cast<float>(0));
-      RConsole::Canvas::SetCursorVisible(false);
-      return false;
-    }
 
     // Establish offsets and constants
     const int vertical_offset = height_ / 2;

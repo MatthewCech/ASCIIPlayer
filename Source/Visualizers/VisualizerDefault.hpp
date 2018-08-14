@@ -11,8 +11,9 @@ namespace ASCIIPlayer
     // Constructor
     VisualizerDefault();
 
-    // DrawBars
+    // Member functions
     bool Update(float* data);
+    void OnResize(int newWidth, int newHeight);
 
   private:
     size_t height_;

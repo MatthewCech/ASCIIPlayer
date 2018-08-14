@@ -58,7 +58,7 @@ namespace ASCIIPlayer
   void VisualizerParticle::OnResize(int newWidth, int newHeight)
   {
     RConsole::Canvas::ReInit(newWidth, newHeight);
-    rlutil::cls();
+    RConsole::Canvas::ForceClearEverything();
     width_ = newWidth;
     height_ = newHeight;
     vs1_.SetPos(width_ / 2.0f, height_ / 4.0f);
@@ -69,8 +69,6 @@ namespace ASCIIPlayer
   // Primary update loop for particle
   bool VisualizerParticle::Update(float* data)
   {
-    const int consoleWidth{ CONSOLE_WIDTH_FUNC };
-    const int consoleHeight{ CONSOLE_HEIGHT_FUNC };
 
     if (data[0] + data[10] + data[20] == 0)
       return true;

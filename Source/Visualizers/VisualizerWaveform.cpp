@@ -6,16 +6,23 @@ namespace ASCIIPlayer
   // Constructor
   VisualizerWaveform::VisualizerWaveform()
     : ASCIIVisualizer(RConsole::Canvas::GetConsoleWidth(), AUDIODATA_WAVEFORM)
-    , width_(RConsole::Canvas::GetConsoleWidth())
-    , height_(RConsole::Canvas::GetConsoleHeight())
+    , width_(CONSOLE_WIDTH_FUNC)
+    , height_(CONSOLE_HEIGHT_FUNC)
   {
     RConsole::Canvas::SetCursorVisible(false); 
   }
 
+  // Called when the window is resized
+  void VisualizerWaveform::OnResize(int newWidth, int newHeight)
+  {
+    RConsole::Canvas::ReInit(newWidth, newHeight);
+    RConsole::Canvas::ForceClearEverything();
+    width_ = newWidth;
+    height_ = newHeight;
+    RConsole::Canvas::SetCursorVisible(false);
+  }
 
   // Draw Bars
-  // NOTE(mcech): Until there is a callback of sorts for the change of bars, I don't 
-  // intend to add any resize stuff on the grounds that this one should be as fast as possible.
   bool VisualizerWaveform::Update(float* data)
   {
     const char symbol = static_cast<unsigned char>(219); // Solid box character on windows. This doesn't really work well on different OSs.
