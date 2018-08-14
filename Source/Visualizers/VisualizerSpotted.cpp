@@ -10,6 +10,12 @@ namespace ASCIIPlayer
 
   }
 
+  // Called when the console is resized
+  void VisaulizerSpotted::OnResize(int newWidth, int newHeight)
+  {
+
+  }
+
   // Establish cell-style spotted format.
   bool VisaulizerSpotted::Update(float* data)
   {

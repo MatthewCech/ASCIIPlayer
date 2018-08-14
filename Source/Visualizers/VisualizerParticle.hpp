@@ -27,8 +27,12 @@ namespace ASCIIPlayer
     // Constructor
     VisualizerParticle();
 
-    // DrawBars
+    // Methods
     bool Update(float* data);
+    void OnResize(int newWidth, int newHeight);
+
+  private:
+    // Variables
     int width_;
     int height_;
     VisualSystem vs1_;

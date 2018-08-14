@@ -54,23 +54,21 @@ namespace ASCIIPlayer
     RConsole::Canvas::SetCursorVisible(false);
   }
 
+  // Handle resizing 
+  void VisualizerParticle::OnResize(int newWidth, int newHeight)
+  {
+    RConsole::Canvas::ReInit(newWidth, newHeight);
+    RConsole::Canvas::ForceClearEverything();
+    width_ = newWidth;
+    height_ = newHeight;
+    vs1_.SetPos(width_ / 2.0f, height_ / 4.0f);
+    vs2_.SetPos(width_ / 2.0f, height_ / 4.0f);
+    RConsole::Canvas::SetCursorVisible(false);
+  }
 
   // Primary update loop for particle
   bool VisualizerParticle::Update(float* data)
   {
-    const int consoleWidth{ CONSOLE_WIDTH_FUNC };
-    const int consoleHeight{ CONSOLE_HEIGHT_FUNC };
-    if (width_ != consoleWidth || height_ != consoleHeight)
-    {
-      RConsole::Canvas::ReInit(consoleWidth, consoleHeight);
-      rlutil::cls();
-      height_ = consoleHeight;
-      width_ = consoleWidth;
-      vs1_.SetPos(width_ / 2.0f, height_ / 4.0f);
-      vs2_.SetPos(width_ / 2.0f, height_ / 4.0f);
-      RConsole::Canvas::SetCursorVisible(false);
-      return false;
-    }
 
     if (data[0] + data[10] + data[20] == 0)
       return true;

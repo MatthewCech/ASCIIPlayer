@@ -17,6 +17,15 @@ namespace ASCIIPlayer
     RConsole::Canvas::SetCursorVisible(false);
   }
 
+  // Is called when the window is resized.
+  void VisualizerDefault::OnResize(int newWidth, int newHeight)
+  {
+    RConsole::Canvas::ReInit(newWidth, newHeight);
+    RConsole::Canvas::ForceClearEverything();
+    height_ = newHeight;
+    RConsole::Canvas::SetCursorVisible(false);
+  }
+
   // Draw waveform based on updating
   bool VisualizerDefault::Update(float* data)
   {
