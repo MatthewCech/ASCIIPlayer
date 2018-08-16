@@ -35,6 +35,8 @@ namespace ASCIIPlayer
     if (offset < 0)
       offset = 0;
 
+    unsigned int asize = sizeof(data) * sizeof(float);
+
     // For every X position, calculate the Y position based on waveform data and variables above.
     for (int i = 0; i < width_ && i < startingWidth_; ++i)
     {

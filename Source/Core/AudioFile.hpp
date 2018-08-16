@@ -1,9 +1,8 @@
 // Audio file object for path and associated data required for streaming.
 #pragma once
 #include <string>
-#include "Defines.hpp"
 #include <unordered_map>
-
+#include "Defines.hpp"
 
 
 namespace ASCIIPlayer

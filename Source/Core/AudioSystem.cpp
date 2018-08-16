@@ -1,6 +1,6 @@
-#include "AudioSystem.hpp"
 #include <FMOD/fmod_errors.h>
 #include <RTest/RTest.hpp>
+#include "AudioSystem.hpp"
 
 
 namespace ASCIIPlayer

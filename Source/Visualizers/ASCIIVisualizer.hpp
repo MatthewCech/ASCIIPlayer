@@ -1,7 +1,7 @@
 #pragma once
-#include "Defines.hpp"
 #include <ConsoleUtils/console-utils.hpp>
 #include <Visualizers/Visualizer.hpp>
+#include "Defines.hpp"
 
 
 namespace ASCIIPlayer

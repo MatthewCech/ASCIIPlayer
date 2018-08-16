@@ -1,8 +1,7 @@
 #pragma once
-#include "FMOD/fmod.hpp" // Audio types
 #include <iostream>      // Debug printing
 #include <chrono>        // MS_SINCE_EPOCH
-
+#include "FMOD/fmod.hpp" // Audio types
 
 
   //////////////////////////////
@@ -15,7 +14,6 @@
 #ifdef _WIN32
   #define OS_WINDOWS
 #endif
-
 
 
   ///////////////////////////////////
@@ -33,7 +31,6 @@ using APUnique      = unsigned long long;
 #define MS_SINCE_EPOCH (std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count())
 
 
-
   ///////////
  // Enums //
 ///////////
@@ -44,7 +41,6 @@ enum AudioDataStyle
   
   AUDIODATA_NO_STYLE
 };
-
 
 
   //////////////////////////

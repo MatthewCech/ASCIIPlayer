@@ -1,7 +1,7 @@
-#include "Lobby.hpp"
-#include <exception>
 #include <thread>
-
+#include <exception>
+#include "Lobby.hpp"
+#include "UserStrings.hpp"
 
 // Menu heiarchy overview and defines
 #define ASCIIMENU_BASE "menuDefualt"
@@ -10,7 +10,6 @@
     #define ASCIIMENU_VISUALIZER "menuVisualizerSelection"
   #define ASCIIMENU_HELP "menuHelp"
     #define ASCIIMENU_HELP_INFO_BOX "menuHelpInfoBox"
-
 
 
 namespace ASCIIPlayer
@@ -242,7 +241,7 @@ namespace ASCIIPlayer
 
         RConsole::Canvas::DrawString(("[ argv0: " + argParser_[0]).c_str(), 0.0f, loc++, RConsole::DARKGREY);
         RConsole::Canvas::DrawString(("[ utime: " + std::to_string(hours) + "h " + std::to_string(minutes % 60) + "m " + std::to_string(seconds % 60) + "s").c_str(), 0.0f, loc++, RConsole::DARKGREY);
-        RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(averageFPS(fpsPrevStart_, fpsEnd_)) + " per second").c_str(), 0.0f, loc++, RConsole::DARKGREY);
+        RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(averageFPS(fpsPrevStart_, fpsEnd_)) + " " + Strings::DEBUG_PER_SECOND).c_str(), 0.0f, loc++, RConsole::DARKGREY);
       }
 
       // Draw menus and finalize drawing for menu overlay.
@@ -275,22 +274,29 @@ namespace ASCIIPlayer
     const size_t mod = (sizeof(osc) / sizeof(*osc));
 
     // Calcualte and wrap offsets for idle bar
-    std::string msg = "Waiting for songs ";
+    int verticalOffset = static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2 - 2);
+    std::string msg = Strings::STARTUP_PRIMARY_TEXT + " ";
     RConsole::Canvas::DrawString((msg
       + static_cast<char>(osc[(index) % mod])
       + static_cast<char>(osc[(index + 1) % mod])
       + static_cast<char>(osc[(index + 2) % mod])
       + static_cast<char>(osc[(index + 3) % mod])
       + static_cast<char>(osc[(index + 4) % mod])).c_str()
-      // Positoning and color...
+      // Positioning and color...
       , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>((msg.size() + 5)) / 2)
-      , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2 - 2)
+      , verticalOffset++
       , RConsole::WHITE);
 
-    std::string submsg = "(press ESC for menu)";
+    std::string submsg = Strings::STARTUP_SUBTEXT_LINE_1;
     RConsole::Canvas::DrawString(submsg.c_str()
       , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>(submsg.size()) / 2)
-      , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2)
+      , ++verticalOffset
+      , RConsole::WHITE);
+
+    std::string escMenu = Strings::STARTUP_SUBTEXT_LINE_2;
+    RConsole::Canvas::DrawString(escMenu.c_str()
+      , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>(escMenu.size()) / 2)
+      , ++verticalOffset
       , RConsole::WHITE);
   }
 
@@ -300,14 +306,14 @@ namespace ASCIIPlayer
   {
     if (__is_displaying_help_menu)
     {
-      std::string message = "Hmm, no message was set for this menu. You shouldn't see this!";
+      std::string message = Strings::MODAL_HELP_DEFAULT;
 
       if (__dialogue_type == GENERAL)
-        message = "ASCIIPlayer is a command-line program navigated exclusively by keyboard. If you want to play a song, you can drag it in to add it to the playlist, or select multiple and pass them as command line aguments!";
+        message = Strings::MODAL_HELP_GENERAL;
       else if (__dialogue_type == CONFIG)
-        message = "Not all configurations can be edited by the menu. ASCIIPlayer.conf is located next to the program executable, and can be opened with your default text editor via the menu 'EDIT' menu or by hand in the program folder.";
+        message = Strings::MODAL_HELP_CONFIG;
       else if (__dialogue_type == OPEN)
-        message = "Opening files with a dialogue box is not currently supported, but you can drag and drop single files into ASCIIPlayer to add them to the current playlist!";
+        message = Strings::MODAL_HELP_OPEN;
 
       __Display_Infobox(40, ASCIIMENU_HELP_INFO_BOX, message);
     }
@@ -337,7 +343,7 @@ namespace ASCIIPlayer
   {
     // Ensure we have a DJ active before any character commands are parsed!
     if (activeDJ_ == nullptr)
-      throw "You should have an active DJ to issue character commands";
+      throw Strings::ERROR_INPUT_NO_DJ;
 
     switch (c)
     {

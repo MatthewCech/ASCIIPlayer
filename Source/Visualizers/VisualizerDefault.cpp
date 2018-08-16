@@ -1,5 +1,5 @@
-#include "VisualizerDefault.hpp"
 #include <math.h>
+#include "VisualizerDefault.hpp"
 
 #define VERTICAL_PADDING 4
 #ifdef OS_WINDOWS
