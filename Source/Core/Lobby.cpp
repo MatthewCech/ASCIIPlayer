@@ -1,8 +1,7 @@
+#include <thread>
+#include <exception>
 #include "Lobby.hpp"
 #include "UserStrings.hpp"
-#include <exception>
-#include <thread>
-
 
 // Menu heiarchy overview and defines
 #define ASCIIMENU_BASE "menuDefualt"
@@ -11,7 +10,6 @@
     #define ASCIIMENU_VISUALIZER "menuVisualizerSelection"
   #define ASCIIMENU_HELP "menuHelp"
     #define ASCIIMENU_HELP_INFO_BOX "menuHelpInfoBox"
-
 
 
 namespace ASCIIPlayer

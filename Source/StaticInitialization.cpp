@@ -26,7 +26,7 @@ std::map<std::string, Container *> MenuRegistry::registry_ = std::map<std::strin
   ///////////////////////////////////
  // static-init-console-utils.cpp //
 ///////////////////////////////////
-#include "ConsoleUtils\console-utils.hpp"
+#include "ConsoleUtils/console-utils.hpp"
 
 
 // console static inits

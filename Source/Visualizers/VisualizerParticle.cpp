@@ -1,5 +1,5 @@
-#include "VisualizerParticle.hpp"
 #include <cmath>
+#include "VisualizerParticle.hpp"
 
 #define DATA_SIZE 128
 

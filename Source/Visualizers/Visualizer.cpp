@@ -1,2 +1,2 @@
-#include "Visualizers/Visualizer.hpp"
+#include "Visualizer.hpp"
 

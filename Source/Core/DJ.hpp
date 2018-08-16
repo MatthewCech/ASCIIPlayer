@@ -1,13 +1,13 @@
 //Custom DJ class for managing the Playlist, SoundSystem, and Visualizer
 #pragma once
+#include <vector>
+#include <string>
 #include "AudioSystem.hpp"
 #include "Defines.hpp"
 #include "Playlist.hpp"
 #include "Visualizers/Visualizer.hpp"
 #include "DJConfig.hpp"
 #include "Overlays/ASCIIOverlay.hpp"
-#include <vector>
-#include <string>
 
 
 

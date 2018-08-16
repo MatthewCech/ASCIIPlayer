@@ -1,3 +1,6 @@
+#include <chrono>
+#include <vector>
+#include <typeindex>
 #include "DJ.hpp"
 #include "Defines.hpp"
 #include "UserStrings.hpp"
@@ -7,12 +10,8 @@
 #include "Visualizers/VisualizerSpectrum.hpp"
 #include "Visualizers/VisualizerParticle.hpp"
 #include "Overlays/DefaultOverlay.hpp"
-#include <chrono>
-#include <typeindex>
-#include <vector>
 
 #define REGISTER_VISUALIZER(n, t) do{ visualizers_.push_back({ n, [](DJ& dj) { dj.setVisualizer<t>(); } }); } while(0)
-
 
 
 namespace ASCIIPlayer

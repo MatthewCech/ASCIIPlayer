@@ -1,8 +1,8 @@
 #pragma once
-#include "Visualizers/ASCIIVisualizer.hpp"
+#include <vector>
+#include "ASCIIVisualizer.hpp"
 #include "Particles/ParticleSystem.hpp"
 #include "Particles/Particle.hpp"
-#include <vector>
 
 
 namespace ASCIIPlayer

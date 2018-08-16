@@ -1,5 +1,5 @@
-#include "VisualizerWisp.hpp"
 #include <math.h>
+#include "VisualizerWisp.hpp"
 
 
 namespace ASCIIPlayer

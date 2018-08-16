@@ -3,6 +3,7 @@
 
 #define STR_TYPE static const std::string
 
+
 namespace Strings
 {
   STR_TYPE STARTUP_PRIMARY_TEXT = "Waiting for songs";

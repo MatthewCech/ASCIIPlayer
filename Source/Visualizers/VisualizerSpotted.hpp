@@ -1,6 +1,5 @@
 #pragma once
-#include "Visualizers/ASCIIVisualizer.hpp"
-
+#include "ASCIIVisualizer.hpp"
 
 
 namespace ASCIIPlayer

@@ -1,6 +1,6 @@
 #pragma once
-#include "ASCIIOverlay.hpp"
 #include <chrono>
+#include "ASCIIOverlay.hpp"
 
 
 namespace ASCIIPlayer

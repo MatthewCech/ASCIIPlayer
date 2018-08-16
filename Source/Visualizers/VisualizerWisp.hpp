@@ -1,7 +1,7 @@
 #pragma once
-#include "Visualizers/ASCIIVisualizer.hpp"
-#include "Overlays/ASCIIOverlay.hpp"
 #include <chrono>
+#include "ASCIIVisualizer.hpp"
+#include "Overlays/ASCIIOverlay.hpp"
 
 
 namespace ASCIIPlayer

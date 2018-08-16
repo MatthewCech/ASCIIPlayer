@@ -1,8 +1,7 @@
 #pragma once
 
-
-
 #define PARTICLE_LIFE_DEFAULT 100
+
 
 template <typename T> class Particle
 {
