@@ -5,7 +5,6 @@
 #include "Defines.hpp"
 
 
-
 namespace ASCIIPlayer
 {
   class AudioSystem
