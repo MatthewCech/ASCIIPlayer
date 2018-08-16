@@ -287,10 +287,23 @@ namespace ASCIIPlayer
       , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2 - 2)
       , RConsole::WHITE);
 
-    std::string submsg = "(press ESC for menu)";
+    std::string spacer = "- - -";
+    RConsole::Canvas::DrawString(spacer.c_str()
+      , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>(spacer.size()) / 2)
+      , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2) - 1
+      , RConsole::WHITE);
+
+
+    std::string submsg = "Drag in a song file or";
     RConsole::Canvas::DrawString(submsg.c_str()
       , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>(submsg.size()) / 2)
       , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2)
+      , RConsole::WHITE);
+
+    std::string escMenu = "press ESC for menu!";
+    RConsole::Canvas::DrawString(escMenu.c_str()
+      , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>(escMenu.size()) / 2)
+      , static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2) + 1
       , RConsole::WHITE);
   }
 
