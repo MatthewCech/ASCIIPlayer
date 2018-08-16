@@ -1,6 +1,6 @@
 // Playlist class to hold any number of files and manage shuffling/looping.
 #pragma once
-#include <vector>         // Underlying structure.
+#include <vector>
 #include "AudioFile.hpp"
 #include "Defines.hpp"
 

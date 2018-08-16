@@ -1,17 +1,17 @@
+#include <chrono>
+#include <vector>
+#include <typeindex>
 #include "DJ.hpp"
+#include "Defines.hpp"
+#include "UserStrings.hpp"
 #include "Visualizers/VisualizerDefault.hpp"
 #include "Visualizers/VisualizerWaveform.hpp"
 #include "Visualizers/VisualizerWisp.hpp"
 #include "Visualizers/VisualizerSpectrum.hpp"
 #include "Visualizers/VisualizerParticle.hpp"
 #include "Overlays/DefaultOverlay.hpp"
-#include <chrono>
-#include <typeindex>
-#include <vector>
-#include "Defines.hpp"
 
 #define REGISTER_VISUALIZER(n, t) do{ visualizers_.push_back({ n, [](DJ& dj) { dj.setVisualizer<t>(); } }); } while(0)
-
 
 
 namespace ASCIIPlayer
@@ -324,8 +324,8 @@ namespace ASCIIPlayer
     // Recursively set the visualizer to default. There should always be a default.
     VisualizerSet("default");
 
-    //!TODO: Replace with logging system for errors.
-    throw("Incorrect visualizer config provided!");
+    // TODO(mcech): Replace with logging system for errors.
+    throw(Strings::ERROR_VISUALIZER_CONFIG_INVALID);
   }
 
 

@@ -1,7 +1,7 @@
 #pragma once
+#include <list>
 #include "Particle.hpp"
 #include "Defines.hpp"
-#include <list>
 
 
 template <typename T> 

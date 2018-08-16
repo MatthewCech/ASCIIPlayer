@@ -1,7 +1,7 @@
-﻿#include "DefaultOverlay.hpp"
-#include <sstream>
+﻿#include <sstream>
 #include <ostream>
 #include <iomanip>
+#include "DefaultOverlay.hpp"
 
 
 namespace ASCIIPlayer

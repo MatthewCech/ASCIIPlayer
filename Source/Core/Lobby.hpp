@@ -1,11 +1,11 @@
 //The main program loop, for configuring the DJ. Low-usage blocking IO.
 #pragma once
-#include "DJConfig.hpp"
-#include "DJ.hpp"
 #include <string>
 #include <ArgParser/ArgParser.hpp>  
 #include <ASCIIMenus/menu-system.hpp>
 #include <ConsoleInput/console-input.hpp>
+#include "DJConfig.hpp"
+#include "DJ.hpp"
 
 
 namespace ASCIIPlayer
