@@ -22,7 +22,7 @@ namespace ASCIIPlayer
     , audioSystem_(config.DJChannelCount)
     , visualizer_(nullptr)
     , overlay_(nullptr)
-    , visaulizerDataSize_(64) // Not magic number, just default width
+    , visaulizerDataSize_(128) // Not magic number, just default width
     , visualizerDataStyle_(AUDIODATA_NO_STYLE)
     , visualizerDataArray_(nullptr)
     , config_(config)
@@ -108,7 +108,7 @@ namespace ASCIIPlayer
 
         if (visualizer_)
         {
-          // Only fill visualizer data if not paused.
+          // Only fill visualizer data if not .
           if (!paused_)
             FillSongData(visualizerDataArray_, visaulizerDataSize_, FMOD_DSP_FFT_WINDOW_RECT);
           

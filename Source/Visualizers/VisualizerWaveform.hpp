@@ -13,6 +13,7 @@ namespace ASCIIPlayer
     // DrawBars
 		bool Update(float* data);
     void OnResize(int newWidth, int newHeight);
+    int startingWidth_;
     int width_;
     int height_;
   };
