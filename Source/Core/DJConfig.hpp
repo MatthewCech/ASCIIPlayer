@@ -8,7 +8,7 @@ namespace ASCIIPlayer
   struct DJConfig
   {
     // Basic
-    float        VolumeDefault           = 0.8f;      // Default volume for the DJ to play at.
+    float        VolumeDefault           = 0.9f;      // Default volume for the DJ to play at.
     float        VolumeChangeAmount      = 0.1f;      // By how much we change the volume every time.
     bool         DJLooping               = true;      // Does it loop?
     bool         DJOverlayAlwaysOn       = false;     // A request for having the UI on all the time.

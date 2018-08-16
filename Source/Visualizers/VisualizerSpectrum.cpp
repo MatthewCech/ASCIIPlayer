@@ -29,8 +29,8 @@ namespace ASCIIPlayer
   {
     RConsole::Canvas::ReInit(newWidth, newHeight);
     RConsole::Canvas::ForceClearEverything();
-    height_ = newWidth;
-    width_ = newHeight;
+    width_ = newWidth;
+    height_ = newHeight;
     pos_1_x_ = (static_cast<float>(side_offset_));
     pos_1_y_ = (static_cast<float>(height_ - 1));
     pos_2_x_ = (static_cast<float>(width_ - side_offset_));
