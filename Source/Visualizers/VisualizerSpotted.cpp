@@ -1,11 +1,13 @@
 #include "VisualizerSpotted.hpp"
 
+#define SPOTTED_SIZE 128
+
 
 namespace ASCIIPlayer
 {
   // Constructor
   VisaulizerSpotted::VisaulizerSpotted()
-    : ASCIIVisualizer(RConsole::Canvas::GetConsoleWidth(), AUDIODATA_SPECTRUM)
+    : ASCIIVisualizer(SPOTTED_SIZE, AUDIODATA_SPECTRUM)
   {
 
   }
@@ -19,6 +21,7 @@ namespace ASCIIPlayer
   // Establish cell-style spotted format.
   bool VisaulizerSpotted::Update(float* data)
   {
+    RConsole::Canvas::Draw('=', 2, 2, RConsole::LIGHTMAGENTA);
     return true;
   }
 }
