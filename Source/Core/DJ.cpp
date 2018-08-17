@@ -248,16 +248,32 @@ namespace ASCIIPlayer
 
 
   // Next song in playlist
+  // NOTE(mcech): Play enforced for smooth transition. Resumes being paused if it was previously.
   void DJ::SongNext()
   {
+    bool wasPaused = IsPaused();
+
+    Play();
     playlist_.Next();
+    Play();
+
+    if (wasPaused)
+      Pause();
   }
 
 
-  // Previous song in playlist
+  // Previous song in playlist.
+  // NOTE(mcech): Play enforced for smooth transition. Resumes being paused if it was previously.
   void DJ::SongPrev()
   {
+    bool wasPaused = IsPaused();
+
+    Play();
     playlist_.Back(audioSystem_);
+    Play();
+
+    if (wasPaused)
+      Pause();
   }
 
 
@@ -280,7 +296,12 @@ namespace ASCIIPlayer
       return;
 
     const unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
-    audioSystem_.SetCurrentPosition(*currSong_, posMS - config_.SkipForwardSeconds * SONG_TIME_SCALE_FOR_SECONDS);
+
+    int location = static_cast<int>(posMS) - config_.SkipForwardSeconds * SONG_TIME_SCALE_FOR_SECONDS;
+    if (location < 0)
+      location = 0;
+
+    audioSystem_.SetCurrentPosition(*currSong_, location);
     isJumpingPos_ = true;
   }
 

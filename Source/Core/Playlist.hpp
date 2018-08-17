@@ -58,7 +58,6 @@ namespace ASCIIPlayer
   // Adds a new audiofile to a playlist.
   template<typename T> void Playlist<T>::Add(AudioFile *file)
   {
-    
     playlist_.push_back(file);
     
     // Update to the added song and update the list
