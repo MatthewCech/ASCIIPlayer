@@ -17,7 +17,7 @@ namespace ASCIIPlayer
     ///////////////////////////
    // File-specific Globals //
   ///////////////////////////
-  //!TODO: Make this entire section not a thing.
+  // TODO(mcech): Make this entire section not a thing.
   //
   // ...not a brilliant solution, should use member function callback support.
   // Do not keep adding to this, just rework the menu system to include member functions,
@@ -25,8 +25,9 @@ namespace ASCIIPlayer
   //
 
   // Static local variables for this file only.
-  static bool __is_displaying_help_menu = false; // For displaying the help menu.
-  static DJ* __current_dj = nullptr;             // A pointer to the current DJ exposed.
+  static bool __menu_navigate_back_next_update = false; // For exiting the menu
+  static bool __is_displaying_help_menu = false;        // For displaying the help menu.
+  static DJ* __current_dj = nullptr;                    // A pointer to the current DJ exposed.
 
   // Enums
   static enum WhichDialogueEnum 
@@ -56,7 +57,7 @@ namespace ASCIIPlayer
     // Move menu options accordingly
     Container *c = MenuRegistry::GetContainer(containerName);
     c->SetPosition(static_cast<size_t>(right - c->GetSelected().Label.size() - 1)
-                 , static_cast<size_t>(bottom - 2));
+      , static_cast<size_t>(bottom - 2));
 
     // Draw box background
     for (int i = static_cast<int>(left); i < right; ++i)
@@ -72,9 +73,9 @@ namespace ASCIIPlayer
         offset += 1;
 
       RConsole::Canvas::DrawString(std::string(str.c_str() + offset, str_width).c_str()
-          , static_cast<int>(left + 2)
-          , static_cast<int>(top + 2 + cycles)
-          , RConsole::WHITE);
+        , static_cast<int>(left + 2)
+        , static_cast<int>(top + 2 + cycles)
+        , RConsole::WHITE);
 
       offset += str_width;
       ++cycles;
@@ -152,8 +153,8 @@ namespace ASCIIPlayer
     fileMenu->AddItem("Open", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = OPEN; });
     fileMenu->AddItem("Save Settings", "");
     fileMenu->AddItem("Info", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = GENERAL; });
-    // TODO(mcech): fileMenu->AddItem("Hide", "", []() { /* Waiting on AddItem templatization */ });
-    fileMenu->AddItem("Quit", "", []() { exit(0); }); //!TODO Confirmation of Destructive Action - Dialogue that takes lambda for yes.
+    fileMenu->AddItem("Hide", "", []() { __menu_navigate_back_next_update = true; }); // TODO(mcech): Convert to template 
+    fileMenu->AddItem("Quit", "", []() { exit(0); });                                 // TODO(mcech): Confirmation of Destructive Action - Dialogue that takes lambda for yes.
 
     Container *editMenu = Container::Create(ASCIIMENU_EDIT);
     editMenu->SetOrientation(ASCIIMenus::VERTICAL);
@@ -215,10 +216,22 @@ namespace ASCIIPlayer
     size_t loops = 0;
     while (lobbyHosting_)
     {
-      __current_dj = activeDJ_; //!TODO: Make this line not a thing.
+      // TODO(mcech): Make this line not a thing.
+      __current_dj = activeDJ_; 
+
+      // Loop tracking
       fpsPrevStart_ = fpsStart_;
       fpsStart_ = MS_SINCE_EPOCH;
+
       // ============================ Start primary loop ============================
+
+      // TODO(mcech): Make this line not a thing.
+      if (__menu_navigate_back_next_update)
+      {
+        while (menuSystems_.Back()) {  }
+        __menu_navigate_back_next_update = false;
+        menuVisible_ = menuSystems_.IsVisible();
+      }
 
       // Idle screen if necessary
       if (activeDJ_->GetPlaylistSize() == 0)
