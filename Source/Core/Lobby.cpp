@@ -152,20 +152,20 @@ namespace ASCIIPlayer
     fileMenu->AddItem("Open", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = OPEN; });
     fileMenu->AddItem("Save Settings", "");
     fileMenu->AddItem("Info", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = GENERAL; });
-    fileMenu->AddItem("Hide", "", []() {  });
+    // TODO(mcech): fileMenu->AddItem("Hide", "", []() { /* Waiting on AddItem templatization */ });
     fileMenu->AddItem("Quit", "", []() { exit(0); }); //!TODO Confirmation of Destructive Action - Dialogue that takes lambda for yes.
 
     Container *editMenu = Container::Create(ASCIIMENU_EDIT);
     editMenu->SetOrientation(ASCIIMenus::VERTICAL);
     editMenu->SetPosition(9, 1);
 
-    //!TODO: Templatize the AddItem function in order to allow it to access member function content!
+    // TODO(mcech): Templatize the AddItem function in order to allow it to access member function content!
     // Why? Well, this will let this function use 'this' as a capture group, and from there the
     // contents of this class can be used! This will be awesome for live-reloading ASCIIPlayer
     // if the config file changed.
     editMenu->AddItem("Edit Config", "", []() { system(".\\ASCIIPlayer.conf"); }); 
-    //!TODO editMenu->AddItem("Reset Config", "");//, []() { system("del .\\ASCIIPlayer.conf"); }); // Deletes / resets existing config.
-    //!TODO editMenu->AddItem("Set Visualizer", ASCIIMENU_VISUALIZER); // Lets you set the visualizer from a list of them!
+    // TODO(mcech): editMenu->AddItem("Reset Config", "");//, []() { system("del .\\ASCIIPlayer.conf"); }); // Deletes / resets existing config.
+    // TODO(mcech): editMenu->AddItem("Set Visualizer", ASCIIMENU_VISUALIZER); // Lets you set the visualizer from a list of them!
     editMenu->AddItem("Next Visualizer", "", []() { if (__current_dj != nullptr) __current_dj->VisualizerNext(); });
     editMenu->AddItem("Prev Visualizer", "", []() { if (__current_dj != nullptr) __current_dj->VisualizerPrev(); });
     editMenu->AddItem("Force Clearscreen", "", []() { RConsole::Canvas::ForceClearEverything(); });
