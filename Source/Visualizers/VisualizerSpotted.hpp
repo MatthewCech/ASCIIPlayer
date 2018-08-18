@@ -17,6 +17,7 @@ namespace ASCIIPlayer
     // Variables
     int width_;
     int height_;
+    float runningStart_;
   };
 }
 
