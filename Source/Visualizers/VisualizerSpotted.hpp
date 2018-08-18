@@ -13,6 +13,11 @@ namespace ASCIIPlayer
     // Member functions
     bool Update(float* data);
     void OnResize(int newWidth, int newHeight);
+
+    // Variables
+    int width_;
+    int height_;
+    float runningStart_;
   };
 }
 

@@ -3,6 +3,9 @@
 #include "Lobby.hpp"
 #include "UserStrings.hpp"
 
+// No-option
+#define ASCIIMENU_NO_CHANGE ""
+
 // Menu heiarchy overview and defines
 #define ASCIIMENU_BASE "menuDefualt"
   #define ASCIIMENU_FILE "menuFile"
@@ -150,11 +153,11 @@ namespace ASCIIPlayer
     Container *fileMenu = Container::Create(ASCIIMENU_FILE);
     fileMenu->SetOrientation(ASCIIMenus::VERTICAL);
     fileMenu->SetPosition(2, 1);
-    fileMenu->AddItem("Open", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = OPEN; });
-    fileMenu->AddItem("Save Settings", "");
-    fileMenu->AddItem("Info", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = GENERAL; });
-    fileMenu->AddItem("Hide", "", []() { __menu_navigate_back_next_update = true; }); // TODO(mcech): Convert to template 
-    fileMenu->AddItem("Quit", "", []() { exit(0); });                                 // TODO(mcech): Confirmation of Destructive Action - Dialogue that takes lambda for yes.
+    fileMenu->AddItem("Open",          ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = OPEN; });
+    fileMenu->AddItem("Save Settings", ASCIIMENU_NO_CHANGE,     []() {  }); // TODO(mcech): Allow settings to save off to config
+    fileMenu->AddItem("Info",          ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = GENERAL; });
+    fileMenu->AddItem("Hide",          ASCIIMENU_NO_CHANGE,     []() { __menu_navigate_back_next_update = true; });
+    fileMenu->AddItem("Quit",          ASCIIMENU_NO_CHANGE,     []() { exit(0); }); // TODO(mcech): Confirmation of Destructive Action - Dialogue that takes lambda for yes.
 
     Container *editMenu = Container::Create(ASCIIMENU_EDIT);
     editMenu->SetOrientation(ASCIIMenus::VERTICAL);
@@ -164,18 +167,18 @@ namespace ASCIIPlayer
     // Why? Well, this will let this function use 'this' as a capture group, and from there the
     // contents of this class can be used! This will be awesome for live-reloading ASCIIPlayer
     // if the config file changed.
-    editMenu->AddItem("Edit Config", "", []() { system(".\\ASCIIPlayer.conf"); }); 
-    // TODO(mcech): editMenu->AddItem("Reset Config", "");//, []() { system("del .\\ASCIIPlayer.conf"); }); // Deletes / resets existing config.
-    // TODO(mcech): editMenu->AddItem("Set Visualizer", ASCIIMENU_VISUALIZER); // Lets you set the visualizer from a list of them!
-    editMenu->AddItem("Next Visualizer", "", []() { if (__current_dj != nullptr) __current_dj->VisualizerNext(); });
-    editMenu->AddItem("Prev Visualizer", "", []() { if (__current_dj != nullptr) __current_dj->VisualizerPrev(); });
-    editMenu->AddItem("Force Clearscreen", "", []() { RConsole::Canvas::ForceClearEverything(); });
+    editMenu->AddItem("Edit Config",       ASCIIMENU_NO_CHANGE, []() { system(".\\ASCIIPlayer.conf"); });
+    // TODO(mcech): editMenu->AddItem("Reset Config", ASCIIMENU_NO_CHANGE, []() { system("del .\\ASCIIPlayer.conf"); }); // Deletes / resets existing config.
+    // TODO(mcech): editMenu->AddItem("Set Visualizer", ASCIIMENU_VISUALIZER, []() {  }); // Lets you set the visualizer from a list of them!
+    editMenu->AddItem("Next Visualizer",   ASCIIMENU_NO_CHANGE, []() { if (__current_dj != nullptr) __current_dj->VisualizerNext(); });
+    editMenu->AddItem("Prev Visualizer",   ASCIIMENU_NO_CHANGE, []() { if (__current_dj != nullptr) __current_dj->VisualizerPrev(); });
+    editMenu->AddItem("Force Clearscreen", ASCIIMENU_NO_CHANGE, []() { RConsole::Canvas::ForceClearEverything(); });
 
     Container *helpMenu = Container::Create(ASCIIMENU_HELP);
     helpMenu->SetOrientation(ASCIIMenus::VERTICAL);
     helpMenu->SetPosition(16, 1);
     helpMenu->AddItem("General Info", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = GENERAL; });
-    helpMenu->AddItem("Config Info", ASCIIMENU_HELP_INFO_BOX,  []() { __is_displaying_help_menu = true; __dialogue_type = CONFIG; });
+    helpMenu->AddItem("Config Info",  ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = CONFIG; });
 
     Container *helpMenuPopup = Container::Create(ASCIIMENU_HELP_INFO_BOX);
     helpMenuPopup->SetOrientation(ASCIIMenus::HORIZONTAL);

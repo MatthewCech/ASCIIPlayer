@@ -4,12 +4,13 @@
 #include "DJ.hpp"
 #include "Defines.hpp"
 #include "UserStrings.hpp"
+#include "Overlays/DefaultOverlay.hpp"
 #include "Visualizers/VisualizerDefault.hpp"
 #include "Visualizers/VisualizerWaveform.hpp"
 #include "Visualizers/VisualizerWisp.hpp"
 #include "Visualizers/VisualizerSpectrum.hpp"
 #include "Visualizers/VisualizerParticle.hpp"
-#include "Overlays/DefaultOverlay.hpp"
+#include "Visualizers/VisualizerSpotted.hpp"
 
 #define REGISTER_VISUALIZER(n, t) do{ visualizers_.push_back({ n, [](DJ& dj) { dj.setVisualizer<t>(); } }); } while(0)
 
@@ -47,6 +48,7 @@ namespace ASCIIPlayer
     REGISTER_VISUALIZER("wisp", VisualizerWisp);
     REGISTER_VISUALIZER("spectrum", VisualizerSpectrum);
     REGISTER_VISUALIZER("particle", VisualizerParticle);
+    REGISTER_VISUALIZER("spotted", VisaulizerSpotted);
 
     // Set visualizer
     VisualizerSet(config_.DJVisualizerID);
