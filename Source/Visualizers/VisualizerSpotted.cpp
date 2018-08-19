@@ -11,6 +11,7 @@ namespace ASCIIPlayer
     , width_(CONSOLE_WIDTH_FUNC)
     , height_(CONSOLE_HEIGHT_FUNC)
     , runningStart_(0)
+    , runningInvert_(false)
   {  }
 
   // Called when the console is resized
@@ -50,7 +51,7 @@ namespace ASCIIPlayer
 
         if (invert == false)
         {
-          if (loop >= SPOTTED_SIZE)
+          if (loop >= SPOTTED_SIZE) // Consider halving?
             invert = true;
           else
             ++loop;
@@ -65,9 +66,21 @@ namespace ASCIIPlayer
       }
     }
 
-    runningStart_ += 0.25;
-    if (runningStart_ > 64)
-      runningStart_ = 0;
+    const float changeAmt = (data[0] * 6 + data[1] * 4) / 2;
+    if (runningInvert_ == false)
+    {
+      if (runningStart_ > 64)
+        runningInvert_ = true;
+      else
+        runningStart_ += changeAmt;
+    }
+    else
+    {
+      if (runningStart_ < 0)
+        runningInvert_ = false;
+      else
+        runningStart_ -= changeAmt;
+    }
 
     return true;
   }
