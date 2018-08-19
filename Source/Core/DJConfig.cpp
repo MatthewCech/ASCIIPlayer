@@ -90,7 +90,7 @@ namespace ASCIIPlayer
        // Etc.
        << "\n\n"
        << "===[ Notes ]===\n"
-			 << "Available Visualizers - default, waveform, wisp, spectrum, particle\n";
+			 << "Available Visualizers - default, waveform, wisp, spectrum, particle, spotted\n";
     return ss.str();
   }
 

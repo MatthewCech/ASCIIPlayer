@@ -11,9 +11,7 @@ namespace ASCIIPlayer
     , width_(CONSOLE_WIDTH_FUNC)
     , height_(CONSOLE_HEIGHT_FUNC)
     , runningStart_(0)
-  {
-
-  }
+  {  }
 
   // Called when the console is resized
   void VisaulizerSpotted::OnResize(int newWidth, int newHeight)
@@ -68,7 +66,7 @@ namespace ASCIIPlayer
     }
 
     runningStart_ += 0.25;
-    if (runningStart_ > SPOTTED_SIZE)
+    if (runningStart_ > 64)
       runningStart_ = 0;
 
     return true;
