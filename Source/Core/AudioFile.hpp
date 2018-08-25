@@ -16,12 +16,12 @@ namespace ASCIIPlayer
     bool BoundToChannel;
   };
 
-	class AudioFile
-	{
+  class AudioFile
+  {
     // Mark as friend to manage handles.
     friend class AudioSystem;
 
-	public:
+  public:
     // Constructor and Destructor
     AudioFile(std::string Path);
     ~AudioFile();
@@ -29,7 +29,7 @@ namespace ASCIIPlayer
     // Operator overloads
     bool operator==(const AudioFile &rhs);
 
-	private:
+  private:
     // Private methods
     AudioHandleWrapper *get(APUnique apu);
 
@@ -40,5 +40,5 @@ namespace ASCIIPlayer
 
     // Static Variables
     static APUnique uniqueID_STATIC_VAR_; // ID for lookup in the audio system
-	};
+  };
 }
