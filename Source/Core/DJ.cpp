@@ -31,7 +31,7 @@ namespace ASCIIPlayer
     , currSong_(false)
     , paused_(true)
     , isJumpingPos_(false)
-	  , lastVolumeChange_(0)
+    , lastVolumeChange_(0)
     , requestUIActive_(false)
     , windowWidth_()
     , windowHeight_()
@@ -52,7 +52,6 @@ namespace ASCIIPlayer
 
     // Set visualizer
     VisualizerSet(config_.DJVisualizerID);
-
 
     // Looping?
     if (config_.DJLooping)
@@ -151,7 +150,9 @@ namespace ASCIIPlayer
       return true;
     }
     else
+    {
       return false;
+    }
   }
   
 
@@ -210,6 +211,7 @@ namespace ASCIIPlayer
   {
     if(visualizer_)
       delete visualizer_;
+	  
     hasShutdown_ = true;
   }
 
@@ -228,6 +230,7 @@ namespace ASCIIPlayer
   void DJ::AddSong(AudioFile *toAdd)
   {
     bool start = false;
+	  
     if (playlist_.GetPlaylistLength() == 0)
       start = true;
 
@@ -337,12 +340,14 @@ namespace ASCIIPlayer
   void DJ::VisualizerSet(const std::string &name)
   {
     for (VisualizerInfo &v : visualizers_)
+    {
       if (name == v.Name)
       {
         v.Func(*this);
         visualizerName_ = name;
         return;
       }
+    }
 
     // Recursively set the visualizer to default. There should always be a default.
     VisualizerSet("default");
@@ -359,6 +364,7 @@ namespace ASCIIPlayer
       return;
 
     for (size_t i = 0; i < visualizers_.size(); ++i)
+    {
       if (visualizers_[i].Name == visualizerName_)
       {
         if (i + 1 < visualizers_.size())
@@ -374,6 +380,7 @@ namespace ASCIIPlayer
 
         return;
       }
+    }
   }
 
 
@@ -384,6 +391,7 @@ namespace ASCIIPlayer
       return;
 
     for (size_t i = 0; i < visualizers_.size(); ++i)
+    {
       if (visualizers_[i].Name == visualizerName_)
       {
         if (i > 0)
@@ -399,6 +407,7 @@ namespace ASCIIPlayer
 
         return;
       }
+    }
   }
 
 
@@ -445,6 +454,6 @@ namespace ASCIIPlayer
   // Called whenever the volume is changed, this sets the internal tracking variables for that.
   void DJ::updateLastVolumeChange()
   {
-	  lastVolumeChange_ = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    lastVolumeChange_ = std::chrono::high_resolution_clock::now().time_since_epoch().count();
   }
 }
