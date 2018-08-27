@@ -40,14 +40,21 @@ namespace ASCIIPlayer
     void VisualizerSet(const std::string &name);
     void VisualizerNext();
     void VisualizerPrev();
-	  long long GetLastVolumeChange();
+    long long GetLastVolumeChange();
     unsigned int GetPlaylistSize();
     void FillSongData(float* toFill, unsigned int size, FMOD_DSP_FFT_WINDOW window);
 
   private:
+    // Keeps track of a given visualizer
+    struct VisualizerInfo
+    {
+      std::string Name;
+      std::function<void(DJ&)> Func;
+    };  
+	  
     // Callback
     void playlistUpdatedCallback();
-	  void updateLastVolumeChange();
+    void updateLastVolumeChange();
 
     // Variables
     Playlist<DJ> playlist_;       // Contains the AudioFile objects.
@@ -58,18 +65,19 @@ namespace ASCIIPlayer
     DJConfig config_;             // The proivded config for the DJ.
 
     // Internal Tracking
-    bool hasShutdown_;                   // Whether or not we have shut down.
-    bool paused_;                        // Is the JD paused or not?
-    bool requestUIActive_;               // Wether or not the user requested the UI be visible by default.
-    bool isJumpingPos_;                  // Are we using this update loop to update our song position with a manual jump?
-    AudioFile *currSong_;                // What is the current song?
-    unsigned int visaulizerDataSize_;    // The size of the array for the audio visualizer.
-    AudioDataStyle visualizerDataStyle_; // The style of data for the audio visualizer
-    float *visualizerDataArray_;         // Data used for the visualizer;
-	  long long lastVolumeChange_;         // The last time the volume was changed, in ms
-    int windowWidth_;                    // Width of the display window the DJ is operating in
-    int windowHeight_;                   // Height of the display window the DJ is operating in
-
+    bool hasShutdown_;                        // Whether or not we have shut down.
+    bool paused_;                             // Is the JD paused or not?
+    bool requestUIActive_;                    // Wether or not the user requested the UI be visible by default.
+    bool isJumpingPos_;                       // Are we using this update loop to update our song position with a manual jump?
+    AudioFile *currSong_;                     // What is the current song?
+    unsigned int visaulizerDataSize_;         // The size of the array for the audio visualizer.
+    AudioDataStyle visualizerDataStyle_;      // The style of data for the audio visualizer
+    float *visualizerDataArray_;              // Data used for the visualizer;
+    long long lastVolumeChange_;              // The last time the volume was changed, in ms
+    int windowWidth_;                         // Width of the display window the DJ is operating in
+    int windowHeight_;                        // Height of the display window the DJ is operating in
+    std::vector<VisualizerInfo> visualizers_; // Holds visualizer information
+	  
     // Visualizer Switching w/ templates
     template <typename T>
     void setVisualizer()
@@ -88,15 +96,5 @@ namespace ASCIIPlayer
       visualizerDataArray_ = new float[visaulizerDataSize_];
       memset(visualizerDataArray_, 0, visaulizerDataSize_);
     }
-
-    // Keeps track of a given visualizer
-    struct VisualizerInfo
-    {
-      std::string Name;
-      std::function<void(DJ&)> Func;
-    };
-
-    // Holds visualizer information
-    std::vector<VisualizerInfo> visualizers_;
   };
 }
