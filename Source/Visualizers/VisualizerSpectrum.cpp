@@ -6,6 +6,7 @@
 #define OSCILATION_CAP 2048.0f
 
 
+
 namespace ASCIIPlayer
 {
   // Constructor
@@ -75,6 +76,7 @@ namespace ASCIIPlayer
     {
       const float value = data[i];
       float height = roundf(log(value * vertical_scalar) * (value * 200) / 20.0f);
+
       if (height < 0)
         height = 0;
 
@@ -98,6 +100,7 @@ namespace ASCIIPlayer
 
     // Normalize by DT then add too oscilation locaiton. Loop as necessary.
     oscilation_location_ += delay * 125;
+
     if (oscilation_location_ > OSCILATION_CAP)
       oscilation_location_ = 0;
 

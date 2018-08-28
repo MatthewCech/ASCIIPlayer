@@ -11,11 +11,15 @@ namespace ASCIIPlayer
   class VisualSystem : public ParticleSystem<std::pair<RConsole::Color, char>>
   {
   public:
+    // Constructor
     VisualSystem(float x, float y);
 
+    // Methods
     void OnUpdateEnd();
     void AdjustParticle(Particle<std::pair<RConsole::Color, char>> &p);
 
+    // Variables
+  private:
     int index_;
   };
 
