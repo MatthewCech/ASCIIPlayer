@@ -58,8 +58,10 @@ namespace ASCIIPlayer
       menuSystems_.Back();
       menuSystems_.Down();
       menuSystems_.Select();
+
       return true;
     }
+
     return false;
   }
 
@@ -72,8 +74,10 @@ namespace ASCIIPlayer
       menuSystems_.Back();
       menuSystems_.Up();
       menuSystems_.Select();
+
       return true;
     }
+
     return false;
   }
 }

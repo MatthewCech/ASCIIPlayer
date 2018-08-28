@@ -37,6 +37,7 @@ namespace ASCIIPlayer
       {
         float val = data[loop] * 8;
         bool show = val > 0.1;
+
         if (show)
         {
           if(val > 0.4)

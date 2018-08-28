@@ -21,8 +21,6 @@ std::map<std::string, Container *> MenuRegistry::registry_ = std::map<std::strin
 
 
 
-
-
   ///////////////////////////////////
  // static-init-console-utils.cpp //
 ///////////////////////////////////
@@ -32,8 +30,8 @@ std::map<std::string, Container *> MenuRegistry::registry_ = std::map<std::strin
 // console static inits
 namespace RConsole
 {
-#define DEFAULT_WIDTH_SIZE (rlutil::tcols() - 1)
-#define DEFAULT_HEIGHT_SIZE rlutil::trows()
+  #define DEFAULT_WIDTH_SIZE (rlutil::tcols() - 1)
+  #define DEFAULT_HEIGHT_SIZE rlutil::trows()
 
   // Static initialization in non-guaranteed order.
   CanvasRaster Canvas::r_ = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
@@ -44,6 +42,4 @@ namespace RConsole
   unsigned int Canvas::height_ = DEFAULT_HEIGHT_SIZE;
   Field2D<bool> Canvas::modified_ = Field2D<bool>(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
 }
-
-
 

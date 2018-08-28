@@ -15,6 +15,7 @@
 #define REGISTER_VISUALIZER(n, t) do{ visualizers_.push_back({ n, [](DJ& dj) { dj.setVisualizer<t>(); } }); } while(0)
 
 
+
 namespace ASCIIPlayer
 {
   // Constructor
@@ -147,6 +148,7 @@ namespace ASCIIPlayer
       // Update our audio system at the very end.
       isJumpingPos_ = false;
       audioSystem_.Update();
+
       return true;
     }
     else
@@ -154,7 +156,7 @@ namespace ASCIIPlayer
       return false;
     }
   }
-  
+
 
   // Plays the current song, or starts if there's nothing.
   void DJ::Play()
@@ -183,10 +185,13 @@ namespace ASCIIPlayer
     }
   }
 
+
+  // Returns if the DJ is paused or not
   bool DJ::IsPaused()
   {
     return paused_;
   }
+
 
   // Toggles if it's paused or not
   void DJ::TogglePause()

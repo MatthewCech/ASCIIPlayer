@@ -144,8 +144,7 @@ namespace ASCIIPlayer
 
     // Play and assign to master channel group.
     ChannelHandle channel;
-    FCheck(fmodSystem_->playSound(
-      FMOD_CHANNEL_FREE, audioFile.get(ID_)->LoadedObject, !playing, &channel));
+    FCheck(fmodSystem_->playSound(FMOD_CHANNEL_FREE, audioFile.get(ID_)->LoadedObject, !playing, &channel));
     FCheck(channel->setChannelGroup(masterChannel_));
 
     // @ToDo: Channel override may result in same song playing multiple times.

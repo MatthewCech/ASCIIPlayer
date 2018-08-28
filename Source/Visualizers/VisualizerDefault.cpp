@@ -47,6 +47,7 @@ namespace ASCIIPlayer
       const int min = 0;
       if (dv < 0)
         dv = 0;
+
       const int cap = sizeof(buffer) / sizeof(char) - 1;
       if (dv > cap) 
         dv = cap;
