@@ -7,7 +7,7 @@
 namespace Strings
 {
   STR_TYPE STARTUP_PRIMARY_TEXT = "Waiting for songs";
-  STR_TYPE STARTUP_SUBTEXT_LINE_1 = "Drag in a song file or";
+  STR_TYPE STARTUP_SUBTEXT_LINE_1 = "Drag in a music file or";
   STR_TYPE STARTUP_SUBTEXT_LINE_2 = "press ESC for menu!";
 
   STR_TYPE MODAL_HELP_DEFAULT = "Hmm, no message was set for this menu. You shouldn't see this!";

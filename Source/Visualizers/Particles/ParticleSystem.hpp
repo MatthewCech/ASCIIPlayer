@@ -33,8 +33,10 @@ public:
     if (isLooping_)
     {
       if (spawnDelay_ == 0)
+      {
         while (particles_.size() < maxParticles_)
           AddParticle();
+      }
 
       else if (++spawnCounter_ >= spawnDelay_)
       {
@@ -91,6 +93,7 @@ public:
   void SetPosY(float y)               { posY_ = y; }
   void SetMaxParticles(size_t max)    { maxParticles_ = max; }
   void SetSpawnDelay(int delay)       { spawnDelay_ = delay; }
+
 
 protected:
   // Variables
