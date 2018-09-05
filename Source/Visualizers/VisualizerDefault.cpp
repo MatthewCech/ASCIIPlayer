@@ -35,9 +35,11 @@ namespace ASCIIPlayer
       // Calculate the distance of the string to display, and display dv of it.
       int dv = static_cast<int>(data[i] * 90);
 
-      // enforce positive value.
+      // enforce positive value and max width
       if (dv < 0)
         dv = 0;
+      else if (dv > width_)
+        dv = width_;
 
       RConsole::Canvas::DrawString(std::string(dv, '>').c_str(), 0, static_cast<unsigned int>(i), RConsole::LIGHTCYAN);
     }
