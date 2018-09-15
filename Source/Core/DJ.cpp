@@ -416,6 +416,13 @@ namespace ASCIIPlayer
   }
 
 
+  // Returns the name of the current visualizer
+  std::string DJ::VisualizerName()
+  {
+    return visualizerName_;
+  }
+
+
   // Gets the last time the volume changed.
   long long DJ::GetLastVolumeChange()
   {
