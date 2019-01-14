@@ -11,6 +11,7 @@
 #include "Visualizers/VisualizerSpectrum.hpp"
 #include "Visualizers/VisualizerParticle.hpp"
 #include "Visualizers/VisualizerSpotted.hpp"
+#include "Visualizers/VisualizerPineapple.hpp"
 
 #define REGISTER_VISUALIZER(n, t) do{ visualizers_.push_back({ n, [](DJ& dj) { dj.setVisualizer<t>(); } }); } while(0)
 
@@ -50,6 +51,7 @@ namespace ASCIIPlayer
     REGISTER_VISUALIZER("spectrum", VisualizerSpectrum);
     REGISTER_VISUALIZER("particle", VisualizerParticle);
     REGISTER_VISUALIZER("spotted", VisaulizerSpotted);
+	REGISTER_VISUALIZER("pineapple", VisualizerPineapple);
 
     // Set visualizer
     VisualizerSet(config_.DJVisualizerID);
