@@ -37,7 +37,7 @@ namespace FileUtil
     static const int Defaults = Text | Replace;
 
     // Constructor and Destructor
-    File::File(std::string filepath, int mode = Defaults);
+    File(std::string filepath, int mode = Defaults);
     ~File();
 
     // Member Functions
@@ -282,7 +282,7 @@ namespace FileUtil
     }
 
     // Establish the file mode flags
-    int mode = std::ios::out;
+    std::ios_base::openmode mode = std::ios::out;
     mode |= std::ios::trunc;
     if (currentFileType_ == Binary)
       mode |= std::ios::binary;
@@ -338,7 +338,7 @@ namespace FileUtil
   inline bool File::readCurrent()
   {
     // Check read style
-    int mode = std::ios::in;
+    std::ios_base::openmode mode = std::ios::in;
     if (currentFileType_ == Binary)
       mode |= std::ios::binary;
 

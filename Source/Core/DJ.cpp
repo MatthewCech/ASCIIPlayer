@@ -30,7 +30,7 @@ namespace ASCIIPlayer
     , visualizerDataArray_(nullptr)
     , config_(config)
     , hasShutdown_(false)
-    , currSong_(false)
+    , currSong_(nullptr)
     , paused_(true)
     , isJumpingPos_(false)
     , lastVolumeChange_(0)
