@@ -1,13 +1,16 @@
 -- Premake5 Wiki: https://github.com/premake/premake-core/wiki
 -- Based on Premake GLFW demo courtesy of JohannesMP
 -- https://github.com/JohannesMP
-filter {"system:windows", "action:vs*"}
+
 function os.winSdkVersion()
   local reg_arch = iif( os.is64bit(), "\\Wow6432Node\\", "\\" )
   local sdk_version = os.getWindowsRegistry( "HKLM:SOFTWARE" .. reg_arch .."Microsoft\\Microsoft SDKs\\Windows\\v10.0\\ProductVersion" )
-  if sdk_version ~= nil then return sdk_version end
+  if sdk_version ~= nil then 
+    return sdk_version 
+  else
+    return ""
+  end
 end
-filter {}
 
 -- Variable definition: CHANGE THESE TO MODIFY PROJECT NAME
 -- Brief reminder: This is actual lua, functions and whatnot are totally allowed.
