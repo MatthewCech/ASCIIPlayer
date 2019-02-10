@@ -69,7 +69,7 @@ namespace ASCIIPlayer
   // Removes a song in the playlist.
   template<typename T> void Playlist<T>::Remove(AudioFile *file)
   {
-    for (auto iter = playlist_.begin(); iter != playlist_.end(); ++i)
+    for (auto iter = playlist_.begin(); iter != playlist_.end(); ++iter)
     {
       if (*(*iter) == *file)
       {

@@ -2,6 +2,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <functional>
 #include "AudioSystem.hpp"
 #include "Defines.hpp"
 #include "Playlist.hpp"

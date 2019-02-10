@@ -1,8 +1,9 @@
 #include <sstream>
 #include <cstring>
-#include <FileIO/FileIO.hpp>
+#include <FileIO/fileio.hpp>
 #include "Defines.hpp"
 #include "DJConfig.hpp"
+
 
 #define NAME_STR_LINE(var) #var << ": " << var << "\n"
 #define PARSE_CONTINUE(var, toCompare, func) if(toCompare == #var) { var = func ; break; }
