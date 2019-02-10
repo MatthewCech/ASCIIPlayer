@@ -52,6 +52,7 @@
 	#include <iostream>
 	#include <string>
 	#include <sstream>
+    #include <cstring>
 	/// Namespace forward declarations
 	namespace rlutil {
 		void locate(int x, int y);
