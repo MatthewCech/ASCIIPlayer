@@ -16,7 +16,8 @@ namespace ASCIIPlayer
     void OnResize(int newWidth, int newHeight);
 
   private:
-    size_t height_;
+    int height_;
+    int width_;
   };
 }
 

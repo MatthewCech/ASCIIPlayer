@@ -45,13 +45,16 @@ namespace ASCIIPlayer
     for (int i = 0; i < audioDataWidth * horizontalScalar; ++i)
     {
       // Ignore strange edge case values and negatives.
-      if (data[i] < .001) continue;
+      if (data[i] < .001) 
+        continue;
 
       // Calculate the log of the input scaled up to make a more smooth visualizer.
       // If it is under 0 for some reason, ignore it.
       const float logH{ abs(log(data[i])) }; // data[i] * scalar
       const int actualHeight{ static_cast<int>(logH - (static_cast<float>(i) / logH)) };
-      if (actualHeight <= 0) continue;
+
+      if (actualHeight <= 0) 
+        continue;
 
       // Place 4 mirrored blocks.
       for (int j = 0; j < actualHeight * SCALAR_TO_CHANGE; ++j)

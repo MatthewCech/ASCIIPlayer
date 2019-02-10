@@ -7,25 +7,20 @@ namespace ASCIIPlayer
   APUnique AudioFile::uniqueID_STATIC_VAR_ = 0; // ID for lookup in the audio system
 
 
-  // Constructor and Destructor
+  // loadedObjects_ is assigned via lazy init later
   AudioFile::AudioFile(std::string path) 
     : path_(path)
     , fileID_(uniqueID_STATIC_VAR_++)
-    , loadedObjects_() // Assigned via lazy init later
+    , loadedObjects_() 
   {  }
 
-
-  // Destructor
   AudioFile::~AudioFile()
   {  }
-
 
   // Operator == overload
   bool AudioFile::operator==(const AudioFile &rhs)
   {
-    if (fileID_ == rhs.fileID_)
-      return true;
-    return false;
+    return fileID_ == rhs.fileID_;
   }
 
   // Get the value associated with the Audiosystem with the ID in question

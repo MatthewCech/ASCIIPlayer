@@ -23,7 +23,7 @@ namespace ASCIIPlayer
     void UnloadFile(AudioFile &audioFile);
 
     // Basic Play/Pause
-    AudioFile *AudioSystem::PreloadFile(const std::string filepath);
+    AudioFile *PreloadFile(const std::string filepath);
     void PlayFile(AudioFile &audioFile, bool playing = false);
     void SetPaused(AudioFile &audioFile, bool pausedState);
     void StopFile(AudioFile &audioFile);

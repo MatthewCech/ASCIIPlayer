@@ -64,8 +64,10 @@ namespace ASCIIPlayer
 
     // Draw box background
     for (int i = static_cast<int>(left); i < right; ++i)
+    {
       for (int j = static_cast<int>(top); j < bottom; ++j)
         RConsole::Canvas::Draw(' ', i, j, RConsole::DARKGREY);
+    }
 
     // Draw the string message
     unsigned int offset = 0;
@@ -90,6 +92,7 @@ namespace ASCIIPlayer
       RConsole::Canvas::Draw(static_cast<unsigned char>(205), i, static_cast<int>(top), RConsole::WHITE);
       RConsole::Canvas::Draw(static_cast<unsigned char>(205), i, static_cast<int>(bottom), RConsole::WHITE);
     }
+
     for (int i = static_cast<int>(top); i < bottom; ++i)
     {
       RConsole::Canvas::Draw(static_cast<unsigned char>(186), static_cast<int>(left), i, RConsole::WHITE);
@@ -258,6 +261,7 @@ namespace ASCIIPlayer
         RConsole::Canvas::DrawString(("[ argv0: " + argParser_[0]).c_str(), 0.0f, loc++, RConsole::DARKGREY);
         RConsole::Canvas::DrawString(("[ utime: " + std::to_string(hours) + "h " + std::to_string(minutes % 60) + "m " + std::to_string(seconds % 60) + "s").c_str(), 0.0f, loc++, RConsole::DARKGREY);
         RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(averageFPS(fpsPrevStart_, fpsEnd_)) + " " + Strings::DEBUG_PER_SECOND).c_str(), 0.0f, loc++, RConsole::DARKGREY);
+        RConsole::Canvas::DrawString(("[ vname: " + activeDJ_->VisualizerName()).c_str(), 0.0f, loc++, RConsole::DARKGREY);
       }
 
       // Draw menus and finalize drawing for menu overlay.

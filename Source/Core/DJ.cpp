@@ -11,8 +11,10 @@
 #include "Visualizers/VisualizerSpectrum.hpp"
 #include "Visualizers/VisualizerParticle.hpp"
 #include "Visualizers/VisualizerSpotted.hpp"
+#include "Visualizers/VisualizerPineapple.hpp"
 
 #define REGISTER_VISUALIZER(n, t) do{ visualizers_.push_back({ n, [](DJ& dj) { dj.setVisualizer<t>(); } }); } while(0)
+
 
 
 namespace ASCIIPlayer
@@ -28,10 +30,10 @@ namespace ASCIIPlayer
     , visualizerDataArray_(nullptr)
     , config_(config)
     , hasShutdown_(false)
-    , currSong_(false)
+    , currSong_(nullptr)
     , paused_(true)
     , isJumpingPos_(false)
-	  , lastVolumeChange_(0)
+    , lastVolumeChange_(0)
     , requestUIActive_(false)
     , windowWidth_()
     , windowHeight_()
@@ -49,10 +51,10 @@ namespace ASCIIPlayer
     REGISTER_VISUALIZER("spectrum", VisualizerSpectrum);
     REGISTER_VISUALIZER("particle", VisualizerParticle);
     REGISTER_VISUALIZER("spotted", VisaulizerSpotted);
+	REGISTER_VISUALIZER("pineapple", VisualizerPineapple);
 
     // Set visualizer
     VisualizerSet(config_.DJVisualizerID);
-
 
     // Looping?
     if (config_.DJLooping)
@@ -148,12 +150,15 @@ namespace ASCIIPlayer
       // Update our audio system at the very end.
       isJumpingPos_ = false;
       audioSystem_.Update();
+
       return true;
     }
     else
+    {
       return false;
+    }
   }
-  
+
 
   // Plays the current song, or starts if there's nothing.
   void DJ::Play()
@@ -182,10 +187,13 @@ namespace ASCIIPlayer
     }
   }
 
+
+  // Returns if the DJ is paused or not
   bool DJ::IsPaused()
   {
     return paused_;
   }
+
 
   // Toggles if it's paused or not
   void DJ::TogglePause()
@@ -210,6 +218,7 @@ namespace ASCIIPlayer
   {
     if(visualizer_)
       delete visualizer_;
+	  
     hasShutdown_ = true;
   }
 
@@ -228,6 +237,7 @@ namespace ASCIIPlayer
   void DJ::AddSong(AudioFile *toAdd)
   {
     bool start = false;
+	  
     if (playlist_.GetPlaylistLength() == 0)
       start = true;
 
@@ -337,12 +347,14 @@ namespace ASCIIPlayer
   void DJ::VisualizerSet(const std::string &name)
   {
     for (VisualizerInfo &v : visualizers_)
+    {
       if (name == v.Name)
       {
         v.Func(*this);
         visualizerName_ = name;
         return;
       }
+    }
 
     // Recursively set the visualizer to default. There should always be a default.
     VisualizerSet("default");
@@ -359,6 +371,7 @@ namespace ASCIIPlayer
       return;
 
     for (size_t i = 0; i < visualizers_.size(); ++i)
+    {
       if (visualizers_[i].Name == visualizerName_)
       {
         if (i + 1 < visualizers_.size())
@@ -374,6 +387,7 @@ namespace ASCIIPlayer
 
         return;
       }
+    }
   }
 
 
@@ -384,6 +398,7 @@ namespace ASCIIPlayer
       return;
 
     for (size_t i = 0; i < visualizers_.size(); ++i)
+    {
       if (visualizers_[i].Name == visualizerName_)
       {
         if (i > 0)
@@ -399,6 +414,14 @@ namespace ASCIIPlayer
 
         return;
       }
+    }
+  }
+
+
+  // Returns the name of the current visualizer
+  std::string DJ::VisualizerName()
+  {
+    return visualizerName_;
   }
 
 
@@ -445,6 +468,6 @@ namespace ASCIIPlayer
   // Called whenever the volume is changed, this sets the internal tracking variables for that.
   void DJ::updateLastVolumeChange()
   {
-	  lastVolumeChange_ = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    lastVolumeChange_ = std::chrono::high_resolution_clock::now().time_since_epoch().count();
   }
 }

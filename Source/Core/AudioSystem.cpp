@@ -23,16 +23,17 @@ namespace ASCIIPlayer
     FCheck(fmodSystem_->getVersion(&version_));
     if (version_ < FMOD_VERSION)
     {
-      printf("You are using an old version of FMOD, %08x. This program requires %08x\n",
-        version_, FMOD_VERSION);
+      printf("You're using an old version of FMOD, %08x. This program requires %08x\n", version_, FMOD_VERSION);
       throw RTest::RException("Oudated FMOD Version Error!");
     }
 
     // Check for drivers
     FCheck(fmodSystem_->getNumDrivers(&numdrivers_));
     if (numdrivers_ == 0)
+    {
       // Turn off output.
       FCheck(fmodSystem_->setOutput(FMOD_OUTPUTTYPE_NOSOUND)); 
+    }
     else
     {
       // Get the driver capabilities.
@@ -42,17 +43,21 @@ namespace ASCIIPlayer
       FCheck(fmodSystem_->setSpeakerMode(speakermode_));
 
       if (caps_ & FMOD_CAPS_HARDWARE_EMULATED)
+      {
         // The user has the 'Acceleration' slider set to off! This is really bad
         // for latency! You might want to warn the user about this.
         FCheck(fmodSystem_->setDSPBufferSize(1024, 10));
+      }
 
       // Get the info for the sound device in place, handle ones that don't like things.
       FCheck(fmodSystem_->getDriverInfo(0, name_, 256, 0));
       if (strstr(name_, "SigmaTel"))
+      {
         // Sigmatel sound devices crackle for some reason if the format is PCM 16bit.
         // PCM floating point output seems to solve it.
         FCheck(fmodSystem_->setSoftwareFormat(
           48000, FMOD_SOUND_FORMAT_PCMFLOAT, 0, 0, FMOD_DSP_RESAMPLER_LINEAR));
+      }
     }
 
     // Run formal init, and make sure we could create the buffers.
@@ -116,7 +121,9 @@ namespace ASCIIPlayer
         return false;
       }
       else
+      {
         DEBUG_PRINT("Preloaded:\n  " << audioFile.path_);
+      }
     }
     return true;
   }
@@ -137,8 +144,7 @@ namespace ASCIIPlayer
 
     // Play and assign to master channel group.
     ChannelHandle channel;
-    FCheck(fmodSystem_->playSound(
-      FMOD_CHANNEL_FREE, audioFile.get(ID_)->LoadedObject, !playing, &channel));
+    FCheck(fmodSystem_->playSound(FMOD_CHANNEL_FREE, audioFile.get(ID_)->LoadedObject, !playing, &channel));
     FCheck(channel->setChannelGroup(masterChannel_));
 
     // @ToDo: Channel override may result in same song playing multiple times.
@@ -166,12 +172,16 @@ namespace ASCIIPlayer
     FCheck(ch->getPaused(&pausedStatus));
 
     if (pausedState)
+    {
       if (pausedStatus == true)
         return;
+    }
     
     if (!pausedState)
+    {
       if (pausedStatus == false)
         return;
+    }
 
     FCheck(ch->setPaused(!pausedStatus));
   }
@@ -183,6 +193,7 @@ namespace ASCIIPlayer
     ChannelHandle *ch = &channelHandles_[audioFile.fileID_];
     bool playing;
     (*ch)->isPlaying(&playing);
+    
     if(playing)
       FCheck((*ch)->stop());
   }
@@ -192,8 +203,11 @@ namespace ASCIIPlayer
   // Returns what we set the volume to.
   float AudioSystem::SetMasterVolume(float f)
   {
-    if (f > 1) f = 1;
-    if (f < 0) f = 0;
+    if (f > 1) 
+      f = 1;
+    else if (f < 0) 
+      f = 0;
+    
     FCheck(masterChannel_->setVolume(f));
     return f;
   }
@@ -283,24 +297,28 @@ namespace ASCIIPlayer
   }
 
 
-  // Get the filename
+  // Get the filename of an audio file 
   std::string AudioSystem::GetFilename(const AudioFile &audioFile) const
   {
     std::string name = audioFile.path_;
     std::size_t location = name.find_last_of("/\\");
+    
     if (location != std::string::npos)
       name = name.substr(location + 1);
+    
     return name;
   }
 
 
-  // Get the filepath
+  // Get the filepath of.an audio file. 
   std::string AudioSystem::GetFilepath(const AudioFile &audioFile) const
   {
     std::string path = audioFile.path_;
     std::size_t location = path.find_last_of("/\\");
+    
     if (location != std::string::npos)
       path = path.substr(0, location + 1);
+    
     return path;
   }
 }

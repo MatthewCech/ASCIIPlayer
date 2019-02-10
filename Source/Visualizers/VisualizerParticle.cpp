@@ -86,6 +86,7 @@ namespace ASCIIPlayer
     // Update and return we're good!
     vs1_.Update();
     vs2_.Update();
+
     return true;
   }
 }

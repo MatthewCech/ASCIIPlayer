@@ -236,9 +236,18 @@ public:
     if (stack_.size() == 0)
       return;
 
+    std::stack<Container *> tempStack = stack_;
+    std::vector<Container *> newStack = std::vector<Container *>();
+    while(!tempStack.empty())
+    {
+        newStack.push_back(tempStack.top());
+        tempStack.pop();
+    }
+
     if(drawAll)
-      for (auto&& stackItem : stack_._Get_container())
+      for (auto iter = newStack.rbegin(); iter != newStack.rend(); ++iter)
       {
+        auto stackItem = *iter;
         const std::vector<Selectable> &v = stackItem->GetAllItems();
         const ASCIIMenus::Orientation o = stackItem->GetOrientation();
         const size_t xPos = stackItem->GetXPos();

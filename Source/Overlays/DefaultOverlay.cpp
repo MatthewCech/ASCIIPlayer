@@ -50,7 +50,9 @@ namespace ASCIIPlayer
     // Set up variables for colors, then use it to draw the UI.
     RConsole::Color color = colors[color_index];
 
-    ///////////////// Drawing happens below ///////////////// 
+      ///////////////////////////
+     // Drawing happens below // 
+    ///////////////////////////
 
     // Variables
     const int volumeHeightOffset = height - 4;
@@ -81,8 +83,6 @@ namespace ASCIIPlayer
     for (int i = volumeWidthOffset; i < volumeWidthCurrent + volumeWidthOffset; ++i)
       RConsole::Canvas::Draw(static_cast<unsigned char>(254), i, volumeHeightOffset, color);
 
-
-
     // Draw current song name out: Left aligned
     int titleLeftOffset = leftGlobalOffset;
     const int titleHeightOfset = volumeHeightOffset + 1;
@@ -97,9 +97,8 @@ namespace ASCIIPlayer
     float titleWidthOffset = (width - info.Song.size()) / 2.0f;
     if (titleWidthOffset < 1)
       titleWidthOffset = 0;
+
     RConsole::Canvas::DrawString(info.Song.c_str(), static_cast<float>(titleLeftOffset), static_cast<float>(titleHeightOfset), color);
-
-
 
     // Draw song progress
     // Label
@@ -135,10 +134,6 @@ namespace ASCIIPlayer
       RConsole::Canvas::DrawString(ss.str().c_str()
         , static_cast<float>(progressWidthTotal + progressLeftOffset + 2)
         , static_cast<float>(progressHeightOffset), color);
-
-
-
-
 
     // Draw paused icon.
     if (info.IsPlaying == false)

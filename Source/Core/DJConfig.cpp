@@ -1,8 +1,9 @@
 #include <sstream>
 #include <cstring>
-#include <FileIO/FileIO.hpp>
+#include <FileIO/fileio.hpp>
 #include "Defines.hpp"
 #include "DJConfig.hpp"
+
 
 #define NAME_STR_LINE(var) #var << ": " << var << "\n"
 #define PARSE_CONTINUE(var, toCompare, func) if(toCompare == #var) { var = func ; break; }
@@ -11,6 +12,7 @@
 
 namespace ASCIIPlayer
 {
+  // Clean up the whitespace at the start and end of the input
   std::string TrimWhitespace(std::string input)
   {
     while (input.length() > 0 && input[0] == ' ' || input[0] == '\t')
@@ -21,6 +23,7 @@ namespace ASCIIPlayer
 
     return input;
   }
+
 
   // Attempts to parse a line of a file.
   void DJConfig::ParseLine(std::string line)
@@ -37,7 +40,8 @@ namespace ASCIIPlayer
 
     try
     {
-      do {
+      do 
+      {
         // Floats
         PARSE_CONTINUE(VolumeDefault, name, stof(val))
         PARSE_CONTINUE(VolumeChangeAmount, name, stof(val))
@@ -90,9 +94,11 @@ namespace ASCIIPlayer
        // Etc.
        << "\n\n"
        << "===[ Notes ]===\n"
-			 << "Available Visualizers - default, waveform, wisp, spectrum, particle, spotted\n";
+			 << "Available Visualizers - default, waveform, wisp, spectrum, particle, spotted, pineapple\n";
+
     return ss.str();
   }
+
 
   // Tries to open config file for the visualizer, generates one otherwise.
   // Uses the specified path to do so.
@@ -101,6 +107,7 @@ namespace ASCIIPlayer
     std::string arg0 = path;
     size_t loc = arg0.find_last_of('\\');
     std::string filepath = "";
+
     if (loc != std::string::npos)
       filepath = arg0.substr(0, loc);
 
@@ -113,23 +120,30 @@ namespace ASCIIPlayer
       std::string str = def.ToString();
       f.Write(str);
       f.Save();
+
       return def;
     }
     else
     {
       DJConfig newConf;
+
       for (unsigned int i = 0; i < f.GetLineCount(); ++i)
+      {
         newConf.ParseLine(f[i]);
+      }
+
       return newConf;
     }
   }
 
 
+  // Writes the config at the specified path
   void DJConfig::Write(DJConfig d, std::string path)
   {
     std::string arg0 = path;
     size_t loc = arg0.find_last_of('\\');
     std::string filepath = "";
+
     if (loc != std::string::npos)
       filepath = arg0.substr(0, loc);
 

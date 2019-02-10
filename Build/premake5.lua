@@ -5,7 +5,11 @@
 function os.winSdkVersion()
   local reg_arch = iif( os.is64bit(), "\\Wow6432Node\\", "\\" )
   local sdk_version = os.getWindowsRegistry( "HKLM:SOFTWARE" .. reg_arch .."Microsoft\\Microsoft SDKs\\Windows\\v10.0\\ProductVersion" )
-  if sdk_version ~= nil then return sdk_version end
+  if sdk_version ~= nil then 
+    return sdk_version 
+  else
+    return ""
+  end
 end
 
 -- Variable definition: CHANGE THESE TO MODIFY PROJECT NAME
@@ -139,11 +143,11 @@ workspace "ASCII_Player"                      -- Solution Name
       source_dir_libs .. "/lib_%{cfg.platform}",                 -- libs with ONLY x32/x64 (no Release/Debug) versions
       source_dir_libs .. "/%{cfg.buildcfg}",                     -- libs with ONLY Release/Debug (no x32/x64) versions
       source_dir_libs .. "/%{cfg.buildcfg}/lib_%{cfg.platform}", -- libs with BOTH Release/Debug AND x32/x64 versions
-      source_dir_libs .. "/lib_%{cfg.platform}/%{cfg.buildcfg}"  -- libs with BOTH x32/x64 AND Release/Debug versions (order reversed)
+      source_dir_libs .. "/lib_%{cfg.platform}/%{cfg.buildcfg}", -- libs with BOTH x32/x64 AND Release/Debug versions (order reversed)
     }
 
 	-- OS-specific Libraries - Dynamic libs will need to be copied to output
-    -- WINDOWS INCLUDES, 32 THEN 64 BIT, EACH BEING DEBUG AND RELEASE
+    -- WINDOWS
     filter { "system:windows", "platforms:*86" , "configurations:Debug" }   
       links 
       { 
@@ -166,7 +170,7 @@ workspace "ASCII_Player"                      -- Solution Name
       }
 
   
-      -- MAC INCLUDES, BEING DEBUG AND RELEASE. RECALL MAC IS ONLY 64-BIT
+      -- MAC
     filter { "system:macosx", "configurations:Debug" }   
       links 
       { 
@@ -176,6 +180,19 @@ workspace "ASCII_Player"                      -- Solution Name
       links 
       { 
         "libfmodex" 
+      }
+
+
+      -- LINUX
+    filter { "system:linux", "configurations:Debug" }
+      links
+      {
+        "libfmodexL"
+      }
+    filter { "system:linux", "configurations:Release" }
+      links
+      {
+        "libfmodex"
       }
 
     filter {}

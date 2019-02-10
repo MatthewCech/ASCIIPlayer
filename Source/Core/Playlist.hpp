@@ -69,12 +69,13 @@ namespace ASCIIPlayer
   // Removes a song in the playlist.
   template<typename T> void Playlist<T>::Remove(AudioFile *file)
   {
-    for (auto iter = playlist_.begin(); iter != playlist_.end(); ++i)
+    for (auto iter = playlist_.begin(); iter != playlist_.end(); ++iter)
     {
       if (*(*iter) == *file)
       {
         playlist_.erase(iter);
         listUpdateCallback();
+
         return;
       }
     }
@@ -86,6 +87,7 @@ namespace ASCIIPlayer
   template<typename T> const std::vector<const AudioFile *>  Playlist<T>::PeekAll()
   {
     std::vector<const AudioFile *> toRet;
+
     for (int i = 0; i < playlist_.size(); ++i)
       toRet.push_back(playlist_[i]);
 
@@ -123,7 +125,9 @@ namespace ASCIIPlayer
         listUpdateCallback();
       }
       else
+      {
         activeIndex_ = static_cast<unsigned int>(playlist_.size());
+      }
     }
   }
 
@@ -199,6 +203,7 @@ namespace ASCIIPlayer
 
     if(playlist_.size() > 0)
       return playlist_[activeIndex_];
+
     return nullptr;
   }
 

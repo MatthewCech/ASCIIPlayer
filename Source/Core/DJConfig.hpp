@@ -12,7 +12,7 @@ namespace ASCIIPlayer
     float        VolumeChangeAmount      = 0.1f;      // By how much we change the volume every time.
     bool         DJLooping               = true;      // Does it loop?
     bool         DJOverlayAlwaysOn       = false;     // A request for having the UI on all the time.
-    unsigned int DJCPULoadReductionDelay = 400;       // Specifies number of microseconds to sleep each loop.
+    unsigned int DJCPULoadReductionDelay = 200;       // Specifies number of microseconds to sleep each loop.
     unsigned int SkipForwardSeconds      = 15;        // Seconds to go forwards when skipping. 
     unsigned int SkipBackwardSeconds     = 15;        // Seconds to go backwards when skipping.
     unsigned int DJChannelCount          = 10;        // The number of channels for the DJ to have.

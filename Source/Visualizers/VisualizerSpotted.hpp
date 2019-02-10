@@ -18,6 +18,7 @@ namespace ASCIIPlayer
     int width_;
     int height_;
     float runningStart_;
+    bool runningInvert_;
   };
 }
 

@@ -19,7 +19,8 @@ namespace ASCIIPlayer
     {  }
 
     // Destructor
-    virtual ~Visualizer() {  };
+    virtual ~Visualizer() 
+    {  }
 
     // Member Functions
     virtual bool Update(float* data) ABSTRACT;
@@ -28,10 +29,11 @@ namespace ASCIIPlayer
 
     // Pre-defined, but virtual functions. 
     // Can be fiddled with if you want, but defaults are reasonable.
-    virtual void OnResize(int newWidth, int newHeight) {  }
-    virtual bool UpdatePost() { return true; };
-    virtual unsigned int GetAudioDataSize() { return audioSize_; }
-    virtual AudioDataStyle GetAudioDataStyle() { return audioStyle_; }
+    virtual void OnResize(int newWidth, int newHeight);
+    virtual bool UpdatePost();
+    virtual unsigned int GetAudioDataSize();
+    virtual AudioDataStyle GetAudioDataStyle();
+
 
   protected:
     // Variables
