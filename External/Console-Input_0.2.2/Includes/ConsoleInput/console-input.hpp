@@ -124,6 +124,7 @@ inline int KeyHit(void) { return _kbhit(); }
 // Use wch to handle additional cases if you wish, tho know it changes codes.
 inline int GetChar(void) { return _getch(); }
 
+#endif
 
 // C++ Specific additional functionality
 #ifdef LANGUAGE_CPP
@@ -230,7 +231,7 @@ void HandleInput(void(callbackSingleChar)(char), void(callbackFilepath)(const ch
     }
 }
 #endif // LANGUAGE_C
-#endif // OS_WINDOWS
+
 
 
 
