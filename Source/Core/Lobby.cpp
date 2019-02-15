@@ -275,8 +275,8 @@ namespace ASCIIPlayer
       {
         sharedArguments->Data()[sharedArguments->Size() - 1] = 0;
         std::string str = std::string(reinterpret_cast<char*>(sharedArguments->Data()));
-        sharedArguments->Data()[0] = 0; // resetting first char to 0
-        interpretMultiCharInput(str);   // use code for path parsing that we already have
+        memset(sharedArguments->Data(), 0, sharedArguments->Size());
+        interpretMultiCharInput(str);
       }
      
       // TODO(mcech): Make this line not a thing.
