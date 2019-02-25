@@ -2,6 +2,7 @@
 #include <exception>
 #include "Lobby.hpp"
 #include "UserStrings.hpp"
+#include <shoom/shoom.hpp>
 
 // No-option
 #define ASCIIMENU_NO_CHANGE ""
@@ -132,6 +133,9 @@ namespace ASCIIPlayer
     , fpsEnd_(0)
     , appStartTime_(MS_SINCE_EPOCH)
   { 
+    // Begin by handling the application opening
+    HandleApplicationOpen(argc, argv);
+
     // Make DJ, don't autoplay. Read in the argument!
     DJ *Dj = new DJ(DJConfig::Read(argParser_[0]), false);
 
@@ -191,6 +195,37 @@ namespace ASCIIPlayer
     menuSystems_.SetColorSelected(RConsole::LIGHTCYAN);
   }
 
+  void Lobby::HandleApplicationOpen(int argc, char** argv)
+  {
+    // Initialize shared memory and stuff
+    sharedStatus = new shoom::Shm("ASCIIPlayer_status", 1); 
+    sharedStatus->Create();
+
+    sharedArguments = new shoom::Shm("ASCIIPlayer_arguments", 512);
+    sharedArguments->Create();
+
+    char val = sharedStatus->Data()[0];
+    if (val == 1)
+    {
+      if (argc >= 2)
+      {
+        size_t maxlen = 512;
+        size_t arglen = strlen(argv[1]);
+        if (arglen < maxlen)
+          maxlen = arglen;
+
+        memcpy(sharedArguments->Data(), argv[1], maxlen);
+
+        delete sharedStatus;
+        delete sharedArguments;
+      }
+
+      exit(0);
+    }
+
+    sharedStatus->Data()[0] = 1;
+  }
+
 
   // Destructor
   Lobby::~Lobby()
@@ -199,8 +234,12 @@ namespace ASCIIPlayer
     {
       activeDJ_->Pause();
       activeDJ_->Shutdown();
+
       delete activeDJ_;
     }
+
+    delete sharedStatus;
+    delete sharedArguments;
   }
 
 
@@ -231,6 +270,15 @@ namespace ASCIIPlayer
 
       // ============================ Start primary loop ============================
 
+      // NOTE(mcech): This is to view shared memory
+      if (sharedArguments->Data()[0] != 0)
+      {
+        sharedArguments->Data()[sharedArguments->Size() - 1] = 0;
+        std::string str = std::string(reinterpret_cast<char*>(sharedArguments->Data()));
+        memset(sharedArguments->Data(), 0, sharedArguments->Size());
+        interpretMultiCharInput(str);
+      }
+     
       // TODO(mcech): Make this line not a thing.
       if (__menu_navigate_back_next_update)
       {
