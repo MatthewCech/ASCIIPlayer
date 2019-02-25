@@ -1,1 +1,0 @@
-Remotely pulls update and version information for asciiplayer!
