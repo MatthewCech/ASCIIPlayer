@@ -1,4 +1,6 @@
 #pragma once
+#ifndef SHOOM_HPP
+#define SHOOM_HPP
 
 #include <cstdint>
 #include <string>
@@ -50,10 +52,10 @@ namespace shoom {
 }
 
 
-  #if defined(_WIN32)
-  #define WIN32_LEAN_AND_MEAN
+#if defined(_WIN32)
+#define WIN32_LEAN_AND_MEAN
 
-  #include <io.h>  // CreateFileMappingA, OpenFileMappingA, etc.
+#include <io.h>  // CreateFileMappingA, OpenFileMappingA, etc.
 
 namespace shoom {
 
@@ -186,4 +188,5 @@ namespace shoom {
 }  // namespace shoom
 
 #undef WIN32_LEAN_AND_MEAN
-#endif  // _WIN32
+#endif // _WIN32
+#endif // SHOOM_HPP
