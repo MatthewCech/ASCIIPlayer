@@ -1,5 +1,5 @@
 #include <cmath>
-#include "VisualizerSpectrum.hpp"
+#include "VisualizerOscillate.hpp"
 #include "Defines.hpp"
 
 #define DATA_SIZE 256
