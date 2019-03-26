@@ -4,6 +4,7 @@
 
 namespace ASCIIPlayer
 {
+  // Spectrum analyzer
   class VisualizerSpectrum : public ASCIIVisualizer
   {
   public:
