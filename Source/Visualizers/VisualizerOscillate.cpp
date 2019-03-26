@@ -10,7 +10,7 @@
 namespace ASCIIPlayer
 {
   // Constructor
-  VisualizerSpectrum::VisualizerSpectrum() 
+  VisualizerOscillate::VisualizerOscillate()
     : ASCIIVisualizer(DATA_SIZE, AUDIODATA_SPECTRUM)
     , width_(RConsole::Canvas::GetConsoleWidth())
     , height_(RConsole::Canvas::GetConsoleHeight())
@@ -19,14 +19,14 @@ namespace ASCIIPlayer
     , pos_1_y_(static_cast<float>(height_ - 1))
     , pos_2_x_(static_cast<float>(width_ - side_offset_))
     , pos_2_y_(static_cast<float>(0))
-    , oscilation_location_(-128)
+    , oscillation_location_(-128)
     , lastTime_(MS_SINCE_EPOCH)
   { 
     RConsole::Canvas::SetCursorVisible(false);
   }
 
   // Handles window resizing
-  void VisualizerSpectrum::OnResize(int newWidth, int newHeight)
+  void VisualizerOscillate::OnResize(int newWidth, int newHeight)
   {
     RConsole::Canvas::ReInit(newWidth, newHeight);
     RConsole::Canvas::ForceClearEverything();
@@ -40,7 +40,7 @@ namespace ASCIIPlayer
   }
 
   // Draw vertical spectrum based on frequencies
-  bool VisualizerSpectrum::Update(float* data)
+  bool VisualizerOscillate::Update(float* data)
   {
     // Calculate delays and update last time and current time variables.
     long long curr_time = MS_SINCE_EPOCH;
@@ -53,7 +53,7 @@ namespace ASCIIPlayer
     const int vertical_scalar = 700;
     
     // Shift y positions of both Ys
-    pos_1_y_ = vertical_offset + sin(static_cast<float>(oscilation_location_) / (OSCILATION_CAP / 2) * 3.14159f) * vertical_offset;
+    pos_1_y_ = vertical_offset + sin(static_cast<float>(oscillation_location_) / (OSCILATION_CAP / 2) * 3.14159f) * vertical_offset;
     pos_2_y_ = height_ - pos_1_y_;
     
     // Characters to draw!
@@ -99,10 +99,10 @@ namespace ASCIIPlayer
     }
 
     // Normalize by DT then add too oscilation locaiton. Loop as necessary.
-    oscilation_location_ += delay * 125;
+    oscillation_location_ += delay * 125;
 
-    if (oscilation_location_ > OSCILATION_CAP)
-      oscilation_location_ = 0;
+    if (oscillation_location_ > OSCILATION_CAP)
+      oscillation_location_ = 0;
 
     return true;
   }

@@ -8,7 +8,7 @@
 #include "Visualizers/VisualizerDefault.hpp"
 #include "Visualizers/VisualizerWaveform.hpp"
 #include "Visualizers/VisualizerWisp.hpp"
-#include "Visualizers/VisualizerSpectrum.hpp"
+#include "Visualizers/VisualizerOscillate.hpp"
 #include "Visualizers/VisualizerParticle.hpp"
 #include "Visualizers/VisualizerSpotted.hpp"
 #include "Visualizers/VisualizerPineapple.hpp"

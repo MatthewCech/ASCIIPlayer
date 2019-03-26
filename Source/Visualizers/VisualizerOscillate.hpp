@@ -4,11 +4,11 @@
 
 namespace ASCIIPlayer
 {
-  class VisualizerSpectrum : public ASCIIVisualizer
+  class VisualizerOscillate : public ASCIIVisualizer
   {
   public:
     // Constructor
-    VisualizerSpectrum();
+    VisualizerOscillate();
 
     // Functions
     bool Update(float* data);
@@ -22,7 +22,7 @@ namespace ASCIIPlayer
     float pos_1_y_;
     float pos_2_x_;
     float pos_2_y_;
-    double oscilation_location_;
+    double oscillation_location_;
     long long lastTime_;
   };
 }
