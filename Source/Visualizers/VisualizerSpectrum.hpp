@@ -2,7 +2,7 @@
 #include "ASCIIVisualizer.hpp"
 #include <vector>
 
-#define VISUALIZER_SPECTRUM_DATA_SIZE 64
+#define VISUALIZER_SPECTRUM_DATA_SIZE 128
 
 
 

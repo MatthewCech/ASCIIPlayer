@@ -235,6 +235,10 @@ namespace ASCIIPlayer
         FCheck(fmodSystem_->getSpectrum(arr, numVals, channelOffset, FMOD_DSP_FFT_WINDOW_RECT));
         break;
 
+      case AUDIODATA_SPECTRUM_ALT:
+        FCheck(fmodSystem_->getSpectrum(arr, numVals, channelOffset, FMOD_DSP_FFT_WINDOW_BLACKMAN));
+        break;
+
       default:
         throw "Unsupported Style";
     }
