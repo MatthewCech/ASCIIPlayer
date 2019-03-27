@@ -1,5 +1,9 @@
 #pragma once
 #include "ASCIIVisualizer.hpp"
+#include <vector>
+
+#define VISUALIZER_SPECTRUM_DATA_SIZE 64
+
 
 
 namespace ASCIIPlayer
@@ -18,7 +22,12 @@ namespace ASCIIPlayer
     // Internal Variables
     int width_;
     int height_;
-    long long lastTime_;
+    float smoothed_[VISUALIZER_SPECTRUM_DATA_SIZE];
+
+    // Time tracking
+    long long lastTimeMS_;
+    long long lastTimeSecond_;
+    std::vector<long long> lastTimes_;
   };
 }
 
