@@ -17,6 +17,9 @@ echo.
 echo -- [ MOVING RESOURCES ] --
 cd ..
 copy Resources project_vs2017
+copy Resources\icon project_vs2017
+copy Resources\dll project_vs2017
+copy Resources\sample project_vs2017
 
 echo.
 echo.
