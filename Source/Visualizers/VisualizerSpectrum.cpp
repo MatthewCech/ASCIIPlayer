@@ -2,8 +2,8 @@
 #include "VisualizerSpectrum.hpp"
 #include "Defines.hpp"
 
-#define NORMALIZED_TIME_MS 8
-
+#define NORMALIZED_TIME_MS 10
+#define SPECTRUM_CHAR '^'
 
 
 namespace ASCIIPlayer
@@ -34,7 +34,7 @@ namespace ASCIIPlayer
   // Draw vertical spectrum based on frequencies
   bool VisualizerSpectrum::Update(float* data)
   {
-    const float smoothRate = 0.95f;
+    const float smoothRate = 0.90f;
     long long current = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     // Smooth in new data
@@ -53,11 +53,11 @@ namespace ASCIIPlayer
     // Draw the lines
     for (int x = 0; x < width_ && x < VISUALIZER_SPECTRUM_DATA_SIZE; ++x)
     {
-      float val = static_cast<float>(log((smoothed_[x] * 100) - 0.1) * 2.5);//5 * sqrt(smoothed_[x]);
+      float val = static_cast<float>(log((smoothed_[x] * 100.0) - 0.1) * 3.2);//5 * sqrt(smoothed_[x]);
 
       // Goes a certain distance in either direction!
       for (int y = 0; y < val; ++y)
-        RConsole::Canvas::Draw('[', x, height_ - 1 - y, RConsole::LIGHTBLUE);
+        RConsole::Canvas::Draw(SPECTRUM_CHAR, x, height_ - 1 - y, RConsole::LIGHTBLUE);
     }
 
     // Smooth out old data

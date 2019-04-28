@@ -18,7 +18,7 @@ local ROOT         = "../"          -- Path to project root
 
 
 -- [ WORKSPACE CONFIGURATION ] --
-workspace "ASCII_Player"                      -- Solution Name
+workspace "ASCIIPlayer"                      -- Solution Name
     configurations { "Debug", "Release"}     -- Optimization/General config mode in VS
     platforms { "x64", "x86"}                -- Dropdown platforms section in VS
     location (ROOT .. "project_" .. _ACTION) -- Note: _ACTION is the argument passed to premake.
