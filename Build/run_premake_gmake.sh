@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd ${0%/*}
-premake5 gmake
+./premake5 gmake
