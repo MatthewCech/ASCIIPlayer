@@ -36,10 +36,12 @@ using APUnique      = unsigned long long;
 ///////////
 enum AudioDataStyle
 {
-  AUDIODATA_SPECTRUM = 0,
+  AUDIODATA_NO_STYLE = 0,
+
+  AUDIODATA_SPECTRUM = 2,
+  AUDIODATA_SPECTRUM_ALT = 3,
+
   AUDIODATA_WAVEFORM = 1,
-  
-  AUDIODATA_NO_STYLE
 };
 
 

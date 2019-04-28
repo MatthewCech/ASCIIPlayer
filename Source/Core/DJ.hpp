@@ -44,7 +44,7 @@ namespace ASCIIPlayer
     std::string VisualizerName();
     long long GetLastVolumeChange();
     unsigned int GetPlaylistSize();
-    void FillSongData(float* toFill, unsigned int size, FMOD_DSP_FFT_WINDOW window);
+    void FillSongData(float* toFill, unsigned int size);
 
   private:
     // Keeps track of a given visualizer

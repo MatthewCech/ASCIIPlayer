@@ -103,9 +103,7 @@ namespace ASCIIPlayer
 
     // FPS tracking
     if (current > lastTimeSecond_ + 1000)
-    {
       lastTimeSecond_ = current;
-    }
 
     if (lastTimes_.size() > 100)
       lastTimes_.pop_back();
@@ -117,3 +115,4 @@ namespace ASCIIPlayer
 
 #undef PINEAPPLE_SIZE
 #undef PINEAPPLE_INTERIOR
+#undef NORMALIZED_TIME_MS
