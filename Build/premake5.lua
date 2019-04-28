@@ -18,9 +18,9 @@ local ROOT         = "../"          -- Path to project root
 
 
 -- [ WORKSPACE CONFIGURATION ] --
-workspace "ASCII_Player"                      -- Solution Name
+workspace "ASCIIPlayer"                      -- Solution Name
     configurations { "Debug", "Release"}     -- Optimization/General config mode in VS
-    platforms { "x64", "x86"}                -- Dropdown platforms section in VS
+    platforms { --[["x64",]] "x86"}                -- Dropdown platforms section in VS
     location (ROOT .. "project_" .. _ACTION) -- Note: _ACTION is the argument passed to premake.
 
     -- [ PROJECT CONFIGURATION ] --
@@ -35,8 +35,8 @@ workspace "ASCII_Player"                      -- Solution Name
     -- Generate filters with info provided for Visual Studio
     filter { "platforms:*86" }
         architecture "x86"
-    filter { "platforms:*64" }
-        architecture "x64"
+    --filter { "platforms:*64" }
+    --    architecture "x64"
 
     -- Generate configs dropdown info, VS
     filter { "configurations:Debug" }
@@ -75,13 +75,13 @@ workspace "ASCII_Player"                      -- Solution Name
     -- All files that we're currently going to worry about 
     local source_dir_root         = ROOT .. "Source"
     local source_dir_includes     = ROOT .. "External" .. "/**/Includes"
-    local source_dir_libs         = ROOT .. "External" .. "/**/" .. "Libs_" .. os.target()
+    local source_dir_libs         = ROOT .. "External" .. "/**/" .. "libs_" .. os.target()
     local source_dir_dependencies = ROOT .. "External"
 
 
 	-- Includes and associated information directories 
     local source_dir_includes     = source_dir_dependencies .. "/**/Includes"
-    local source_dir_libs         = source_dir_dependencies .. "/**/" .. "Libs_" .. os.target()
+    local source_dir_libs         = source_dir_dependencies .. "/**/" .. "libs_" .. os.target()
     -- optional for libs that are 32 or 64 bit specific
     local source_dir_libs32       = source_dir_libs .. "/lib_x32"
     local source_dir_libs64       = source_dir_libs .. "/lib_x64"
@@ -134,11 +134,14 @@ workspace "ASCII_Player"                      -- Solution Name
       source_dir_root
     }
     
+    configuration { "linux", "gmake" }
+      linkoptions { "--verbose" }
 
     -- Where linker should look for library files
     -- NOTE: currently each library must have "LIBS_<OS>" in its path.
     libdirs
     {
+      source_dir_dependencies,
       source_dir_libs,                                           -- default: look for any libs here (does not recurse)
       source_dir_libs .. "/lib_%{cfg.platform}",                 -- libs with ONLY x32/x64 (no Release/Debug) versions
       source_dir_libs .. "/%{cfg.buildcfg}",                     -- libs with ONLY Release/Debug (no x32/x64) versions
@@ -174,12 +177,12 @@ workspace "ASCII_Player"                      -- Solution Name
     filter { "system:macosx", "configurations:Debug" }   
       links 
       { 
-        "libfmodexL" 
+        "fmodexL" 
       }
     filter { "system:macosx", "configurations:Release" } 
       links 
       { 
-        "libfmodex" 
+        "fmodex" 
       }
 
 
@@ -187,12 +190,12 @@ workspace "ASCII_Player"                      -- Solution Name
     filter { "system:linux", "configurations:Debug" }
       links
       {
-        "libfmodexL"
+        "fmodexL"
       }
     filter { "system:linux", "configurations:Release" }
       links
       {
-        "libfmodex"
+        "fmodex"
       }
 
     filter {}

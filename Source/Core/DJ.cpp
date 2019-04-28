@@ -14,8 +14,8 @@
 #include "Visualizers/VisualizerPineapple.hpp"
 #include "Visualizers/VisualizerSpectrum.hpp"
 
+// Constructs a VisualizerInfo object containing the visualizer name and a 'set' callback, adding it to the visualizer list.
 #define REGISTER_VISUALIZER(n, t) do{ visualizers_.push_back({ n, [](DJ& dj) { dj.setVisualizer<t>(); } }); } while(0)
-
 
 
 namespace ASCIIPlayer
@@ -116,7 +116,7 @@ namespace ASCIIPlayer
         {
           // Only fill visualizer data if not .
           if (!paused_)
-            FillSongData(visualizerDataArray_, visaulizerDataSize_, FMOD_DSP_FFT_WINDOW_RECT);
+            FillSongData(visualizerDataArray_, visaulizerDataSize_);
           
           // Determine if the window size changed at all.
           int width = visualizer_->Width();
@@ -442,12 +442,12 @@ namespace ASCIIPlayer
 
 
   // Fills the array provided with the active spectrum.
-  void DJ::FillSongData(float* toFill, unsigned int size, FMOD_DSP_FFT_WINDOW window)
+  void DJ::FillSongData(float* toFill, unsigned int size)
   {
-    if (visualizerDataStyle_ == AUDIODATA_WAVEFORM)
-      audioSystem_.FillWithAudioData(toFill, size, 0, window, AUDIODATA_WAVEFORM);
-    else
-      audioSystem_.FillWithAudioData(toFill, size, 0, window, AUDIODATA_SPECTRUM);
+    if (visualizerDataStyle_ == AUDIODATA_NO_STYLE)
+      throw "No style. No grace.";
+
+    audioSystem_.FillWithAudioData(toFill, size, 0, visualizerDataStyle_);
   }
 
 
