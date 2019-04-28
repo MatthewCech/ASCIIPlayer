@@ -2,7 +2,7 @@
 #include "VisualizerSpectrum.hpp"
 #include "Defines.hpp"
 
-#define NORMALIZED_TIME_MS 10
+#define NORMALIZED_TIME_MS 8
 #define SPECTRUM_CHAR '^'
 
 
@@ -77,7 +77,18 @@ namespace ASCIIPlayer
 
     total /= lastTimes_.size();
 
-    RConsole::Canvas::DrawString(std::to_string(1000.0 / total).c_str(), 0, 0, RConsole::WHITE);
+    const int displayFormatWidth = 50;
+    float updateCycles = (1000.0f / total);
+    char toDisplay[displayFormatWidth];
+    memset(toDisplay, 0, sizeof(char) * displayFormatWidth);
+
+#ifdef OS_WINDOWS
+    sprintf_s(toDisplay, displayFormatWidth, "%.2f", updateCycles);
+#else
+    sprintf(toDisplay, "%.2f", updateCycles);
+#endif
+
+    RConsole::Canvas::DrawString(toDisplay, 0, 0, RConsole::WHITE);
 
     // FPS tracking
     if (current > lastTimeSecond_ + 1000)
