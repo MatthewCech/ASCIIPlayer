@@ -75,13 +75,13 @@ workspace "ASCIIPlayer"                      -- Solution Name
     -- All files that we're currently going to worry about 
     local source_dir_root         = ROOT .. "Source"
     local source_dir_includes     = ROOT .. "External" .. "/**/Includes"
-    local source_dir_libs         = ROOT .. "External" .. "/**/" .. "Libs_" .. os.target()
+    local source_dir_libs         = ROOT .. "External" .. "/**/" .. "libs_" .. os.target()
     local source_dir_dependencies = ROOT .. "External"
 
 
 	-- Includes and associated information directories 
     local source_dir_includes     = source_dir_dependencies .. "/**/Includes"
-    local source_dir_libs         = source_dir_dependencies .. "/**/" .. "Libs_" .. os.target()
+    local source_dir_libs         = source_dir_dependencies .. "/**/" .. "libs_" .. os.target()
     -- optional for libs that are 32 or 64 bit specific
     local source_dir_libs32       = source_dir_libs .. "/lib_x32"
     local source_dir_libs64       = source_dir_libs .. "/lib_x64"
@@ -139,6 +139,7 @@ workspace "ASCIIPlayer"                      -- Solution Name
     -- NOTE: currently each library must have "LIBS_<OS>" in its path.
     libdirs
     {
+      source_dir_dependencies,
       source_dir_libs,                                           -- default: look for any libs here (does not recurse)
       source_dir_libs .. "/lib_%{cfg.platform}",                 -- libs with ONLY x32/x64 (no Release/Debug) versions
       source_dir_libs .. "/%{cfg.buildcfg}",                     -- libs with ONLY Release/Debug (no x32/x64) versions
@@ -174,12 +175,12 @@ workspace "ASCIIPlayer"                      -- Solution Name
     filter { "system:macosx", "configurations:Debug" }   
       links 
       { 
-        "libfmodexL" 
+        "../External/fmod_4.44.52/Libs_linux/Debug/libfmodexL.a" 
       }
     filter { "system:macosx", "configurations:Release" } 
       links 
       { 
-        "libfmodex" 
+        "../External/fmod_4.44.52/Libs_linux/Debug/libfmodex.a" 
       }
 
 
@@ -187,12 +188,12 @@ workspace "ASCIIPlayer"                      -- Solution Name
     filter { "system:linux", "configurations:Debug" }
       links
       {
-        "libfmodexL"
+        "../External/fmod_4.44.52/Libs_linux/Debug/libfmodexL.a"
       }
     filter { "system:linux", "configurations:Release" }
       links
       {
-        "libfmodex"
+        "../External/fmod_4.44.52/Libs_linux/Debug/libfmodex.a"
       }
 
     filter {}
