@@ -20,7 +20,7 @@ local ROOT         = "../"          -- Path to project root
 -- [ WORKSPACE CONFIGURATION ] --
 workspace "ASCIIPlayer"                      -- Solution Name
     configurations { "Debug", "Release"}     -- Optimization/General config mode in VS
-    platforms { "x64", "x86"}                -- Dropdown platforms section in VS
+    platforms { --[["x64",]] "x86"}                -- Dropdown platforms section in VS
     location (ROOT .. "project_" .. _ACTION) -- Note: _ACTION is the argument passed to premake.
 
     -- [ PROJECT CONFIGURATION ] --
@@ -35,8 +35,8 @@ workspace "ASCIIPlayer"                      -- Solution Name
     -- Generate filters with info provided for Visual Studio
     filter { "platforms:*86" }
         architecture "x86"
-    filter { "platforms:*64" }
-        architecture "x64"
+    --filter { "platforms:*64" }
+    --    architecture "x64"
 
     -- Generate configs dropdown info, VS
     filter { "configurations:Debug" }
@@ -134,6 +134,8 @@ workspace "ASCIIPlayer"                      -- Solution Name
       source_dir_root
     }
     
+    configuration { "linux", "gmake" }
+      linkoptions { "--verbose" }
 
     -- Where linker should look for library files
     -- NOTE: currently each library must have "LIBS_<OS>" in its path.
@@ -175,12 +177,12 @@ workspace "ASCIIPlayer"                      -- Solution Name
     filter { "system:macosx", "configurations:Debug" }   
       links 
       { 
-        "../External/fmod_4.44.52/Libs_linux/Debug/libfmodexL.a" 
+        "libfmodexL" 
       }
     filter { "system:macosx", "configurations:Release" } 
       links 
       { 
-        "../External/fmod_4.44.52/Libs_linux/Debug/libfmodex.a" 
+        "libfmodex" 
       }
 
 
@@ -188,12 +190,12 @@ workspace "ASCIIPlayer"                      -- Solution Name
     filter { "system:linux", "configurations:Debug" }
       links
       {
-        "../External/fmod_4.44.52/Libs_linux/Debug/libfmodexL.a"
+        "libfmodexL"
       }
     filter { "system:linux", "configurations:Release" }
       links
       {
-        "../External/fmod_4.44.52/Libs_linux/Debug/libfmodex.a"
+        "libfmodex"
       }
 
     filter {}
