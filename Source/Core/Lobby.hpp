@@ -7,6 +7,10 @@
 #include "DJConfig.hpp"
 #include "DJ.hpp"
 
+namespace shoom
+{
+  class Shm;
+}
 
 namespace ASCIIPlayer
 {
@@ -26,7 +30,8 @@ namespace ASCIIPlayer
     void displayExtraMenus();
     void interpretMultiCharInput(const std::string str);
     void interpretChar(char key);
-    
+    void HandleApplicationOpen(int argc, char** argv);
+
     // Private methods - Utility and Management
     int averageFPS(long long start, long long end);
     void startDJ();
@@ -52,5 +57,9 @@ namespace ASCIIPlayer
     long long fpsPrevStart_;
     long long fpsEnd_;
     long long appStartTime_;
+
+    // Shared memory locations
+    shoom::Shm *sharedStatus;
+    shoom::Shm *sharedArguments;
   };
 }

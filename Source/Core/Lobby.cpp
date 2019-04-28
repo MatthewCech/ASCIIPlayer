@@ -2,6 +2,7 @@
 #include <exception>
 #include "Lobby.hpp"
 #include "UserStrings.hpp"
+#include <shoom/shoom.hpp>
 
 // No-option
 #define ASCIIMENU_NO_CHANGE ""
@@ -35,18 +36,46 @@ namespace ASCIIPlayer
   // Enums
   static enum WhichDialogueEnum 
   { 
-    GENERAL, 
+    GENERAL,
+    COMMANDS,
     CONFIG,
     OPEN
   } __dialogue_type;
 
   // Global popups using drawing system
-  static void __Display_Infobox(size_t maxWidth, std::string containerName, std::string str)
+  static void __Display_Infobox(size_t maxWidth, std::string containerName, std::string str, size_t stringBuffer = 3)
   {
-    // Define widths
+
+    // Determine two potential heights...
+    // Note that when we make str_height later, we check 
+    // to see if there were any newlines and favor them.
+    int newlines = 0;
+    int longest = 0;
+    int current = 0;
+    for (char c : str)
+    {
+      if (++current > longest)
+        ++longest;
+
+      if (c == '\n')
+      {
+        ++newlines;
+        current = 0;
+      }
+    }
+
+    const bool manualFormat = newlines != 0;
+
+    if (manualFormat)
+    {
+      if (longest + stringBuffer < maxWidth)
+        maxWidth = longest + stringBuffer;
+    }
+
+    // Define sizes
     const unsigned int half_w             = static_cast<unsigned int>(maxWidth / 2);
-    const unsigned int str_width          = static_cast<unsigned int>(maxWidth - 3);
-    const unsigned int str_height         = static_cast<int>(str.size() / static_cast<float>(str_width) + 0.99);
+    const unsigned int str_width          = static_cast<unsigned int>(maxWidth - stringBuffer);
+    const unsigned int str_height         = manualFormat ? newlines + 1: static_cast<int>(str.size() / static_cast<float>(str_width) + 0.99);
     const unsigned int half_h             = (str_height + 5) / 2;
     const unsigned int half_screen_width  = RConsole::Canvas::GetConsoleWidth() / 2;
     const unsigned int half_screen_height = RConsole::Canvas::GetConsoleHeight() / 2;
@@ -59,8 +88,7 @@ namespace ASCIIPlayer
 
     // Move menu options accordingly
     Container *c = MenuRegistry::GetContainer(containerName);
-    c->SetPosition(static_cast<size_t>(right - c->GetSelected().Label.size() - 1)
-      , static_cast<size_t>(bottom - 2));
+    c->SetPosition(static_cast<size_t>(right - c->GetSelected().Label.size() - 1), static_cast<size_t>(bottom - 2));
 
     // Draw box background
     for (int i = static_cast<int>(left); i < right; ++i)
@@ -74,15 +102,26 @@ namespace ASCIIPlayer
     unsigned int cycles = 0;
     while (offset < str.size())
     {
-      if (*(str.c_str() + offset) == ' ')
-        offset += 1;
+      if (!manualFormat)
+      {
+        if (*(str.c_str() + offset) == ' ')
+          offset += 1;
+      }
 
-      RConsole::Canvas::DrawString(std::string(str.c_str() + offset, str_width).c_str()
+      std::string toWrite = std::string(str.c_str() + offset, str_width);
+      size_t loc = toWrite.find_first_of('\n');
+      if (loc != std::string::npos)
+      {
+        toWrite = toWrite.substr(0, loc);
+        ++offset; // Accounts for newlines
+      }
+
+      RConsole::Canvas::DrawString(toWrite.c_str()
         , static_cast<int>(left + 2)
         , static_cast<int>(top + 2 + cycles)
         , RConsole::WHITE);
 
-      offset += str_width;
+      offset += toWrite.length();// str_width;
       ++cycles;
     }
 
@@ -132,6 +171,9 @@ namespace ASCIIPlayer
     , fpsEnd_(0)
     , appStartTime_(MS_SINCE_EPOCH)
   { 
+    // Begin by handling the application opening
+    HandleApplicationOpen(argc, argv);
+
     // Make DJ, don't autoplay. Read in the argument!
     DJ *Dj = new DJ(DJConfig::Read(argParser_[0]), false);
 
@@ -180,7 +222,8 @@ namespace ASCIIPlayer
     Container *helpMenu = Container::Create(ASCIIMENU_HELP);
     helpMenu->SetOrientation(ASCIIMenus::VERTICAL);
     helpMenu->SetPosition(16, 1);
-    helpMenu->AddItem("General Info", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = GENERAL; });
+    helpMenu->AddItem("About", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = GENERAL; });
+    helpMenu->AddItem("Keyboard Commands", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = COMMANDS; });
     helpMenu->AddItem("Config Info",  ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = CONFIG; });
 
     Container *helpMenuPopup = Container::Create(ASCIIMENU_HELP_INFO_BOX);
@@ -191,6 +234,37 @@ namespace ASCIIPlayer
     menuSystems_.SetColorSelected(RConsole::LIGHTCYAN);
   }
 
+  void Lobby::HandleApplicationOpen(int argc, char** argv)
+  {
+    // Initialize shared memory and stuff
+    sharedStatus = new shoom::Shm("ASCIIPlayer_status", 1); 
+    sharedStatus->Create();
+
+    sharedArguments = new shoom::Shm("ASCIIPlayer_arguments", 512);
+    sharedArguments->Create();
+
+    char val = sharedStatus->Data()[0];
+    if (val == 1)
+    {
+      if (argc >= 2)
+      {
+        size_t maxlen = 512;
+        size_t arglen = strlen(argv[1]);
+        if (arglen < maxlen)
+          maxlen = arglen;
+
+        memcpy(sharedArguments->Data(), argv[1], maxlen);
+
+        delete sharedStatus;
+        delete sharedArguments;
+      }
+
+      exit(0);
+    }
+
+    sharedStatus->Data()[0] = 1;
+  }
+
 
   // Destructor
   Lobby::~Lobby()
@@ -199,8 +273,12 @@ namespace ASCIIPlayer
     {
       activeDJ_->Pause();
       activeDJ_->Shutdown();
+
       delete activeDJ_;
     }
+
+    delete sharedStatus;
+    delete sharedArguments;
   }
 
 
@@ -231,6 +309,15 @@ namespace ASCIIPlayer
 
       // ============================ Start primary loop ============================
 
+      // NOTE(mcech): This is to view shared memory
+      if (sharedArguments->Data()[0] != 0)
+      {
+        sharedArguments->Data()[sharedArguments->Size() - 1] = 0;
+        std::string str = std::string(reinterpret_cast<char*>(sharedArguments->Data()));
+        memset(sharedArguments->Data(), 0, sharedArguments->Size());
+        interpretMultiCharInput(str);
+      }
+     
       // TODO(mcech): Make this line not a thing.
       if (__menu_navigate_back_next_update)
       {
@@ -321,7 +408,7 @@ namespace ASCIIPlayer
   }
 
 
-  // Displays additional menus
+  // Displays additional menus with the specified string
   void Lobby::displayExtraMenus()
   {
     if (__is_displaying_help_menu)
@@ -330,6 +417,8 @@ namespace ASCIIPlayer
 
       if (__dialogue_type == GENERAL)
         message = Strings::MODAL_HELP_GENERAL;
+      else if (__dialogue_type == COMMANDS)
+        message = Strings::MODAL_HELP_COMMANDS;
       else if (__dialogue_type == CONFIG)
         message = Strings::MODAL_HELP_CONFIG;
       else if (__dialogue_type == OPEN)

@@ -1,0 +1,2 @@
+DID YOU FORGET WHAT AN .ISS FILE IS?
+It's an inno installer setup file. Edit it, and you'll need this: http://www.jrsoftware.org/isdl.php
