@@ -177,12 +177,12 @@ workspace "ASCIIPlayer"                      -- Solution Name
     filter { "system:macosx", "configurations:Debug" }   
       links 
       { 
-        "libfmodexL" 
+        "fmodexL" 
       }
     filter { "system:macosx", "configurations:Release" } 
       links 
       { 
-        "libfmodex" 
+        "fmodex" 
       }
 
 
@@ -190,12 +190,12 @@ workspace "ASCIIPlayer"                      -- Solution Name
     filter { "system:linux", "configurations:Debug" }
       links
       {
-        "libfmodexL"
+        "fmodexL"
       }
     filter { "system:linux", "configurations:Release" }
       links
       {
-        "libfmodex"
+        "fmodex"
       }
 
     filter {}
