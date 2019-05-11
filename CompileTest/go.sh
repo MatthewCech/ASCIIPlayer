@@ -4,6 +4,7 @@ sudo apt-get -y update
 sudo apt-get -y upgrade
 sudo apt-get -y install build-essential
 sudo apt-get -y install ia32-libs
+sudo apt-get install gcc-multilib g++-multilib
 
 echo ""
 echo " --- [Compiling and Linking] ---"
