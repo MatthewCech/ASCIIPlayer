@@ -13,4 +13,4 @@ echo ""
 #This fails b/c 32 vs 64 bit:
 # g++ -I. -L. -lfmodex main.cpp
 
-g++ -m32 -I. -L. -lfmodex main.cpp
+g++ -pthread -m32 main.cpp -L./lib/x86 -lfmodL -I./inc -o output

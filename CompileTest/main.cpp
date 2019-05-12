@@ -1,10 +1,10 @@
 #include <iostream>
-#include "fmod.h"
+#include "fmod.hpp"
 
 const char* MakeAudioSystem() 
 {
-  FMOD_SYSTEM *system = nullptr;
-  FMOD_System_Create(&system);
+  FMOD::System *system;
+  FMOD::System_Create(&system);
   return "It did a thing!";
 }
 
