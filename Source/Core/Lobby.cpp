@@ -179,7 +179,7 @@ namespace ASCIIPlayer
 
     // Just loop through and see if anything happens to be a song to load.
     std::vector<std::string> args = argParser_.GetAllArgs();
-    for (unsigned int i = 0; i < args.size(); ++i)
+    for (unsigned int i = 1; i < args.size(); ++i)
     {
       AudioFile *test1 = new ASCIIPlayer::AudioFile(args[i]);
       Dj->AddSong(test1);
