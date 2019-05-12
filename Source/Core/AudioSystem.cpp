@@ -27,23 +27,14 @@ namespace ASCIIPlayer
         but outputting the number of channels specified. Generally it is best to keep the channel
         count at 0 for maximum compatibility.
     */
-   // float height = inbuffer[0] * inbuffer[0] * 10;
-    //RConsole::Canvas::DrawString((std::string("Float is: ") + std::to_string(height)).c_str(), 0, 0, RConsole::LIGHTBLUE);
+
     memcpy(&spectrum, data->buffer, 128 * sizeof(float));
 
+    // Input is not modified, but is copied over to the outbuffer.
     for (unsigned int samp = 0; samp < length; samp++)
     {
-      /*
-          Feel free to unroll this.
-      */
       for (int chan = 0; chan < *outchannels; chan++)
-      {
-        /*
-            This DSP filter just halves the volume!
-            Input is modified, and sent to output.
-        */
-        data->buffer[(samp * *outchannels) + chan] = outbuffer[(samp * inchannels) + chan] = inbuffer[(samp * inchannels) + chan] * data->volume_linear;
-      }
+        data->buffer[(samp * *outchannels) + chan] = outbuffer[(samp * inchannels) + chan] = inbuffer[(samp * inchannels) + chan];
     }
 
     data->channels = inchannels;
