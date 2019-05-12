@@ -155,22 +155,22 @@ workspace "ASCIIPlayer"                      -- Solution Name
     filter { "system:windows", "platforms:*86" , "configurations:Debug" }   
       links 
       { 
-        "fmodexL_vc" 
+        "fmodL_vc" 
       }
     filter { "system:windows", "platforms:*86" , "configurations:Release" } 
       links 
       { 
-        "fmodex_vc" 
+        "fmod_vc" 
       }
     filter { "system:windows", "platforms:*64" , "configurations:Debug" }   
       links 
       { 
-        "fmodexL64_vc" 
+        "fmodL64_vc" 
       }
     filter { "system:windows", "platforms:*64" , "configurations:Release" } 
       links 
       { 
-        "fmodex64_vc" 
+        "fmod64_vc" 
       }
 
   
