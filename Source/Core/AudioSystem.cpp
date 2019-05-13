@@ -2,6 +2,9 @@
 #include <RTest/RTest.hpp>
 #include "AudioSystem.hpp"
 #include <ConsoleUtils/console-utils.hpp>
+#include <mutex>
+
+#define DATA_SIZE 512
 
 namespace ASCIIPlayer
 {
@@ -13,8 +16,20 @@ namespace ASCIIPlayer
     int   channels;
   } mydsp_data_t;
 
-  float spectrum[1024];
+  int lastSize = 0;
+  float spectrum[DATA_SIZE];
   FMOD::DSP *mydsp;
+  std::mutex myMutex;
+
+  void TrackLatest(float *data, int size)
+  {
+    if (size > DATA_SIZE)
+      size = DATA_SIZE;
+
+    lastSize = size;
+    std::lock_guard<std::mutex> dataLock(myMutex);
+    memcpy(&spectrum, data, size * sizeof(float));
+  }
 
   FMOD_RESULT F_CALLBACK myDSPCallback(FMOD_DSP_STATE *dsp_state, float *inbuffer, float *outbuffer, unsigned int length, int inchannels, int *outchannels)
   {
@@ -28,7 +43,7 @@ namespace ASCIIPlayer
         count at 0 for maximum compatibility.
     */
 
-    memcpy(&spectrum, data->buffer, 128 * sizeof(float));
+    TrackLatest(data->buffer, data->length_samples);
 
     // Input is not modified, but is copied over to the outbuffer.
     for (unsigned int samp = 0; samp < length; samp++)
@@ -361,7 +376,11 @@ namespace ASCIIPlayer
   // Fills a provided array of floats with the spectrum in question.
   void AudioSystem::FillWithAudioData(float *arr, int numVals, int channelOffset, AudioDataStyle style)
   {
-    memcpy(arr, spectrum, sizeof(float) * 128);
+    if (lastSize > 0)
+    {
+      std::lock_guard<std::mutex> dataLock(myMutex);
+      memcpy(arr, spectrum, sizeof(float) * lastSize);
+    }
     
     switch (style)
     {
