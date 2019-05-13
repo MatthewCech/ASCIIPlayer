@@ -40,11 +40,11 @@ namespace ASCIIPlayer
     std::string GetFilepath(const AudioFile &audioFile) const;
     void FillWithAudioData(float *arr, int numVals, int channelOffset, AudioDataStyle style);
 
+    static void FCheck(const FMOD_RESULT &res);
   private:
       //////////////////////////
      // Private member funcs //
     //////////////////////////
-    void FCheck(const FMOD_RESULT &res) const;
 
       ///////////////
      // Variables //
