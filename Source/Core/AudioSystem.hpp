@@ -40,11 +40,11 @@ namespace ASCIIPlayer
     std::string GetFilepath(const AudioFile &audioFile) const;
     void FillWithAudioData(float *arr, int numVals, int channelOffset, AudioDataStyle style);
 
+    static void FCheck(const FMOD_RESULT &res);
   private:
       //////////////////////////
      // Private member funcs //
     //////////////////////////
-    void FCheck(const FMOD_RESULT &res) const;
 
       ///////////////
      // Variables //
@@ -52,13 +52,7 @@ namespace ASCIIPlayer
     // Audio System
     FMOD::System *fmodSystem_;   // Handle to the system we use to initialize and play sounds.
     Channelgroup *masterChannel_; // Master channel to shove things into for volume reasons.
-
-    // Additional FMOD info
-    int              numdrivers_;  // Number of drivers in the system (audio cards)
-    char             name_[256];   // The name of the driver.
-    FMOD_CAPS        caps_;        // The capabilities of the soundcard.
-    unsigned int     version_;     // Version number.
-    FMOD_SPEAKERMODE speakermode_; // The speaker mode- 5.1, 7.1, etc.
+    unsigned int version_;
 
     // Active Handles map:
     std::unordered_map<APUnique, ChannelHandle> channelHandles_;

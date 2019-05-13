@@ -19,8 +19,8 @@ local ROOT         = "../"          -- Path to project root
 
 -- [ WORKSPACE CONFIGURATION ] --
 workspace "ASCIIPlayer"                      -- Solution Name
-    configurations { "Debug", "Release"}     -- Optimization/General config mode in VS
-    platforms { --[["x64",]] "x86"}                -- Dropdown platforms section in VS
+    configurations { "Debug", "Release" }    -- Optimization/General config mode in VS
+    platforms { "x86" }                      -- Dropdown platforms section in VS
     location (ROOT .. "project_" .. _ACTION) -- Note: _ACTION is the argument passed to premake.
 
     -- [ PROJECT CONFIGURATION ] --
@@ -35,8 +35,6 @@ workspace "ASCIIPlayer"                      -- Solution Name
     -- Generate filters with info provided for Visual Studio
     filter { "platforms:*86" }
         architecture "x86"
-    --filter { "platforms:*64" }
-    --    architecture "x64"
 
     -- Generate configs dropdown info, VS
     filter { "configurations:Debug" }
@@ -60,7 +58,7 @@ workspace "ASCIIPlayer"                      -- Solution Name
     filter { "system:macosx", "toolset:clang or gcc" }
         linkoptions { "-rpath @executable_path/lib" }
     
-    filter {"system:windows", "action:vs*"}
+    filter {"system:windows", "action:vs*" }
         linkoptions   { "/ignore:4099" }          -- Ignore library pdb warnings when running in debug
         systemversion(os.winSdkVersion() .. ".0") -- windows 10 SDK
 
@@ -134,8 +132,11 @@ workspace "ASCIIPlayer"                      -- Solution Name
       source_dir_root
     }
     
-    configuration { "linux", "gmake" }
-      linkoptions { "--verbose" }
+	filter { "system:linux" }
+      configuration { "linux", "gmake" }
+        linkoptions { "--verbose" }
+
+    filter {}
 
     -- Where linker should look for library files
     -- NOTE: currently each library must have "LIBS_<OS>" in its path.
@@ -154,26 +155,26 @@ workspace "ASCIIPlayer"                      -- Solution Name
     filter { "system:windows", "platforms:*86" , "configurations:Debug" }   
       links 
       { 
-        "fmodexL_vc" 
+        "fmodL_vc" 
       }
     filter { "system:windows", "platforms:*86" , "configurations:Release" } 
       links 
       { 
-        "fmodex_vc" 
+        "fmod_vc" 
       }
     filter { "system:windows", "platforms:*64" , "configurations:Debug" }   
       links 
       { 
-        "fmodexL64_vc" 
+        "fmodL64_vc" 
       }
     filter { "system:windows", "platforms:*64" , "configurations:Release" } 
       links 
       { 
-        "fmodex64_vc" 
+        "fmod64_vc" 
       }
 
   
-      -- MAC
+    -- MAC
     filter { "system:macosx", "configurations:Debug" }   
       links 
       { 
@@ -186,7 +187,7 @@ workspace "ASCIIPlayer"                      -- Solution Name
       }
 
 
-      -- LINUX
+    -- LINUX
     filter { "system:linux", "configurations:Debug" }
       links
       {

@@ -2,7 +2,7 @@
 #include "VisualizerDefault.hpp"
 
 #define VERTICAL_PADDING 3
-#define DATA_SIZE 64
+#define DATA_SIZE 128
 
 
 namespace ASCIIPlayer
@@ -29,22 +29,18 @@ namespace ASCIIPlayer
   // Draw waveform based on updating
   bool VisualizerDefault::Update(float* data)
   {
-    // Handle drawing
-    for (size_t i = 0; i < GetAudioDataSize() && i < static_cast<size_t>(height_); ++i)
+    for (int i = 0; i < 20; ++i)
     {
-      // Calculate the distance of the string to display, and display dv of it.
-      int dv = static_cast<int>(data[i] * 90);
+      float height = data[i];
+      if (height < 0)
+        height *= -1;
 
-      // enforce positive value and max width
-      if (dv < 0)
-        dv = 0;
-      else if (dv > width_)
-        dv = width_;
+      height *= 50;
 
-      RConsole::Canvas::DrawString(std::string(dv, '>').c_str(), 0, static_cast<unsigned int>(i), RConsole::LIGHTCYAN);
+      for (int j = 0; j < height && j < 20; ++j)
+          RConsole::Canvas::Draw('>', j, i, RConsole::LIGHTBLUE);
     }
 
-    // We're good! Return true!
     return true;
   }
 }

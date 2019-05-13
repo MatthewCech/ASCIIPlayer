@@ -48,12 +48,12 @@ namespace ASCIIPlayer
     // Register Visualizers
     REGISTER_VISUALIZER("default", VisualizerDefault);
     REGISTER_VISUALIZER("waveform", VisualizerWaveform);
-    REGISTER_VISUALIZER("wisp", VisualizerWisp);
-    REGISTER_VISUALIZER("oscillate", VisualizerOscillate);
-    REGISTER_VISUALIZER("particle", VisualizerParticle);
-    REGISTER_VISUALIZER("spotted", VisaulizerSpotted);
-	  REGISTER_VISUALIZER("pineapple", VisualizerPineapple);
-    REGISTER_VISUALIZER("spectrum", VisualizerSpectrum);
+    //REGISTER_VISUALIZER("wisp", VisualizerWisp);
+    //REGISTER_VISUALIZER("oscillate", VisualizerOscillate);
+    //REGISTER_VISUALIZER("particle", VisualizerParticle);
+    //REGISTER_VISUALIZER("spotted", VisaulizerSpotted);
+	  //REGISTER_VISUALIZER("pineapple", VisualizerPineapple);
+    //REGISTER_VISUALIZER("spectrum", VisualizerSpectrum);
 
     // Set visualizer
     VisualizerSet(config_.DJVisualizerID);

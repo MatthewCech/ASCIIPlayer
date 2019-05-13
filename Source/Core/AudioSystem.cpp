@@ -1,10 +1,179 @@
 #include <FMOD/fmod_errors.h>
 #include <RTest/RTest.hpp>
 #include "AudioSystem.hpp"
+#include <ConsoleUtils/console-utils.hpp>
+#include <mutex>
 
+#define DATA_SIZE 512
 
 namespace ASCIIPlayer
 {
+  typedef struct
+  {
+    float *buffer;
+    float volume_linear;
+    int   length_samples;
+    int   channels;
+  } mydsp_data_t;
+
+  int lastSize = 0;
+  float spectrum[DATA_SIZE];
+  FMOD::DSP *mydsp;
+  std::mutex myMutex;
+
+  void TrackLatest(float *data, int size)
+  {
+    if (size > DATA_SIZE)
+      size = DATA_SIZE;
+
+    lastSize = size;
+    std::lock_guard<std::mutex> dataLock(myMutex);
+    memcpy(&spectrum, data, size * sizeof(float));
+  }
+
+  FMOD_RESULT F_CALLBACK myDSPCallback(FMOD_DSP_STATE *dsp_state, float *inbuffer, float *outbuffer, unsigned int length, int inchannels, int *outchannels)
+  {
+    mydsp_data_t *data = (mydsp_data_t *)dsp_state->plugindata;
+
+    /*
+        This loop assumes inchannels = outchannels, which it will be if the DSP is created with '0'
+        as the number of channels in FMOD_DSP_DESCRIPTION.
+        Specifying an actual channel count will mean you have to take care of any number of channels coming in,
+        but outputting the number of channels specified. Generally it is best to keep the channel
+        count at 0 for maximum compatibility.
+    */
+
+    TrackLatest(data->buffer, data->length_samples);
+
+    // Input is not modified, but is copied over to the outbuffer.
+    for (unsigned int samp = 0; samp < length; samp++)
+    {
+      for (int chan = 0; chan < *outchannels; chan++)
+        data->buffer[(samp * *outchannels) + chan] = outbuffer[(samp * inchannels) + chan] = inbuffer[(samp * inchannels) + chan];
+    }
+
+    data->channels = inchannels;
+
+    return FMOD_OK;
+  }
+
+  /*
+      Callback called when DSP is created.   This implementation creates a structure which is attached to the dsp state's 'plugindata' member.
+  */
+  FMOD_RESULT F_CALLBACK myDSPCreateCallback(FMOD_DSP_STATE *dsp_state)
+  {
+    unsigned int blocksize;
+    FMOD_RESULT result;
+
+    result = dsp_state->functions->getblocksize(dsp_state, &blocksize);
+    AudioSystem::FCheck(result);
+
+    mydsp_data_t *data = (mydsp_data_t *)calloc(sizeof(mydsp_data_t), 1);
+    if (!data)
+    {
+      return FMOD_ERR_MEMORY;
+    }
+    dsp_state->plugindata = data;
+    data->volume_linear = 1.0f;
+    data->length_samples = blocksize;
+
+    data->buffer = (float *)malloc(blocksize * 8 * sizeof(float));      // *8 = maximum size allowing room for 7.1.   Could ask dsp_state->functions->getspeakermode for the right speakermode to get real speaker count.
+    if (!data->buffer)
+    {
+      return FMOD_ERR_MEMORY;
+    }
+
+    return FMOD_OK;
+  }
+
+  /*
+      Callback called when DSP is destroyed.   The memory allocated in the create callback can be freed here.
+  */
+  FMOD_RESULT F_CALLBACK myDSPReleaseCallback(FMOD_DSP_STATE *dsp_state)
+  {
+    if (dsp_state->plugindata)
+    {
+      mydsp_data_t *data = (mydsp_data_t *)dsp_state->plugindata;
+
+      if (data->buffer)
+      {
+        free(data->buffer);
+      }
+
+      free(data);
+    }
+
+    return FMOD_OK;
+  }
+
+  /*
+      Callback called when DSP::getParameterData is called.   This returns a pointer to the raw floating point PCM data.
+      We have set up 'parameter 0' to be the data parameter, so it checks to make sure the passed in index is 0, and nothing else.
+  */
+  FMOD_RESULT F_CALLBACK myDSPGetParameterDataCallback(FMOD_DSP_STATE *dsp_state, int index, void **data, unsigned int *length, char *)
+  {
+    if (index == 0)
+    {
+      unsigned int blocksize;
+      FMOD_RESULT result;
+      mydsp_data_t *mydata = (mydsp_data_t *)dsp_state->plugindata;
+
+      result = dsp_state->functions->getblocksize(dsp_state, &blocksize);
+      AudioSystem::FCheck(result);
+
+      *data = (void *)mydata;
+      *length = blocksize * 2 * sizeof(float);
+
+      return FMOD_OK;
+    }
+
+    return FMOD_ERR_INVALID_PARAM;
+  }
+
+  /*
+      Callback called when DSP::setParameterFloat is called.   This accepts a floating point 0 to 1 volume value, and stores it.
+      We have set up 'parameter 1' to be the volume parameter, so it checks to make sure the passed in index is 1, and nothing else.
+  */
+  FMOD_RESULT F_CALLBACK myDSPSetParameterFloatCallback(FMOD_DSP_STATE *dsp_state, int index, float value)
+  {
+    if (index == 1)
+    {
+      mydsp_data_t *mydata = (mydsp_data_t *)dsp_state->plugindata;
+
+      mydata->volume_linear = value;
+
+      return FMOD_OK;
+    }
+
+    return FMOD_ERR_INVALID_PARAM;
+  }
+
+  /*
+      Callback called when DSP::getParameterFloat is called.   This returns a floating point 0 to 1 volume value.
+      We have set up 'parameter 1' to be the volume parameter, so it checks to make sure the passed in index is 1, and nothing else.
+      An alternate way of displaying the data is provided, as a string, so the main app can use it.
+  */
+  FMOD_RESULT F_CALLBACK myDSPGetParameterFloatCallback(FMOD_DSP_STATE *dsp_state, int index, float *value, char *valstr)
+  {
+    if (index == 1)
+    {
+      mydsp_data_t *mydata = (mydsp_data_t *)dsp_state->plugindata;
+
+      *value = mydata->volume_linear;
+      if (valstr)
+      {
+#pragma warning (disable : 4996)
+        sprintf(valstr, "%d", (int)((*value * 100.0f) + 0.5f));
+      }
+
+      return FMOD_OK;
+    }
+
+    return FMOD_ERR_INVALID_PARAM;
+  }
+
+
+
   // Static Variable Init
   APUnique AudioSystem::AudioSystemIDIncrement = 0;
 
@@ -13,77 +182,59 @@ namespace ASCIIPlayer
   AudioSystem::AudioSystem(int numChannels, float defaultVolume) 
     : fmodSystem_(nullptr)
     , masterChannel_(nullptr)
-    , numdrivers_(0)
     , ID_(AudioSystemIDIncrement++)
   {
-    // Generate system and get version
     FCheck(FMOD::System_Create(&fmodSystem_));
-
-    // Check version.
     FCheck(fmodSystem_->getVersion(&version_));
+
     if (version_ < FMOD_VERSION)
-    {
-      printf("You're using an old version of FMOD, %08x. This program requires %08x\n", version_, FMOD_VERSION);
-      throw RTest::RException("Oudated FMOD Version Error!");
-    }
+      throw "FMOD lib version %08x doesn't match header version %08x", version_, FMOD_VERSION;
 
-    // Check for drivers
-    FCheck(fmodSystem_->getNumDrivers(&numdrivers_));
-    if (numdrivers_ == 0)
-    {
-      // Turn off output.
-      FCheck(fmodSystem_->setOutput(FMOD_OUTPUTTYPE_NOSOUND)); 
-    }
-    else
-    {
-      // Get the driver capabilities.
-      FCheck(fmodSystem_->getDriverCaps(0, &caps_, 0, &speakermode_));
-
-      // Set the user selected speaker mode.
-      FCheck(fmodSystem_->setSpeakerMode(speakermode_));
-
-      if (caps_ & FMOD_CAPS_HARDWARE_EMULATED)
-      {
-        // The user has the 'Acceleration' slider set to off! This is really bad
-        // for latency! You might want to warn the user about this.
-        FCheck(fmodSystem_->setDSPBufferSize(1024, 10));
-      }
-
-      // Get the info for the sound device in place, handle ones that don't like things.
-      FCheck(fmodSystem_->getDriverInfo(0, name_, 256, 0));
-      if (strstr(name_, "SigmaTel"))
-      {
-        // Sigmatel sound devices crackle for some reason if the format is PCM 16bit.
-        // PCM floating point output seems to solve it.
-        FCheck(fmodSystem_->setSoftwareFormat(
-          48000, FMOD_SOUND_FORMAT_PCMFLOAT, 0, 0, FMOD_DSP_RESAMPLER_LINEAR));
-      }
-    }
-
-    // Run formal init, and make sure we could create the buffers.
-    FMOD_RESULT res = fmodSystem_->init(numChannels, FMOD_INIT_NORMAL, 0);
-    if (res == FMOD_ERR_OUTPUT_CREATEBUFFER)
-    {
-      // Ok, the speaker mode selected isn't supported by this soundcard. Switch it
-      // back to stereo...
-      FCheck(fmodSystem_->setSpeakerMode(FMOD_SPEAKERMODE_STEREO));
-
-      // ... and re-init.
-      res = fmodSystem_->init(numChannels, FMOD_INIT_NORMAL, 0);
-    }
-
-    // Regardless, check the result.
-    FCheck(res);
+    FCheck(fmodSystem_->init(numChannels, FMOD_INIT_NORMAL, nullptr));
 
     // Set default volume
-    fmodSystem_->createChannelGroup("Master", &masterChannel_);
+    FCheck(fmodSystem_->createChannelGroup("Master", &masterChannel_));
     SetMasterVolume(defaultVolume);
+
+    FMOD_DSP_DESCRIPTION dspdesc;
+    memset(&dspdesc, 0, sizeof(dspdesc));
+    FMOD_DSP_PARAMETER_DESC wavedata_desc;
+    FMOD_DSP_PARAMETER_DESC volume_desc;
+    FMOD_DSP_PARAMETER_DESC *paramdesc[2] =
+    {
+        &wavedata_desc,
+        &volume_desc
+    };
+
+    FMOD_DSP_INIT_PARAMDESC_DATA(wavedata_desc, "wave data", "", "wave data", FMOD_DSP_PARAMETER_DATA_TYPE_USER);
+    FMOD_DSP_INIT_PARAMDESC_FLOAT(volume_desc, "volume", "%", "linear volume in percent", 0, 1, 1);
+
+    strncpy(dspdesc.name, "My first DSP unit", sizeof(dspdesc.name));
+    dspdesc.version = 0x00010000;
+    dspdesc.numinputbuffers = 1;
+    dspdesc.numoutputbuffers = 1;
+    dspdesc.read = myDSPCallback;
+    dspdesc.create = myDSPCreateCallback;
+    dspdesc.release = myDSPReleaseCallback;
+    dspdesc.getparameterdata = myDSPGetParameterDataCallback;
+    dspdesc.setparameterfloat = myDSPSetParameterFloatCallback;
+    dspdesc.getparameterfloat = myDSPGetParameterFloatCallback;
+    dspdesc.numparameters = 2;
+    dspdesc.paramdesc = paramdesc;
+
+    FCheck(fmodSystem_->createDSP(&dspdesc, &mydsp));
+    FCheck(masterChannel_->addDSP(0, mydsp));
   }
 
 
   // Destructor for the audio system.
   AudioSystem::~AudioSystem()
   {
+    masterChannel_->removeDSP(mydsp);
+
+    // Close the system
+    FCheck(fmodSystem_->close());
+
     // Releases all assests.
     FCheck(fmodSystem_->release());
   }
@@ -144,7 +295,7 @@ namespace ASCIIPlayer
 
     // Play and assign to master channel group.
     ChannelHandle channel;
-    FCheck(fmodSystem_->playSound(FMOD_CHANNEL_FREE, audioFile.get(ID_)->LoadedObject, !playing, &channel));
+    FCheck(fmodSystem_->playSound(audioFile.get(ID_)->LoadedObject, FMOD_DEFAULT, !playing, &channel));
     FCheck(channel->setChannelGroup(masterChannel_));
 
     // @ToDo: Channel override may result in same song playing multiple times.
@@ -225,18 +376,26 @@ namespace ASCIIPlayer
   // Fills a provided array of floats with the spectrum in question.
   void AudioSystem::FillWithAudioData(float *arr, int numVals, int channelOffset, AudioDataStyle style)
   {
+    if (lastSize > 0)
+    {
+      std::lock_guard<std::mutex> dataLock(myMutex);
+      memcpy(arr, spectrum, sizeof(float) * lastSize);
+    }
+    
     switch (style)
     {
       case AUDIODATA_WAVEFORM:
-        FCheck(fmodSystem_->getWaveData(arr, numVals, channelOffset));
+        //arr = spectrum;
+        //numVals = 1024;
+        //FCheck(fmodSystem_->get(arr, numVals, channelOffset));
         break;
 
       case AUDIODATA_SPECTRUM:
-        FCheck(fmodSystem_->getSpectrum(arr, numVals, channelOffset, FMOD_DSP_FFT_WINDOW_RECT));
+        //FCheck(fmodSystem_->getSpectrum(arr, numVals, channelOffset, FMOD_DSP_FFT_WINDOW_RECT));
         break;
-
+       
       case AUDIODATA_SPECTRUM_ALT:
-        FCheck(fmodSystem_->getSpectrum(arr, numVals, channelOffset, FMOD_DSP_FFT_WINDOW_BLACKMAN));
+        //FCheck(fmodSystem_->getSpectrum(arr, numVals, channelOffset, FMOD_DSP_FFT_WINDOW_BLACKMAN));
         break;
 
       default:
@@ -250,7 +409,7 @@ namespace ASCIIPlayer
    // Private member funcs //
   //////////////////////////
   // Checks the result of the FMOD operation.
-  void AudioSystem::FCheck(const FMOD_RESULT &res) const
+  void AudioSystem::FCheck(const FMOD_RESULT &res)
   {
     if (res != FMOD_OK)
       throw RTest::RException(std::string("FMOD Error: ") + FMOD_ErrorString(res));
