@@ -8,6 +8,11 @@ namespace ASCIIPlayer
     // ... In theory, we could track width and height by default
   }
   
+  void Visualizer::UpdatePre()
+  {
+
+  }
+
   bool Visualizer::UpdatePost()
   {
     return true; 

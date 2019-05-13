@@ -24,8 +24,12 @@ namespace ASCIIPlayer
   }
 
   // Draw Bars
-  bool VisualizerWaveform::Update(float* data)
+  bool VisualizerWaveform::Update(float* data, bool isActive)
   {
+    // Don't display anything new if we're not active.
+    if (!isActive)
+      return true;
+
     const char symbol = static_cast<unsigned char>(219); // Solid box character on windows. This doesn't really work well on different OSs.
     const int halfHeight = height_ / 2;                  // Half-way point on the console visually
     const int heightScalar = 6;                          // Arbitrary value determining the max vertical offset

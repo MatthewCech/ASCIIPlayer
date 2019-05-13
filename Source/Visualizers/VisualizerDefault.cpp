@@ -27,7 +27,7 @@ namespace ASCIIPlayer
   }
 
   // Draw waveform based on updating
-  bool VisualizerDefault::Update(float* data)
+  bool VisualizerDefault::Update(float* data, bool isActive)
   {
     for (int i = 0; i < 20; ++i)
     {

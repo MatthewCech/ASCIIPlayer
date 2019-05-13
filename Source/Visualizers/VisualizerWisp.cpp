@@ -101,7 +101,7 @@ namespace ASCIIPlayer
   }
 
   // Updates the visualizer w/ new audiodata
-  bool VisualizerWisp::Update(float* data)
+  bool VisualizerWisp::Update(float* data, bool isRunning)
   {
     // Variables
     const int dataSize{ static_cast<int>(GetAudioDataSize()) }; // Width of data for this loop
