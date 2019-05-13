@@ -28,7 +28,7 @@ namespace ASCIIPlayer
 		RConsole::Canvas::SetCursorVisible(false);
 	}
 
-	bool VisualizerPineapple::Update(float* data)
+	bool VisualizerPineapple::Update(float* data, bool isActive)
 	{
 		const char symbol = '/';
     const char symbolAlt = '.';

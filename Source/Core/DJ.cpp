@@ -129,7 +129,11 @@ namespace ASCIIPlayer
           }
 
           // Update and post-update functions
-          visualizer_->Update(visualizerDataArray_);
+          bool status = !paused_;
+          if (playlist_.GetPlaylistLength() <= 0)
+            status = false;
+
+          visualizer_->Update(visualizerDataArray_, status);
           visualizer_->UpdatePost();
         }
 

@@ -184,6 +184,9 @@ namespace ASCIIPlayer
     , masterChannel_(nullptr)
     , ID_(AudioSystemIDIncrement++)
   {
+    // Set values to 0
+    memset(spectrum, 0, DATA_SIZE);
+
     FCheck(FMOD::System_Create(&fmodSystem_));
     FCheck(fmodSystem_->getVersion(&version_));
 

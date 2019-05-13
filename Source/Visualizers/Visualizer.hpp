@@ -23,13 +23,14 @@ namespace ASCIIPlayer
     {  }
 
     // Member Functions
-    virtual bool Update(float* data) ABSTRACT;
+    virtual bool Update(float* data, bool isActive) ABSTRACT;
     virtual int Width() ABSTRACT;
     virtual int Height() ABSTRACT;
 
     // Pre-defined, but virtual functions. 
     // Can be fiddled with if you want, but defaults are reasonable.
     virtual void OnResize(int newWidth, int newHeight);
+    virtual void UpdatePre();
     virtual bool UpdatePost();
     virtual unsigned int GetAudioDataSize();
     virtual AudioDataStyle GetAudioDataStyle();

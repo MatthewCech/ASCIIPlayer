@@ -13,7 +13,7 @@ namespace ASCIIPlayer
     VisualizerWisp();
 
     // Member functions
-    bool Update(float* data);
+    bool Update(float* data, bool isActive);
     void OnResize(int newWidth, int newHeight);
 
   private:
