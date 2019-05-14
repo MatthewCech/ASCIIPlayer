@@ -3,6 +3,7 @@
 #include "AudioSystem.hpp"
 #include <ConsoleUtils/console-utils.hpp>
 #include <mutex>
+#include <atomic>
 
 #define DATA_SIZE 512
 
@@ -16,19 +17,25 @@ namespace ASCIIPlayer
     int   channels;
   } mydsp_data_t;
 
-  int lastSize = 0;
-  float spectrum[DATA_SIZE];
-  FMOD::DSP *mydsp;
-  std::mutex myMutex;
+  std::atomic<int> __wave_data_last_size = 0;
+  float *__wave_data = nullptr;
+  FMOD::DSP *__wave_data_dsp;
+  std::mutex __wave_data_mutex;
 
   void TrackLatest(float *data, int size)
   {
-    if (size > DATA_SIZE)
-      size = DATA_SIZE;
+    if (__wave_data_mutex.try_lock())
+    {
+      if (size > DATA_SIZE)
+        size = DATA_SIZE;
 
-    lastSize = size;
-    std::lock_guard<std::mutex> dataLock(myMutex);
-    memcpy(&spectrum, data, size * sizeof(float));
+      __wave_data_last_size = size;
+
+      if (__wave_data != nullptr)
+        memcpy(&__wave_data, data, size * sizeof(float));
+
+      __wave_data_mutex.unlock();
+    }
   }
 
   FMOD_RESULT F_CALLBACK myDSPCallback(FMOD_DSP_STATE *dsp_state, float *inbuffer, float *outbuffer, unsigned int length, int inchannels, int *outchannels)
@@ -184,8 +191,11 @@ namespace ASCIIPlayer
     , masterChannel_(nullptr)
     , ID_(AudioSystemIDIncrement++)
   {
-    // Set values to 0
-    memset(spectrum, 0, DATA_SIZE);
+    // Initialize spectrum structure and set values to 0. Lock is required.
+    __wave_data_mutex.lock();
+    __wave_data = new float[DATA_SIZE];
+    memset(__wave_data, 0, DATA_SIZE);
+    __wave_data_mutex.unlock();
 
     FCheck(FMOD::System_Create(&fmodSystem_));
     FCheck(fmodSystem_->getVersion(&version_));
@@ -225,21 +235,23 @@ namespace ASCIIPlayer
     dspdesc.numparameters = 2;
     dspdesc.paramdesc = paramdesc;
 
-    FCheck(fmodSystem_->createDSP(&dspdesc, &mydsp));
-    FCheck(masterChannel_->addDSP(0, mydsp));
+    FCheck(fmodSystem_->createDSP(&dspdesc, &__wave_data_dsp));
+    FCheck(masterChannel_->addDSP(0, __wave_data_dsp));
   }
 
 
   // Destructor for the audio system.
   AudioSystem::~AudioSystem()
   {
-    masterChannel_->removeDSP(mydsp);
+    FCheck(masterChannel_->removeDSP(__wave_data_dsp));
 
     // Close the system
     FCheck(fmodSystem_->close());
 
     // Releases all assests.
     FCheck(fmodSystem_->release());
+
+    delete[] __wave_data;
   }
 
 
@@ -379,10 +391,16 @@ namespace ASCIIPlayer
   // Fills a provided array of floats with the spectrum in question.
   void AudioSystem::FillWithAudioData(float *arr, int numVals, int channelOffset, AudioDataStyle style)
   {
-    if (lastSize > 0)
+    int last = __wave_data_last_size;
+    if (last > 0)
     {
-      std::lock_guard<std::mutex> dataLock(myMutex);
-      memcpy(arr, spectrum, sizeof(float) * lastSize);
+      __wave_data_mutex.lock();
+      memcpy(arr, __wave_data, sizeof(float) * last);
+      __wave_data_mutex.unlock();
+
+      float masterVolume = GetMasterVolume();
+      for (int i = 0; i < last; ++i)
+        arr[i] *= 1.0f / masterVolume;
     }
     
     switch (style)
