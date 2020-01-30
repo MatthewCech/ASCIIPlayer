@@ -1,5 +1,5 @@
-#ASCIIPlayer
-ASCIIPlayer A lightweight command-line audio visualizer that allows you to play all sorts of audio formats in your terminal!
+# ASCIIPlayer
+ASCIIPlayer is a lightweight command-line audio visualizer that allows you to play all sorts of audio formats in your terminal!
 
 How to run:
 - Download the installer from www.asciiplayer.com or download the standalone executable
