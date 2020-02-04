@@ -24,18 +24,18 @@ namespace ASCIIPlayer
 
   void TrackLatest(float *data, int size)
   {
-    if (__wave_data_mutex.try_lock())
-    {
+    //if (__wave_data_mutex.try_lock())
+    //{
       if (size > DATA_SIZE)
         size = DATA_SIZE;
 
       __wave_data_last_size = size;
 
-      if (__wave_data != nullptr)
-        memcpy(&__wave_data, data, size * sizeof(float));
+      //if (__wave_data != nullptr)
+        //memcpy(&__wave_data, data, size * sizeof(float));
 
-      __wave_data_mutex.unlock();
-    }
+    //  __wave_data_mutex.unlock();
+   // }
   }
 
   FMOD_RESULT F_CALLBACK myDSPCallback(FMOD_DSP_STATE *dsp_state, float *inbuffer, float *outbuffer, unsigned int length, int inchannels, int *outchannels)

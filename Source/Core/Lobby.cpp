@@ -369,11 +369,11 @@ namespace ASCIIPlayer
    // Private //
   /////////////
   // Displays a little bouncing image in the last 
-  void Lobby::displayIdle(long long curr_frametime, long long last_frametime)
+  void Lobby::displayIdle(long curr_frametime, long last_frametime)
   {
     // Advance index value
-    const double numIndexesPerSecond = 12.5;
-    idleIndex_ += (static_cast<double>(curr_frametime + 1) - static_cast<double>(last_frametime)) / 1000 * numIndexesPerSecond;
+    const double numIndexesPerSecond = 18;
+    idleIndex_ += (static_cast<double>(curr_frametime) - static_cast<double>(last_frametime)) / 1000.0f * numIndexesPerSecond;
 
     // Calculate index in array and mod value.
     const int osc[] = { '`', '*', '+', '_', ',', '.', '.', '.', '.', '.', '.', '.', ',', '/', '^' };
