@@ -25,3 +25,5 @@ documentation/
 Build/RH/ResourceHacker\.log
 
 Build/RH/ResourceHacker\.ini
+
+Installer_windows/ASCIIPlayer.conf
