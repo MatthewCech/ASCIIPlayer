@@ -25,7 +25,7 @@ workspace "ASCIIPlayer"                      -- Solution Name
 
     -- [ PROJECT CONFIGURATION ] --
     project "ASCIIPlayer"        -- Project name
-        targetname "ascii_player" -- Executable name
+        targetname "asciiplayer" -- Executable name
         kind "ConsoleApp"        -- Style of app in project- WindowedApp, ConsoleApp, etc.
         language "C++"
 
