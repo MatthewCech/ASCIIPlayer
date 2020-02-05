@@ -1,11 +1,9 @@
-; -- Example1.iss --
-; Demonstrates copying 3 files and creating an icon.
-
-; SEE THE DOCUMENTATION FOR DETAILS ON CREATING .ISS SCRIPT FILES!
+; Windows installer creation script using inno installer.
+; Download the thing that actually runs this at https://www.jrsoftware.org/isinfo.php
 
 [Setup]
 AppName=ASCIIPlayer
-AppVersion=0.2.1
+AppVersion=0.3.0
 SetupIconFile=ASCIIPlayer.ico
 DefaultDirName={pf}\ASCIIPlayer
 DefaultGroupName=ASCIIPlayer
@@ -15,12 +13,12 @@ SolidCompression=yes
 OutputDir=output
 OutputBaseFilename=ASCIIPlayerInstaller
 ChangesAssociations=yes
-LicenseFile=LICENSE.txt
+LicenseFile=..\LICENSE.md
 
 [Files]
 Source: "ascii_player.exe"; DestDir: "{app}"
-Source: "fmodexL.dll"; DestDir: "{app}"
-Source: "README.txt"; DestDir: "{app}"; Flags: isreadme
+Source: "fmodL.dll"; DestDir: "{app}"
+Source: "..\README.md"; DestDir: "{app}"; Flags: isreadme
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; \

@@ -9,7 +9,18 @@ Looking for a stable build or for info about the latest changes? Head over to ww
 
 Want to provide feedback or feature suggestions? Feel free to file a request or bug report on GitHub at https://github.com/MatthewCech/ASCIIPlayer, or send me an email at contact(at)asciiplayer.com 
 
----
+## License
+
+(human readable)
+
+- It's free. Just don't pretend you made it when you didn't. Besides, you don't want to claim credit for some of this.
+- Not my fault if it breaks or causes your machine to explode or something like that.
+- Mentioning "Hey asciiplayer was made by this Matthew person" would be top notch.
+
+For specifics, see LICENSE.md.
+
+## FMOD
+
 ASCII Player is based on FMOD's low level API, and FMOD itself requires per-project licensing. For more information, head over to https://www.fmod.com/.
 
 Made with FMOD Studio by Firelight Technologies Pty Ltd.
