@@ -26,14 +26,14 @@ namespace ASCIIPlayer
 
   private:
     // Private methods - Parsing and Overlays
-    void displayIdle(long curr_frametime, long last_frametime);
+    void displayIdle(std::int64_t curr_frametime, std::int64_t last_frametime);
     void displayExtraMenus();
     void interpretMultiCharInput(const std::string str);
     void interpretChar(char key);
     void HandleApplicationOpen(int argc, char** argv);
 
     // Private methods - Utility and Management
-    int averageFPS(long start, long end);
+    int averageFPS(std::int64_t start, std::int64_t end);
     void startDJ();
     void stopDj();
     void setDJ(DJ *newDJ);
@@ -51,12 +51,12 @@ namespace ASCIIPlayer
     // Debug or Idle Related
     double idleIndex_; 
     size_t timesIndex_;
-    long times_[200];
+    std::int64_t times_[200];
     bool showDebug_;
-    long fpsStart_;
-    long fpsPrevStart_;
-    long fpsEnd_;
-    long appStartTime_;
+    std::int64_t fpsStart_;
+    std::int64_t fpsPrevStart_;
+    std::int64_t fpsEnd_;
+    std::int64_t appStartTime_;
 
     // Shared memory locations
     shoom::Shm *sharedStatus;

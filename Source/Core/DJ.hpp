@@ -42,7 +42,7 @@ namespace ASCIIPlayer
     void VisualizerNext();
     void VisualizerPrev();
     std::string VisualizerName();
-    long long GetLastVolumeChange();
+    std::int64_t GetLastVolumeChange();
     unsigned int GetPlaylistSize();
     void FillSongData(float* toFill, unsigned int size);
 
@@ -75,7 +75,7 @@ namespace ASCIIPlayer
     unsigned int visaulizerDataSize_;         // The size of the array for the audio visualizer.
     AudioDataStyle visualizerDataStyle_;      // The style of data for the audio visualizer
     float *visualizerDataArray_;              // Data used for the visualizer;
-    long long lastVolumeChange_;              // The last time the volume was changed, in ms
+    std::int64_t lastVolumeChange_;              // The last time the volume was changed, in ms
     int windowWidth_;                         // Width of the display window the DJ is operating in
     int windowHeight_;                        // Height of the display window the DJ is operating in
     std::vector<VisualizerInfo> visualizers_; // Holds visualizer information

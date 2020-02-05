@@ -36,7 +36,7 @@ namespace ASCIIPlayer
 
     // Determine color index 
     const int fadeDelayMS = 105;
-    long long color_index = (time_ - lastFadeTime_) / fadeDelayMS;
+    std::int64_t color_index = (time_ - lastFadeTime_) / fadeDelayMS;
     const RConsole::Color colors[] = { RConsole::WHITE, RConsole::WHITE, RConsole::WHITE, RConsole::WHITE 
                                      , RConsole::WHITE, RConsole::WHITE, RConsole::WHITE, RConsole::WHITE 
                                      , RConsole::WHITE, RConsole::WHITE, RConsole::WHITE, RConsole::WHITE
@@ -151,8 +151,8 @@ namespace ASCIIPlayer
     return true;
   }
 
-  // Get a long long of current time in MS
-  long long DefaultOverlay::getTime()
+  // Get a std::int64_t of current time in MS
+  std::int64_t DefaultOverlay::getTime()
   {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
   }

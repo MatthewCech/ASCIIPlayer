@@ -10,17 +10,17 @@ namespace ASCIIPlayer
   public:
     DefaultOverlay();
     virtual bool Update(const UIInfo uinfo);
-
+    
   private:
     // Private methods
-    long long getTime();
+    std::int64_t getTime();
 
     // Private variables
     UIInfo lastInfo_;
-    long long lastFadeTime_;
-    long long lastTime_;
-    long long time_;
-    long long times_[100] = { 0 };
+    std::int64_t lastFadeTime_;
+    std::int64_t lastTime_;
+    std::int64_t time_;
+    std::int64_t times_[100] = { 0 };
     size_t timesIndex_ = 0;
   };
 }

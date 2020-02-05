@@ -23,12 +23,12 @@
 using ChannelHandle = FMOD::Channel*;     // Channel handle for FMOD
 using AudioHandle   = FMOD::Sound;        // Sound object handle for FMOD
 using Channelgroup  = FMOD::ChannelGroup; // Channel object handle for FMOD
-using APUnique      = unsigned long long;
+using APUnique      = std::int64_t;
 
 // Defines
 #define ABSTRACT =0
 #define SONG_TIME_SCALE_FOR_SECONDS 1000
-#define MS_SINCE_EPOCH ((long)(std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count()))
+#define MS_SINCE_EPOCH std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()
 
 
   ///////////

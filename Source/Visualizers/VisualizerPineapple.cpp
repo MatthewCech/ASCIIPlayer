@@ -14,7 +14,7 @@ namespace ASCIIPlayer
     , radius_(PINEAPPLE_SIZE / 4)
     , lastTimeMS_(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
     , lastTimeSecond_(lastTimeMS_)
-    , lastTimes_(std::vector<long long>())
+    , lastTimes_(std::vector<std::int64_t>())
   {
     memset(smoothed_, 0, PINEAPPLE_SIZE * sizeof(float));
   }
@@ -39,7 +39,7 @@ namespace ASCIIPlayer
     const float smoothRate = 0.965f;
     const float edgeCurve = 5;
 
-    long long current = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::int64_t current = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     // Smooth in new data
     if (current > lastTimeMS_ + NORMALIZED_TIME_MS)
@@ -84,7 +84,7 @@ namespace ASCIIPlayer
 
     // Debug
     float total = 0;
-    for (long long val : lastTimes_)
+    for (std::int64_t val : lastTimes_)
       total += val;
     
     total /= lastTimes_.size();
