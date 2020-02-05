@@ -28,7 +28,7 @@ using APUnique      = unsigned long long;
 // Defines
 #define ABSTRACT =0
 #define SONG_TIME_SCALE_FOR_SECONDS 1000
-#define MS_SINCE_EPOCH (std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count())
+#define MS_SINCE_EPOCH ((long)(std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count()))
 
 
   ///////////

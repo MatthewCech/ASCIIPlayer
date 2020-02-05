@@ -46,7 +46,7 @@ namespace ASCIIPlayer
       overlay_ = new DefaultOverlay();
 
     // Register Visualizers
-    REGISTER_VISUALIZER("default", VisualizerDefault);
+    //REGISTER_VISUALIZER("default", VisualizerDefault);
     REGISTER_VISUALIZER("waveform", VisualizerWaveform);
     //REGISTER_VISUALIZER("wisp", VisualizerWisp);
     //REGISTER_VISUALIZER("oscillate", VisualizerOscillate);

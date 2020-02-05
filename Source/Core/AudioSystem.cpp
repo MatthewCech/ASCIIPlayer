@@ -2,7 +2,6 @@
 #include <RTest/RTest.hpp>
 #include "AudioSystem.hpp"
 #include <ConsoleUtils/console-utils.hpp>
-#include <mutex>
 
 #define DATA_SIZE 512
 
@@ -16,24 +15,15 @@ namespace ASCIIPlayer
     int   channels;
   } mydsp_data_t;
 
-  int lastSize = 0;
-  float spectrum[DATA_SIZE];
-  FMOD::DSP *mydsp;
-  std::mutex myMutex;
+  unsigned int __wave_data_size = 10;
+  float __wave_data[DATA_SIZE];
+  FMOD::DSP *__wave_data_dsp;
 
-  void TrackLatest(float *data, int size)
-  {
-    if (size > DATA_SIZE)
-      size = DATA_SIZE;
-
-    lastSize = size;
-    std::lock_guard<std::mutex> dataLock(myMutex);
-    memcpy(&spectrum, data, size * sizeof(float));
-  }
 
   FMOD_RESULT F_CALLBACK myDSPCallback(FMOD_DSP_STATE *dsp_state, float *inbuffer, float *outbuffer, unsigned int length, int inchannels, int *outchannels)
   {
     mydsp_data_t *data = (mydsp_data_t *)dsp_state->plugindata;
+    __wave_data_size = length;
 
     /*
         This loop assumes inchannels = outchannels, which it will be if the DSP is created with '0'
@@ -42,16 +32,23 @@ namespace ASCIIPlayer
         but outputting the number of channels specified. Generally it is best to keep the channel
         count at 0 for maximum compatibility.
     */
-
-    TrackLatest(data->buffer, data->length_samples);
-
-    // Input is not modified, but is copied over to the outbuffer.
+    
+    //Input is not modified, but is copied over to the outbuffer.
     for (unsigned int samp = 0; samp < length; samp++)
     {
-      for (int chan = 0; chan < *outchannels; chan++)
-        data->buffer[(samp * *outchannels) + chan] = outbuffer[(samp * inchannels) + chan] = inbuffer[(samp * inchannels) + chan];
+      const int numChannels = *outchannels;
+      for (int chan = 0; chan < numChannels; chan++)
+      {
+        float inVal = inbuffer[(samp * inchannels) + chan];
+        data->buffer[(samp * numChannels) + chan] = outbuffer[(samp * inchannels) + chan] = inVal;
+        
+        if (samp < __wave_data_size && samp < DATA_SIZE)
+        {
+          __wave_data[(samp * numChannels) + chan] = inVal;
+        }
+      }
     }
-
+    
     data->channels = inchannels;
 
     return FMOD_OK;
@@ -184,8 +181,11 @@ namespace ASCIIPlayer
     , masterChannel_(nullptr)
     , ID_(AudioSystemIDIncrement++)
   {
-    // Set values to 0
-    memset(spectrum, 0, DATA_SIZE);
+    // Initialize spectrum structure and set values to 0. Lock is required.
+    //__wave_data_mutex.lock();
+    //__wave_data = new float[DATA_SIZE];
+    //memset(__wave_data, 0, DATA_SIZE);
+    //__wave_data_mutex.unlock();
 
     FCheck(FMOD::System_Create(&fmodSystem_));
     FCheck(fmodSystem_->getVersion(&version_));
@@ -225,21 +225,23 @@ namespace ASCIIPlayer
     dspdesc.numparameters = 2;
     dspdesc.paramdesc = paramdesc;
 
-    FCheck(fmodSystem_->createDSP(&dspdesc, &mydsp));
-    FCheck(masterChannel_->addDSP(0, mydsp));
+    FCheck(fmodSystem_->createDSP(&dspdesc, &__wave_data_dsp));
+    FCheck(masterChannel_->addDSP(0, __wave_data_dsp));
   }
 
 
   // Destructor for the audio system.
   AudioSystem::~AudioSystem()
   {
-    masterChannel_->removeDSP(mydsp);
+    FCheck(masterChannel_->removeDSP(__wave_data_dsp));
 
     // Close the system
     FCheck(fmodSystem_->close());
 
     // Releases all assests.
     FCheck(fmodSystem_->release());
+
+    //delete[] __wave_data;
   }
 
 
@@ -379,11 +381,8 @@ namespace ASCIIPlayer
   // Fills a provided array of floats with the spectrum in question.
   void AudioSystem::FillWithAudioData(float *arr, int numVals, int channelOffset, AudioDataStyle style)
   {
-    if (lastSize > 0)
-    {
-      std::lock_guard<std::mutex> dataLock(myMutex);
-      memcpy(arr, spectrum, sizeof(float) * lastSize);
-    }
+    for(unsigned int i = 0; i < __wave_data_size && i < static_cast<unsigned int>(numVals) && i < DATA_SIZE; ++i)
+      arr[i] = __wave_data[i];
     
     switch (style)
     {
