@@ -7,7 +7,7 @@ namespace ASCIIPlayer
    // Private - Utility and Management //
   //////////////////////////////////////
   // Calculates average framerate based on the start and stop provided. 
-  int Lobby::averageFPS(long start, long end)
+  int Lobby::averageFPS(std::int64_t start, std::int64_t end)
   {
     size_t size = sizeof(times_) / sizeof(long);
     times_[timesIndex_++] = end - start;

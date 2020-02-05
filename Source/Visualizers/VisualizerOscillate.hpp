@@ -23,7 +23,7 @@ namespace ASCIIPlayer
     float pos_2_x_;
     float pos_2_y_;
     double oscillation_location_;
-    long long lastTime_;
+    std::int64_t lastTime_;
   };
 }
 

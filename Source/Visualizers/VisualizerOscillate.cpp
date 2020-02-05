@@ -43,7 +43,7 @@ namespace ASCIIPlayer
   bool VisualizerOscillate::Update(float* data, bool isActive)
   {
     // Calculate delays and update last time and current time variables.
-    long long curr_time = MS_SINCE_EPOCH;
+    std::int64_t curr_time = MS_SINCE_EPOCH;
     const double delay = (static_cast<double>(curr_time) - static_cast<double>(lastTime_)) / 1000.0;
     lastTime_ = curr_time;
 

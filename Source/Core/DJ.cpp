@@ -432,7 +432,7 @@ namespace ASCIIPlayer
 
 
   // Gets the last time the volume changed.
-  long long DJ::GetLastVolumeChange()
+  std::int64_t DJ::GetLastVolumeChange()
   {
     return lastVolumeChange_;
   }

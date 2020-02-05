@@ -15,7 +15,7 @@ namespace ASCIIPlayer
     , height_(RConsole::Canvas::GetConsoleHeight())
     , lastTimeMS_(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
     , lastTimeSecond_(lastTimeMS_)
-    , lastTimes_(std::vector<long long>())
+    , lastTimes_(std::vector<std::int64_t>())
   { 
     RConsole::Canvas::SetCursorVisible(false);
     memset(smoothed_, 0, VISUALIZER_SPECTRUM_DATA_SIZE * sizeof(float));
@@ -35,7 +35,7 @@ namespace ASCIIPlayer
   bool VisualizerSpectrum::Update(float* data, bool isActive)
   {
     const float smoothRate = 0.90f;
-    long long current = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::int64_t current = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     // Smooth in new data
     if (current > lastTimeMS_ + NORMALIZED_TIME_MS)
@@ -72,7 +72,7 @@ namespace ASCIIPlayer
 
     // Debug
     float total = 0;
-    for (long long val : lastTimes_)
+    for (std::int64_t val : lastTimes_)
       total += val;
 
     total /= lastTimes_.size();

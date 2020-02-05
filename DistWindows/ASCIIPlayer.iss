@@ -16,7 +16,7 @@ ChangesAssociations=yes
 LicenseFile=..\LICENSE.md
 
 [Files]
-Source: "ascii_player.exe"; DestDir: "{app}"
+Source: "asciiplayer.exe"; DestDir: "{app}"
 Source: "fmodL.dll"; DestDir: "{app}"
 Source: "..\README.md"; DestDir: "{app}"; Flags: isreadme
 
@@ -25,11 +25,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; \
     GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Icons]
-Name: "{userdesktop}\ASCIIPlayer"; Filename: "{app}\ascii_player.exe"; Tasks: desktopicon
-Name: "{group}\ASCIIPlayer"; Filename: "{app}\ascii_player.exe"
+Name: "{userdesktop}\ASCIIPlayer"; Filename: "{app}\asciiplayer.exe"; Tasks: desktopicon
+Name: "{group}\ASCIIPlayer"; Filename: "{app}\asciiplayer.exe"
 
 ;[Registry]
 ;Root: HKCR; Subkey: ".mp3"; ValueType: string; ValueName: ""; ValueData: "ASCIIPlayer"; Flags: uninsdeletevalue
-;Root: HKCR; Subkey: "ASCIIPlayer"; ValueType: string; ValueName: ""; ValueData: "ASCII Player"; Flags: uninsdeletekey
-;Root: HKCR; Subkey: "ASCIIPlayer\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\ascii_player.exe,0"
-;Root: HKCR; Subkey: "ASCIIPlayer\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\ascii_player.exe"" ""%1"""
+;Root: HKCR; Subkey: "ASCIIPlayer"; ValueType: string; ValueName: ""; ValueData: "ASCIIPlayer"; Flags: uninsdeletekey
+;Root: HKCR; Subkey: "ASCIIPlayer\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\asciiplayer.exe,0"
+;Root: HKCR; Subkey: "ASCIIPlayer\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\asciiplayer.exe"" ""%1"""

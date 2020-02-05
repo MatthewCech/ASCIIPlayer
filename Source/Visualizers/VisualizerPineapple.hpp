@@ -24,9 +24,9 @@ namespace ASCIIPlayer
     float smoothed_[PINEAPPLE_SIZE];
 
     // Frame time normalization / tracking
-    long long lastTimeMS_;
-    long long lastTimeSecond_;
-    std::vector<long long> lastTimes_;
+    std::int64_t lastTimeMS_;
+    std::int64_t lastTimeSecond_;
+    std::vector<std::int64_t> lastTimes_;
   };
 }
 
