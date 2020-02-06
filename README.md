@@ -26,7 +26,7 @@ For specifics, see LICENSE.md.
 Human Readable Version:
 - It's free. Just don't pretend you made it when you didn't. Besides, you don't want to claim credit for some of this.
 - Not my fault if it breaks or causes your machine to explode or something like that.
-- Mentioning "Hey asciiplayer was made by this Matthew person" would be top notch.
+- Mentioning "Hey asciiplayer was made by Matthew" would be top notch, plus you then can point the finger at me if things go wrong.
 
 ## FMOD
 
