@@ -7,6 +7,8 @@
 #include "DJConfig.hpp"
 #include "DJ.hpp"
 
+#define TRACKED_TIMES 200
+
 namespace shoom
 {
   class Shm;
@@ -51,7 +53,7 @@ namespace ASCIIPlayer
     // Debug or Idle Related
     double idleIndex_; 
     size_t timesIndex_;
-    std::int64_t times_[200];
+    std::int64_t times_[TRACKED_TIMES];
     bool showDebug_;
     std::int64_t fpsStart_;
     std::int64_t fpsPrevStart_;
