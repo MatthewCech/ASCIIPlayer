@@ -9,7 +9,9 @@ namespace ASCIIPlayer
   // Calculates average framerate based on the start and stop provided. 
   int Lobby::averageFPS(std::int64_t start, std::int64_t end)
   {
-    size_t size = sizeof(times_) / sizeof(long);
+    // Doing this is clever and all, but this used to say sizeof(times_) / sizeof(std::int64_t), which is 2x the amount.
+    //size_t size = sizeof(times_) / sizeof(std::int64_t);
+    size_t size = TRACKED_TIMES;
     times_[timesIndex_++] = end - start;
     if (timesIndex_ >= size)
       timesIndex_ = 0;
