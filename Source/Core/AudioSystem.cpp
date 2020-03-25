@@ -42,9 +42,10 @@ namespace ASCIIPlayer
         float inVal = inbuffer[(samp * inchannels) + chan];
         data->buffer[(samp * numChannels) + chan] = outbuffer[(samp * inchannels) + chan] = inVal;
         
-        if (samp < __wave_data_size && samp < DATA_SIZE)
+        int index = (samp * numChannels) + chan;
+        if (samp < __wave_data_size && index < DATA_SIZE)
         {
-          __wave_data[(samp * numChannels) + chan] = inVal;
+          __wave_data[index] = inVal;
         }
       }
     }
