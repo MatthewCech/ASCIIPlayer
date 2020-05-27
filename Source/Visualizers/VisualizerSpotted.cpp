@@ -26,7 +26,7 @@ namespace ASCIIPlayer
   }
 
   // Establish cell-style spotted format.
-  bool VisaulizerSpotted::Update(float* data, bool isActive)
+  bool VisaulizerSpotted::Update(float* data, float volume, bool isActive)
   {
     int loop = static_cast<int>(runningStart_); // give it some initial offset
     bool invert = false;
