@@ -5,6 +5,7 @@ sudo apt-get -y update
 sudo apt-get -y upgrade
 sudo apt-get -y install build-essential
 sudo apt-get -y install ia32-libs
+sudo apt-get -y install gcc-multilib g++-multilib
 
 Build/run_clean.sh
 Build/run_premake_gmake.sh
