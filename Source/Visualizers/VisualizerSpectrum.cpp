@@ -32,7 +32,7 @@ namespace ASCIIPlayer
   }
 
   // Draw vertical spectrum based on frequencies
-  bool VisualizerSpectrum::Update(float* data, bool isActive)
+  bool VisualizerSpectrum::Update(float* data, float volume, bool isActive)
   {
     const float smoothRate = 0.90f;
     std::int64_t current = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();

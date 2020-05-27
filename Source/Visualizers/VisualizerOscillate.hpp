@@ -11,7 +11,7 @@ namespace ASCIIPlayer
     VisualizerOscillate();
 
     // Functions
-    bool Update(float* data, bool isActive);
+    bool Update(float* data, float volume, bool isActive);
     void OnResize(int newWidth, int newHeight);
 
     // Internal Variables

@@ -38,7 +38,7 @@ namespace ASCIIPlayer
     void SetCurrentPosition(AudioFile &audioFile, unsigned int pos);
     std::string GetFilename(const AudioFile &audioFile) const;
     std::string GetFilepath(const AudioFile &audioFile) const;
-    void FillWithAudioData(float *arr, int numVals, int channelOffset, AudioDataStyle style);
+    void FillWithAudioData(float *arr, int numVals, AudioDataStyle style);
 
     static void FCheck(const FMOD_RESULT &res);
   private:

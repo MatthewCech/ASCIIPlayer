@@ -112,9 +112,10 @@ namespace ASCIIPlayer
             std::this_thread::sleep_for(std::chrono::microseconds(config_.DJCPULoadReductionDelay));
         }
 
-        if (visualizer_)
+        // If we've got songs to visualize and a visualizer to do it, then lets show some data!
+        if (visualizer_ && playlist_.GetPlaylistLength() > 0)
         {
-          // Only fill visualizer data if not .
+          // Only fill visualizer data if not paused.
           if (!paused_)
             FillSongData(visualizerDataArray_, visaulizerDataSize_);
           
@@ -133,7 +134,7 @@ namespace ASCIIPlayer
           if (playlist_.GetPlaylistLength() <= 0)
             status = false;
 
-          visualizer_->Update(visualizerDataArray_, status);
+          visualizer_->Update(visualizerDataArray_, audioSystem_.GetMasterVolume(), status);
           visualizer_->UpdatePost();
         }
 
@@ -157,10 +158,12 @@ namespace ASCIIPlayer
       isJumpingPos_ = false;
       audioSystem_.Update();
 
+      // Everything's runnin', It's all gravy~
       return true;
     }
     else
     {
+      // Shutdown or something else in progress. No update was performed.
       return false;
     }
   }
@@ -449,9 +452,9 @@ namespace ASCIIPlayer
   void DJ::FillSongData(float* toFill, unsigned int size)
   {
     if (visualizerDataStyle_ == AUDIODATA_NO_STYLE)
-      throw "No style. No grace.";
+      throw "A style is required";
 
-    audioSystem_.FillWithAudioData(toFill, size, 0, visualizerDataStyle_);
+    audioSystem_.FillWithAudioData(toFill, size, visualizerDataStyle_);
   }
 
 

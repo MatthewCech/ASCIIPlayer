@@ -11,7 +11,7 @@ namespace ASCIIPlayer
     VisaulizerSpotted();
 
     // Member functions
-    bool Update(float* data, bool isActive);
+    bool Update(float* data, float volume, bool isActive);
     void OnResize(int newWidth, int newHeight);
 
     // Variables

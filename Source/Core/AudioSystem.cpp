@@ -16,8 +16,8 @@ namespace ASCIIPlayer
   } mydsp_data_t;
 
   unsigned int __wave_data_size = 10;
-  float __wave_data[DATA_SIZE];
-  FMOD::DSP *__wave_data_dsp;
+  float        __wave_data[DATA_SIZE];
+  FMOD::DSP    *__wave_data_dsp;
 
 
   FMOD_RESULT F_CALLBACK myDSPCallback(FMOD_DSP_STATE *dsp_state, float *inbuffer, float *outbuffer, unsigned int length, int inchannels, int *outchannels)
@@ -380,7 +380,7 @@ namespace ASCIIPlayer
 
 
   // Fills a provided array of floats with the spectrum in question.
-  void AudioSystem::FillWithAudioData(float *arr, int numVals, int channelOffset, AudioDataStyle style)
+  void AudioSystem::FillWithAudioData(float *arr, int numVals, AudioDataStyle style)
   {
     for(unsigned int i = 0; i < __wave_data_size && i < static_cast<unsigned int>(numVals) && i < DATA_SIZE; ++i)
       arr[i] = __wave_data[i];

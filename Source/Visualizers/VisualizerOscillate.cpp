@@ -40,7 +40,7 @@ namespace ASCIIPlayer
   }
 
   // Draw vertical spectrum based on frequencies
-  bool VisualizerOscillate::Update(float* data, bool isActive)
+  bool VisualizerOscillate::Update(float* data, float volume, bool isActive)
   {
     // Calculate delays and update last time and current time variables.
     std::int64_t curr_time = MS_SINCE_EPOCH;

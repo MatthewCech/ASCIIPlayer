@@ -65,7 +65,7 @@ namespace ASCIIPlayer
   }
 
   // Primary update loop for particle
-  bool VisualizerParticle::Update(float* data, bool isActive)
+  bool VisualizerParticle::Update(float* data, float volume, bool isActive)
   {
 
     if (data[0] + data[10] + data[20] == 0)
