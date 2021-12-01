@@ -26,7 +26,8 @@ namespace ASCIIPlayer
     std::string ToString();
 
     // Static member funcs
-    static DJConfig Read(std::string path);
+    static DJConfig ReadString(std::string string);
+    static DJConfig ReadFile(std::string path);
     static void Write(DJConfig d, std::string path);
   };
 }

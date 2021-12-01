@@ -34,7 +34,7 @@ namespace ASCIIPlayer
     handleApplicationOpen(argc, argv);
 
     // Make DJ, don't autoplay. Read in the argument!
-    DJ *Dj = new DJ(DJConfig::Read(argParser_[0]), false);
+    DJ *Dj = new DJ(DJConfig::ReadFile(argParser_[0]), false);
 
     // Just loop through and see if anything happens to be a song to load.
     std::vector<std::string> args = argParser_.GetAllArgs();
@@ -165,7 +165,7 @@ namespace ASCIIPlayer
         drawDebug();
 
       // Draw menus and finalize drawing for menu overlay.
-      drawExtraMenus();
+      drawDialog();
       menuSystems_.Draw(0, 0, true);
 
       // Write out and display all drawing
@@ -261,8 +261,8 @@ namespace ASCIIPlayer
         menuSystems_.Select(ASCIIMENU_BASE);
 
       menuVisible_ = menuSystems_.IsVisible();
-      if (__is_displaying_help_menu)
-        __is_displaying_help_menu = false;
+      if (__is_displaying_dialog)
+        __is_displaying_dialog = false;
       break;
 
       // Menu Navigation: Up/Left

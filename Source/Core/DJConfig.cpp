@@ -31,7 +31,7 @@ namespace ASCIIPlayer
     std::string name;
     std::string val;
 
-    size_t pos = line.find_first_of(":");
+    size_t pos = line.find_first_of("=");
     if (pos == std::string::npos)
       return;
 
@@ -93,16 +93,28 @@ namespace ASCIIPlayer
 
        // Etc.
        << "\n\n"
-       << "===[ Notes ]===\n"
-			 << "Available Visualizers - default, waveform, wisp, spectrum, particle, spotted, pineapple\n";
+       << "; ===== Notes:"
+			 << "; Available Visualizers - default, waveform, wisp, spectrum, particle, spotted, pineapple\n";
 
     return ss.str();
   }
 
 
+  // Tries to read a string that represents a valid config file
+  DJConfig DJConfig::ReadString(std::string string)
+  {
+    DJConfig newConf;
+    std::stringstream stream = std::stringstream(string);
+
+    for (std::string line; std::getline(stream, line, '\n');)
+      newConf.ParseLine(line);
+
+    return newConf;
+  }
+
   // Tries to open config file for the visualizer, generates one otherwise.
   // Uses the specified path to do so.
-  DJConfig DJConfig::Read(std::string path)
+  DJConfig DJConfig::ReadFile(std::string path)
   {
     std::string arg0 = path;
     size_t loc = arg0.find_last_of('\\');

@@ -6,10 +6,17 @@ namespace ASCIIPlayer
 {
   // Static initialization
   bool Lobby::__menu_navigate_back_next_update = false; // For exiting the menu
-  bool Lobby::__is_displaying_help_menu = false;        // For displaying the help menu.
+  bool Lobby::__is_displaying_dialog = false;        // For displaying the help menu.
   DJ* Lobby::__current_dj = nullptr;                    // A pointer to the current DJ exposed.
-  DialogType Lobby::__dialogue_type = DialogType::NONE; // For indicating what type of dialog we're displaying.
+  DialogType Lobby::__dialog_type = DialogType::NONE; // For indicating what type of dialog we're displaying.
 
+
+  // Given a type of dialog, configure the menus to show.
+  void ShowMenu(DialogType dialog_type)
+  {
+    Lobby::__is_displaying_dialog = true;
+    Lobby::__dialog_type = dialog_type;
+  }
 
   // Creats and configures the menus we can display in the lobby.
   void Lobby::buildMenus()
@@ -24,9 +31,8 @@ namespace ASCIIPlayer
     Container* fileMenu = Container::Create(ASCIIMENU_FILE);
     fileMenu->SetOrientation(ASCIIMenus::VERTICAL);
     fileMenu->SetPosition(2, 1);
-    fileMenu->AddItem("Open", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = DialogType::OPEN; });
+    fileMenu->AddItem("Open", ASCIIMENU_HELP_INFO_BOX, []() { ShowMenu(DialogType::DIALOG_OPEN); });
     fileMenu->AddItem("Save Settings", ASCIIMENU_NO_CHANGE, []() {}); // TODO(mcech): Allow settings to save off to config
-    fileMenu->AddItem("Info", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = DialogType::GENERAL; });
     fileMenu->AddItem("Hide", ASCIIMENU_NO_CHANGE, []() { __menu_navigate_back_next_update = true; });
     fileMenu->AddItem("Quit", ASCIIMENU_NO_CHANGE, []() { exit(0); }); // TODO(mcech): Confirmation of Destructive Action - Dialogue that takes lambda for yes.
 
@@ -34,10 +40,6 @@ namespace ASCIIPlayer
     editMenu->SetOrientation(ASCIIMenus::VERTICAL);
     editMenu->SetPosition(9, 1);
 
-    // TODO(mcech): Templatize the AddItem function in order to allow it to access member function content!
-    // Why? Well, this will let this function use 'this' as a capture group, and from there the
-    // contents of this class can be used! This will be awesome for live-reloading ASCIIPlayer
-    // if the config file changed.
     editMenu->AddItem("Edit Config", ASCIIMENU_NO_CHANGE, []() { system(".\\ASCIIPlayer.conf"); });
     editMenu->AddItem("Reset Config", ASCIIMENU_NO_CHANGE, []() { system("del .\\ASCIIPlayer.conf"); });
     //TODO(mcech): editMenu->AddItem("Set Visualizer", ASCIIMENU_VISUALIZER, []() {  }); // Lets you set the visualizer from a list of them!
@@ -48,13 +50,13 @@ namespace ASCIIPlayer
     Container* helpMenu = Container::Create(ASCIIMENU_HELP);
     helpMenu->SetOrientation(ASCIIMenus::VERTICAL);
     helpMenu->SetPosition(16, 1);
-    helpMenu->AddItem("About", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = DialogType::GENERAL; });
-    helpMenu->AddItem("Keyboard Commands", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = DialogType::COMMANDS; });
-    helpMenu->AddItem("Config Info", ASCIIMENU_HELP_INFO_BOX, []() { __is_displaying_help_menu = true; __dialogue_type = DialogType::CONFIG; });
+    helpMenu->AddItem("About", ASCIIMENU_HELP_INFO_BOX, []() { ShowMenu(DialogType::HELP_GENERAL); });
+    helpMenu->AddItem("Keyboard Commands", ASCIIMENU_HELP_INFO_BOX, []() { ShowMenu(DialogType::HELP_COMMANDS); });
+    helpMenu->AddItem("Config Info", ASCIIMENU_HELP_INFO_BOX, []() { ShowMenu(DialogType::HELP_CONFIG); });
 
     Container* helpMenuPopup = Container::Create(ASCIIMENU_HELP_INFO_BOX);
     helpMenuPopup->SetOrientation(ASCIIMenus::HORIZONTAL);
-    helpMenuPopup->AddItem("[ Ok ]", "back", []() { __is_displaying_help_menu = false; });
+    helpMenuPopup->AddItem("[ Ok ]", "back", []() { __is_displaying_dialog = false; });
 
     // Set colors
     menuSystems_.SetColorSelected(RConsole::LIGHTCYAN);
@@ -73,6 +75,7 @@ namespace ASCIIPlayer
     const int osc[] = { '.', ',', '/', '^', '`', '*', '+', '_', ',', '.', '.', '.', '.', '.', '.' };
     const size_t index = static_cast<size_t>(idleIndex_);
     const size_t mod = (sizeof(osc) / sizeof(*osc));
+    const RConsole::Color color = RConsole::WHITE;
 
     // Calcualte and wrap offsets for idle bar
     int verticalOffset = static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2 - 2);
@@ -83,22 +86,21 @@ namespace ASCIIPlayer
       + static_cast<char>(osc[(index + 2) % mod])
       + static_cast<char>(osc[(index + 3) % mod])
       + static_cast<char>(osc[(index + 4) % mod])).c_str()
-      // Positioning and color...
       , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>((msg.size() + 5)) / 2)
       , verticalOffset++
-      , RConsole::WHITE);
+      , color);
 
     std::string submsg = Strings::STARTUP_SUBTEXT_LINE_1;
     RConsole::Canvas::DrawString(submsg.c_str()
       , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>(submsg.size()) / 2)
       , ++verticalOffset
-      , RConsole::WHITE);
+      , color);
 
     std::string escMenu = Strings::STARTUP_SUBTEXT_LINE_2;
     RConsole::Canvas::DrawString(escMenu.c_str()
       , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>(escMenu.size()) / 2)
       , ++verticalOffset
-      , RConsole::WHITE);
+      , color);
   }
 
 
@@ -119,27 +121,106 @@ namespace ASCIIPlayer
 
 
   // Displays additional menus with the specified string
-  void Lobby::drawExtraMenus()
+  void Lobby::drawDialog()
   {
-    if (__is_displaying_help_menu)
+    if (__is_displaying_dialog)
     {
-      std::string message = Strings::MODAL_HELP_DEFAULT;
+      const size_t width = 40;
 
-      if (__dialogue_type == DialogType::GENERAL)
-        message = Strings::MODAL_HELP_GENERAL;
-      else if (__dialogue_type == DialogType::COMMANDS)
-        message = Strings::MODAL_HELP_COMMANDS;
-      else if (__dialogue_type == DialogType::CONFIG)
-        message = Strings::MODAL_HELP_CONFIG;
-      else if (__dialogue_type == DialogType::OPEN)
-        message = Strings::MODAL_HELP_OPEN;
+      switch (__dialog_type)
+      {
+        case DialogType::HELP_GENERAL:
+          displayInfobox(width, ASCIIMENU_HELP_INFO_BOX, Strings::MODAL_HELP_GENERAL);
+          break;
+        case DialogType::HELP_COMMANDS:
+          displayInfobox(width, ASCIIMENU_HELP_INFO_BOX, Strings::MODAL_HELP_COMMANDS);
+          break;
+        case DialogType::HELP_CONFIG:
+          displayInfobox(width, ASCIIMENU_HELP_INFO_BOX, Strings::MODAL_HELP_CONFIG);
+          break;
+        case DialogType::DIALOG_OPEN:
+          displayInfobox(width, ASCIIMENU_HELP_INFO_BOX, Strings::MODAL_HELP_OPEN);
+          break;
 
-      displayInfobox(40, ASCIIMENU_HELP_INFO_BOX, message);
+        default:
+          displayInfobox(width, ASCIIMENU_HELP_INFO_BOX, Strings::MODAL_HELP_DEFAULT);
+          break;
+      }
     }
   }
 
+  // Draws a box with the specified size and returns the box size in a Rect struct.
+  // The information about the caluclated rect is returned in a Rect struct.
+  Rect Lobby::drawCenteredBox(size_t width, size_t height, size_t margin_height, size_t margin_width, RConsole::Color color)
+  {
+    // Define sizes
+    const unsigned int half_w = static_cast<unsigned int>((width) / 2);
+    const unsigned int half_h = static_cast<unsigned int>((height) / 2);
+    const unsigned int half_screen_width = RConsole::Canvas::GetConsoleWidth() / 2;
+    const unsigned int half_screen_height = RConsole::Canvas::GetConsoleHeight() / 2;
+    const unsigned int margin_top = margin_height;
+    const unsigned int margin_bottom = margin_height;
+    const unsigned int margin_left = margin_width;
+    const unsigned int margin_right = margin_width;
+
+
+
+    // Side calculations
+    Rect rect;
+    rect.left = half_screen_width - half_w;
+    rect.right = half_screen_width + half_w;
+    if (width % 2 == 0)
+    {
+      rect.right = rect.right - 1;
+    }
+    rect.top = half_screen_height - half_h;
+    rect.bottom = half_screen_height + half_h;
+    if (height % 2 == 0)
+    {
+      rect.bottom = rect.bottom - 1;
+    }
+
+    rect.leftPadded = rect.left - margin_left;
+    rect.rightPadded = rect.right + margin_right;
+    rect.topPadded = rect.top - margin_top;
+    rect.bottomPadded = rect.bottom + margin_bottom;
+
+
+    // Draw box background
+    for (int i = rect.leftPadded; i < rect.rightPadded; ++i)
+    {
+      for (int j = rect.topPadded; j < rect.bottomPadded; ++j)
+        RConsole::Canvas::Draw(' ', i, j, RConsole::DARKGREY);
+    }
+
+    // Draw sides of the box - horizontal sides
+    for (int i = rect.leftPadded; i < rect.rightPadded; ++i)
+    {
+      RConsole::Canvas::Draw(static_cast<unsigned char>(205), i, static_cast<int>(rect.topPadded), color);
+      RConsole::Canvas::Draw(static_cast<unsigned char>(205), i, static_cast<int>(rect.bottomPadded), color);
+    }
+
+    // Draw sides of the box - vertical sides
+    for (int i = rect.topPadded; i < rect.bottomPadded; ++i)
+    {
+      RConsole::Canvas::Draw(static_cast<unsigned char>(186), static_cast<int>(rect.leftPadded), i, color);
+      RConsole::Canvas::Draw(static_cast<unsigned char>(186), static_cast<int>(rect.rightPadded), i, color);
+    }
+
+    // Draw corners
+    RConsole::Canvas::Draw(static_cast<unsigned char>(187), rect.rightPadded, rect.topPadded, color);
+    RConsole::Canvas::Draw(static_cast<unsigned char>(188), rect.rightPadded, rect.bottomPadded, color);
+    RConsole::Canvas::Draw(static_cast<unsigned char>(201), rect.leftPadded, rect.topPadded, color);
+    RConsole::Canvas::Draw(static_cast<unsigned char>(200), rect.leftPadded, rect.bottomPadded, color);
+
+    // Generate return structure
+    return rect;
+  }
+
+
+
   // Global popups using drawing system
-  void Lobby::displayInfobox(size_t maxWidth, std::string containerName, std::string str, size_t stringBuffer)
+  void Lobby::displayInfobox(size_t max_width, std::string containerName, std::string str)
   {
     // Determine two potential heights...
     // Note that when we make str_height later, we check 
@@ -150,7 +231,8 @@ namespace ASCIIPlayer
 
     for (char c : str)
     {
-      if (++current > longest)
+      ++current;
+      if (current > longest)
         ++longest;
 
       if (c == '\n')
@@ -161,37 +243,22 @@ namespace ASCIIPlayer
     }
 
     const bool manualFormat = newlines != 0;
-
     if (manualFormat)
     {
-      if (longest + stringBuffer < maxWidth)
-        maxWidth = longest + stringBuffer;
+      if (longest < static_cast<int>(max_width))
+        max_width = longest;
     }
 
-    // Define sizes
-    const unsigned int half_w = static_cast<unsigned int>(maxWidth / 2);
-    const unsigned int str_width = static_cast<unsigned int>(maxWidth - stringBuffer);
-    const unsigned int str_height = manualFormat ? newlines + 1 : static_cast<int>(str.size() / static_cast<float>(str_width) + 0.99);
-    const unsigned int half_h = (str_height + 5) / 2;
-    const unsigned int half_screen_width = RConsole::Canvas::GetConsoleWidth() / 2;
-    const unsigned int half_screen_height = RConsole::Canvas::GetConsoleHeight() / 2;
+    // Determine expected box size
+    const size_t str_width = static_cast<unsigned int>(max_width);
+    const size_t str_height = manualFormat ? newlines + 1: static_cast<unsigned int>(std::ceilf(str.size() / static_cast<float>(str_width)));
 
-    // Side calculations
-    const float left = static_cast<float>(half_screen_width - half_w);
-    const float right = static_cast<float>(half_screen_width + half_w);
-    const float top = static_cast<float>(half_screen_height - half_h) - 1;
-    const float bottom = static_cast<float>(half_screen_height + half_h);
+    // Draw the box. Use returned rect as buffer.
+    Rect rect = drawCenteredBox(str_width, str_height + 2);
 
     // Move menu options accordingly
     Container* c = MenuRegistry::GetContainer(containerName);
-    c->SetPosition(static_cast<size_t>(right - c->GetSelected().Label.size() - 1), static_cast<size_t>(bottom - 2));
-
-    // Draw box background
-    for (int i = static_cast<int>(left); i < right; ++i)
-    {
-      for (int j = static_cast<int>(top); j < bottom; ++j)
-        RConsole::Canvas::Draw(' ', i, j, RConsole::DARKGREY);
-    }
+    c->SetPosition(static_cast<size_t>(rect.rightPadded - c->GetSelected().Label.size() - 1), static_cast<size_t>(rect.bottomPadded - 2));
 
     // Draw the string message
     unsigned int offset = 0;
@@ -213,32 +280,13 @@ namespace ASCIIPlayer
       }
 
       RConsole::Canvas::DrawString(toWrite.c_str()
-        , static_cast<int>(left + 2)
-        , static_cast<int>(top + 2 + cycles)
+        , static_cast<int>(rect.left)
+        , static_cast<int>(rect.top + cycles)
         , RConsole::WHITE);
 
-      offset += toWrite.length();// str_width;
+      offset += toWrite.length();;
       ++cycles;
     }
-
-    // Draw sides of the box and add corners
-    for (int i = static_cast<int>(left); i < right; ++i)
-    {
-      RConsole::Canvas::Draw(static_cast<unsigned char>(205), i, static_cast<int>(top), RConsole::WHITE);
-      RConsole::Canvas::Draw(static_cast<unsigned char>(205), i, static_cast<int>(bottom), RConsole::WHITE);
-    }
-
-    for (int i = static_cast<int>(top); i < bottom; ++i)
-    {
-      RConsole::Canvas::Draw(static_cast<unsigned char>(186), static_cast<int>(left), i, RConsole::WHITE);
-      RConsole::Canvas::Draw(static_cast<unsigned char>(186), static_cast<int>(right), i, RConsole::WHITE);
-    }
-
-    // Draw corners
-    RConsole::Canvas::Draw(static_cast<unsigned char>(187), right, top, RConsole::WHITE);
-    RConsole::Canvas::Draw(static_cast<unsigned char>(188), right, bottom, RConsole::WHITE);
-    RConsole::Canvas::Draw(static_cast<unsigned char>(201), left, top, RConsole::WHITE);
-    RConsole::Canvas::Draw(static_cast<unsigned char>(200), left, bottom, RConsole::WHITE);
   }
 
   // Move to the right in the menu

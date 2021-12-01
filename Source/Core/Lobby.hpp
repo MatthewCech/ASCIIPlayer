@@ -31,10 +31,24 @@ namespace shoom
 enum class DialogType
 {
   NONE,
-  GENERAL,
-  COMMANDS,
-  CONFIG,
-  OPEN
+  HELP_GENERAL,
+  HELP_COMMANDS,
+  HELP_CONFIG,
+  DIALOG_OPEN,
+  DIALOG_CONFIG
+};
+
+struct Rect
+{
+  int left;
+  int right;
+  int top;
+  int bottom;
+
+  int leftPadded;
+  int rightPadded;
+  int topPadded;
+  int bottomPadded;
 };
 
 namespace ASCIIPlayer
@@ -52,9 +66,9 @@ namespace ASCIIPlayer
     // NOTE(mcech): Refactor the menu system so we can capture a class with the menu lambdas
     // Static local variables for this class only.
     static bool __menu_navigate_back_next_update; // For exiting the menu
-    static bool __is_displaying_help_menu;        // For displaying the help menu.
+    static bool __is_displaying_dialog;        // For displaying the help menu.
     static DJ* __current_dj;                      // A pointer to the current DJ exposed.
-    static DialogType __dialogue_type;            // The current type of dialog being displayed
+    static DialogType __dialog_type;            // The current type of dialog being displayed
 
   private:
     // Private methods
@@ -68,12 +82,13 @@ namespace ASCIIPlayer
 
     // Private methods - Menus
     void drawDebug();
-    void displayInfobox(size_t maxWidth, std::string containerName, std::string str, size_t stringBuffer = 3);
     void buildMenus();
+    void displayInfobox(size_t maxWidth, std::string containerName, std::string str);
+    Rect drawCenteredBox(size_t width, size_t height, size_t margin_height = 2, size_t margin_width = 2, RConsole::Color color = RConsole::WHITE);
     bool menuMoveCheckRight();
     bool menuMoveCheckLeft();
     void drawSplash(std::int64_t curr_frametime, std::int64_t last_frametime);
-    void drawExtraMenus();
+    void drawDialog();
 
     // Core Variables
     InputParser keyParser_;
