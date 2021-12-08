@@ -103,12 +103,8 @@ namespace ASCIIPlayer
     void callback_forceClear();
     void callback_visualizerNext();
     void callback_visualizerPrev();
-    void callback_display_dialogOpen();
-    void callback_display_editConfig();
-    void callback_display_visualizerSelect();
-    void callback_display_infoBox();
-    void callback_display_infoCommands();
-    void callback_display_infoConfig();
+    void callback_visualizerSet(int arg);
+    void callback_showMenu(int arg);
 
     // Core Variables
     InputParser keyParser_;

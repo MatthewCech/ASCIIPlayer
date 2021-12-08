@@ -21,12 +21,8 @@ namespace ASCIIPlayer
   void Lobby::callback_hideDialog() { isDisplayingDialog_ = false; }
   void Lobby::callback_visualizerNext() { if (activeDJ_ != nullptr) activeDJ_->VisualizerNext(); }
   void Lobby::callback_visualizerPrev() { if (activeDJ_ != nullptr) activeDJ_->VisualizerPrev(); }
-  void Lobby::callback_display_dialogOpen() { showMenu(DialogType::DIALOG_OPEN); }
-  void Lobby::callback_display_editConfig() { showMenu(DialogType::DIALOG_CONFIG); }
-  void Lobby::callback_display_visualizerSelect() { showMenu(DialogType::DIALOG_VISUALIZER_LIST); }
-  void Lobby::callback_display_infoBox() { showMenu(DialogType::HELP_GENERAL); }
-  void Lobby::callback_display_infoCommands() { showMenu(DialogType::HELP_COMMANDS); }
-  void Lobby::callback_display_infoConfig() { showMenu(DialogType::HELP_CONFIG); }
+  void Lobby::callback_visualizerSet(int arg) { if (activeDJ_ != nullptr) activeDJ_->VisualizerSet(activeDJ_->GetVisualizerList()[arg].Name); }
+  void Lobby::callback_showMenu(int arg) { showMenu(static_cast<DialogType>(arg)); }
 
   // Creats and configures the menus we can display in the lobby.
   void Lobby::buildMenus()
@@ -41,7 +37,7 @@ namespace ASCIIPlayer
     Container* fileMenu = Container::Create(this, ASCIIMENU_FILE);
     fileMenu->SetOrientation(ASCIIMenus::VERTICAL);
     fileMenu->SetPosition(2, 1);
-    fileMenu->AddItem("Open", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_display_dialogOpen);
+    fileMenu->AddItem("Open", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_showMenu, static_cast<int>(DialogType::DIALOG_OPEN));
     //fileMenu->AddItem("Save Settings", ASCIIMENU_NO_CHANGE, []() {}); // TODO(mcech): Allow settings to save off to config
     fileMenu->AddItem("Hide", ASCIIMENU_NO_CHANGE, &Lobby::callback_goBack);
     fileMenu->AddItem("Quit", ASCIIMENU_NO_CHANGE, &Lobby::callback_close); // TODO(mcech): Confirmation of Destructive Action - Dialogue that takes lambda for yes.
@@ -50,9 +46,9 @@ namespace ASCIIPlayer
     editMenu->SetOrientation(ASCIIMenus::VERTICAL);
     editMenu->SetPosition(9, 1);
 
-    editMenu->AddItem("Edit Config", ASCIIMENU_NO_CHANGE, &Lobby::callback_display_editConfig);
+    editMenu->AddItem("Edit Config", ASCIIMENU_NO_CHANGE, &Lobby::callback_showMenu, static_cast<int>(DialogType::DIALOG_CONFIG));
     editMenu->AddItem("Reset Config", ASCIIMENU_NO_CHANGE, &Lobby::callback_resetConfig);
-    editMenu->AddItem("Set Visualizer", ASCIIMENU_SELECT_VISUALIZER, &Lobby::callback_display_visualizerSelect);
+    editMenu->AddItem("Set Visualizer", ASCIIMENU_SELECT_VISUALIZER, &Lobby::callback_showMenu, static_cast<int>(DialogType::DIALOG_VISUALIZER_LIST));
     editMenu->AddItem("Next Visualizer", ASCIIMENU_NO_CHANGE, &Lobby::callback_visualizerNext);
     editMenu->AddItem("Prev Visualizer", ASCIIMENU_NO_CHANGE, &Lobby::callback_visualizerPrev);
     editMenu->AddItem("Force Clearscreen", ASCIIMENU_NO_CHANGE, &Lobby::callback_forceClear);
@@ -60,9 +56,9 @@ namespace ASCIIPlayer
     Container* helpMenu = Container::Create(this, ASCIIMENU_HELP);
     helpMenu->SetOrientation(ASCIIMenus::VERTICAL);
     helpMenu->SetPosition(16, 1);
-    helpMenu->AddItem("About", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_display_infoBox);
-    helpMenu->AddItem("Keyboard Commands", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_display_infoCommands);
-    helpMenu->AddItem("Config Info", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_display_infoConfig);
+    helpMenu->AddItem("About", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_showMenu, static_cast<int>(DialogType::HELP_GENERAL));
+    helpMenu->AddItem("Keyboard Commands", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_showMenu, static_cast<int>(DialogType::HELP_COMMANDS));
+    helpMenu->AddItem("Config Info", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_showMenu, static_cast<int>(DialogType::HELP_CONFIG));
 
     Container* helpMenuPopup = Container::Create(this, ASCIIMENU_HELP_INFO_BOX);
     helpMenuPopup->SetOrientation(ASCIIMenus::HORIZONTAL);
@@ -70,12 +66,11 @@ namespace ASCIIPlayer
 
     Container* visualizerPopup = Container::Create(this, ASCIIMENU_SELECT_VISUALIZER);
     visualizerPopup->SetOrientation(ASCIIMenus::VERTICAL);
-    for (DJ::VisualizerInfo info : activeDJ_->GetVisualizerList())
+    std::vector<DJ::VisualizerInfo> info = activeDJ_->GetVisualizerList();
+    for (int i = 0; i < info.size(); ++i)
     {
-      //visualizerPopup->AddItem(info.Name, ASCIIMENU_NO_CHANGE, [info]() {__current_dj->VisualizerSet(info.Name});
+      visualizerPopup->AddItem(info[i].Name, ASCIIMENU_NO_CHANGE, callback_visualizerSet, i);
     }
-
-    //visualizerPopup->AddItem("");
 
     // Set colors
     menuSystems_.SetColorSelected(RConsole::LIGHTCYAN);

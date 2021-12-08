@@ -14,7 +14,8 @@ namespace ASCIIPlayer
 namespace ASCIIMenus 
 {
   // Callback Functions
-  typedef void(ASCIIPlayer::Lobby::*CallbackFunction)();
+  typedef void(ASCIIPlayer::Lobby::*CallbackFunctionVoid)();
+  typedef void(ASCIIPlayer::Lobby::* CallbackFunctionInt)(int);
 
   // Enums
   enum ButtonState { SELECTED, NOT_SELECTED };
@@ -56,29 +57,60 @@ private:
 // Menu Container and associated struct. The basic idea is that you create a label and a destination
 // that allows menu navigation.
 //////////////////////////////////////////////////////
-struct Selectable
+class Selectable
 {
-  Selectable(std::string label, std::string target, ASCIIPlayer::Lobby* lobby, ASCIIMenus::CallbackFunction function = nullptr)
+  enum class ArgType
+  {
+    NONE,
+    INT
+  };
+
+public:
+  Selectable(std::string label, std::string target, ASCIIPlayer::Lobby* lobby, ASCIIMenus::CallbackFunctionVoid function = nullptr)
     : Label(label)
     , Target(target)
-    , callbackFunction_(function)
+    , callbackFunctionVoid_(function)
+    , callbackFunctionInt_(nullptr)
     , lobby_(lobby)
+    , argType_(ArgType::NONE)
   {  }
+
+  Selectable(std::string label, std::string target, ASCIIPlayer::Lobby* lobby, ASCIIMenus::CallbackFunctionInt function, int arg)
+    : Label(label)
+    , Target(target)
+    , callbackFunctionVoid_(nullptr)
+    , callbackFunctionInt_(function)
+    , lobby_(lobby)
+    , arg_(arg)
+    , argType_(ArgType::INT)
+  {  }
+
 
   void Call()
   {
-    if (callbackFunction_ != nullptr)
-    {
-      (lobby_->*callbackFunction_)();
-    }
+      switch (argType_)
+      {
+        case ArgType::NONE:
+          if(callbackFunctionVoid_ != nullptr)
+            (lobby_->*callbackFunctionVoid_)();
+          break;
+        case ArgType::INT:
+          (lobby_->*callbackFunctionInt_)(arg_);
+          break;
+      }
   }
 
   std::string Label;
   std::string Target;
 
 private:
-  ASCIIMenus::CallbackFunction callbackFunction_;
   ASCIIPlayer::Lobby *lobby_;
+  ArgType argType_;
+  
+  ASCIIMenus::CallbackFunctionVoid callbackFunctionVoid_;
+
+  ASCIIMenus::CallbackFunctionInt callbackFunctionInt_;
+  int arg_;
 };
 class Container
 {
@@ -92,11 +124,17 @@ public:
   }
 
   // Member functions
-  void AddItem(std::string label, std::string target, ASCIIMenus::CallbackFunction function = nullptr) 
+  void AddItem(std::string label, std::string target, ASCIIMenus::CallbackFunctionVoid function = nullptr) 
   { 
     lineItems_.push_back(Selectable(label, target, lobby_, function));
   }
-  
+
+  // Member functions
+  void AddItem(std::string label, std::string target, ASCIIMenus::CallbackFunctionInt function, int arg)
+  {
+    lineItems_.push_back(Selectable(label, target, lobby_, function, arg));
+  }
+
   // Setter
   void SetOrientation(ASCIIMenus::Orientation o)   { orientation_ = o;  }
   void SetPosition(size_t x, size_t y) { x_ = x; y_ = y;    }
