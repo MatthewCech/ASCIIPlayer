@@ -58,10 +58,11 @@ private:
 //////////////////////////////////////////////////////
 struct Selectable
 {
-  Selectable(std::string label, std::string target, ASCIIPlayer::Lobby *lobby, ASCIIMenus::CallbackFunction function = nullptr)
+  Selectable(std::string label, std::string target, ASCIIPlayer::Lobby* lobby, ASCIIMenus::CallbackFunction function = nullptr)
     : Label(label)
     , Target(target)
     , callbackFunction_(function)
+    , lobby_(lobby)
   {  }
 
   void Call()
