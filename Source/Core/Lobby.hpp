@@ -2,16 +2,17 @@
 #pragma once
 #include <string>
 #include <ArgParser/ArgParser.hpp>  
-#include <ASCIIMenus/menu-system.hpp>
 #include <ConsoleInput/console-input.hpp>
 #include "DJConfig.hpp"
 #include "DJ.hpp"
+#include "MenuSystem.hpp"
 
 // Number of frame time entries tracked
 #define TRACKED_TIMES 200
 
-// Menu No-option
+// Menu No-option or relative nav
 #define ASCIIMENU_NO_CHANGE ""
+#define ASCIIMENU_BACK "back"
 
 // Menu heiarchy overview and defines
 #define ASCIIMENU_BASE "menuDefualt"
@@ -20,6 +21,7 @@
     #define ASCIIMENU_SELECT_VISUALIZER "menuVisualizerSelection"
   #define ASCIIMENU_HELP "menuHelp"
     #define ASCIIMENU_HELP_INFO_BOX "menuHelpInfoBox"
+
 
 // Shared memory class defintiion
 namespace shoom
@@ -91,12 +93,28 @@ namespace ASCIIPlayer
     bool menuMoveCheckLeft();
     void drawSplash(std::int64_t curr_frametime, std::int64_t last_frametime);
     void drawDialog();
+    void showMenu(DialogType dialog_type);
+
+    // Menu associated
+    void callback_close();
+    void callback_resetConfig();
+    void callback_goBack();
+    void callback_hideDialog();
+    void callback_forceClear();
+    void callback_visualizerNext();
+    void callback_visualizerPrev();
+    void callback_display_dialogOpen();
+    void callback_display_editConfig();
+    void callback_display_visualizerSelect();
+    void callback_display_infoBox();
+    void callback_display_infoCommands();
+    void callback_display_infoConfig();
 
     // Core Variables
     InputParser keyParser_;
     ArgParser argParser_;
     DJ *activeDJ_;
-    MenuSystem<Lobby> menuSystems_;
+    MenuSystem menuSystems_;
     bool lobbyHosting_;
     bool menuVisible_;
 
@@ -109,6 +127,12 @@ namespace ASCIIPlayer
     std::int64_t fpsPrevStart_;
     std::int64_t fpsEnd_;
     std::int64_t appStartTime_;
+
+    // Menu management
+    bool menuNavBackNextUpdate_;   // For exiting the menu
+    bool isDisplayingDialog_;      // For displaying the help menu.
+    DialogType displayDialogType_; // For indicating what type of dialog we're displaying.
+
 
     // Shared memory locations
     shoom::Shm *sharedStatus;

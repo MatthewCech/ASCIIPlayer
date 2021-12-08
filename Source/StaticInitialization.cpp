@@ -9,14 +9,6 @@
  *
  ********************************************************/
 
-  /////////////////////////////////
- // static-init-ascii-menus.cpp //
-/////////////////////////////////
-#include <map>
-#include <ASCIIMenus/menu-system.hpp>
-#include "Core/Lobby.hpp"
-
-
   ///////////////////////////////////
  // static-init-console-utils.cpp //
 ///////////////////////////////////

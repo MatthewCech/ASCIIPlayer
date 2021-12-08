@@ -1,11 +1,4 @@
-/*!***************************************************************************
-@file    main.cpp
-@author  mc-w
-@date    2/25/2016
-@brief   Stack-based menu design for navigating in a console.
-
-@copyright (See LICENSE.md)
-*****************************************************************************/
+// Based on https://github.com/MatthewCech/ASCIIMenus
 #pragma once
 #include <stack>
 #include <map>
@@ -13,8 +6,16 @@
 #include <vector>
 #include <ConsoleUtils/console-utils.hpp>
 
+namespace ASCIIPlayer
+{
+  class Lobby;
+}
+
 namespace ASCIIMenus 
 {
+  // Callback Functions
+  typedef void(ASCIIPlayer::Lobby::*CallbackFunction)();
+
   // Enums
   enum ButtonState { SELECTED, NOT_SELECTED };
   enum Orientation { HORIZONTAL, VERTICAL };
@@ -24,21 +25,18 @@ namespace ASCIIMenus
 // Registered series of lookups for menus to interact. Each entry includes the menu in question
 // represented as the name and a pointer to the container in question.
 //////////////////////////////////////////////////////
-template<class T> class Container;
-template<class T> class MenuRegistry
+class Container;
+class MenuRegistry
 {
 public:
-  MenuRegistry()
-    : registry_(std::map<std::string, Container<T> *>)
-
   // Register a specific key/containtainer association. Duplicate keys override eachother.
-  static void Register(std::string str, T *con)
+  static void Register(std::string str, Container *con) 
   { 
     registry_[str] = con;  
   }
   
   // Gets the container associted with the string key, returns null if it does not exist.
-  static Container<T> *GetContainer(std::string str)
+  static Container *GetContainer(std::string str)       
   { 
     auto iter = registry_.find(str); 
     if(iter != registry_.end())
@@ -49,7 +47,7 @@ public:
 
 private:
   // Private variables
-  std::map<std::string, Container<T> *> registry_;
+  static std::map<std::string, Container *> registry_;
 };
 
 
@@ -58,53 +56,44 @@ private:
 // Menu Container and associated struct. The basic idea is that you create a label and a destination
 // that allows menu navigation.
 //////////////////////////////////////////////////////
-template<class T> struct Selectable
+struct Selectable
 {
-  // Callback Functions
-  typedef void(T::*CallbackFunc)();
-
-  Selectable(std::string label, std::string target, CallbackFunc function = nullptr)
+  Selectable(std::string label, std::string target, ASCIIPlayer::Lobby *lobby, ASCIIMenus::CallbackFunction function = nullptr)
     : Label(label)
     , Target(target)
-    , CallbackFunction(function)
+    , callbackFunction_(function)
   {  }
 
   void Call()
   {
-    if (CallbackFunction != nullptr)
-      CallbackFunction();
+    if (callbackFunction_ != nullptr)
+    {
+      (lobby_->*callbackFunction_)();
+    }
   }
 
   std::string Label;
   std::string Target;
-  CallbackFunc CallbackFunction;
+
+private:
+  ASCIIMenus::CallbackFunction callbackFunction_;
+  ASCIIPlayer::Lobby *lobby_;
 };
-
-
-class Menu
+class Container
 {
 public:
   // Effective ctor, registers the name for you. Deallocation needed after.
-  template<typename T> static Container<T>* Create(std::string menuName)
-  {
-    Container<T>* c = new Container<T>(menuName);
-    MenuRegistry::Register(menuName, c);
+  static Container *Create(ASCIIPlayer::Lobby* lobby, std::string menuName)
+  { 
+    Container *c = new Container(menuName, lobby);
+    MenuRegistry::Register(menuName, c); 
     return c;
   }
-};
 
-
-template<class T> class Container
-{
-  // Callback Functions
-  typedef void(T::*CallbackFunc)();
-
-
-public:
   // Member functions
-  void AddItem(std::string label, std::string target, CallbackFunc function = nullptr)
+  void AddItem(std::string label, std::string target, ASCIIMenus::CallbackFunction function = nullptr) 
   { 
-    lineItems_.push_back(Selectable(label, target, function)); 
+    lineItems_.push_back(Selectable(label, target, lobby_, function));
   }
   
   // Setter
@@ -113,12 +102,12 @@ public:
   void SetSelectedLine(size_t line) { selected_ = line; }
 
   // Accessors
-  std::vector<Selectable<T>> &GetAllItems() { return lineItems_; }
-  ASCIIMenus::Orientation GetOrientation()  { return orientation_; }
-  Selectable<T> GetSelected()               { return lineItems_[selected_]; }
-  size_t GetSelectedLine()                  { return selected_; }
-  size_t GetXPos()                          { return x_; }
-  size_t GetYPos()                          { return y_; }
+  std::vector<Selectable> &GetAllItems()   { return lineItems_; }
+  ASCIIMenus::Orientation GetOrientation() { return orientation_; }
+  Selectable GetSelected()                 { return lineItems_[selected_]; }
+  size_t GetSelectedLine()                 { return selected_; }
+  size_t GetXPos()                         { return x_; }
+  size_t GetYPos()                         { return y_; }
 
 
   // Changes to next selection, with wrapping.
@@ -140,22 +129,24 @@ public:
 
 private:
   // Private ctor
-    Container(std::string menuName) 
-    : selected_(0)
-    , name_(menuName)
-    , lineItems_()
-    , orientation_(ASCIIMenus::Orientation::VERTICAL)
-    , x_(0)
-    , y_(0)
+  Container(std::string menuName, ASCIIPlayer::Lobby *lobby)
+  : selected_(0)
+  , name_(menuName)
+  , lineItems_()
+  , orientation_(ASCIIMenus::Orientation::VERTICAL)
+  , x_(0)
+  , y_(0)
+  , lobby_(lobby)
   {  }
 
   // Private variables
   size_t selected_;
   std::string name_;
-  std::vector<Selectable<T>> lineItems_;
+  std::vector<Selectable> lineItems_;
   ASCIIMenus::Orientation orientation_;
   size_t x_;
   size_t y_;
+  ASCIIPlayer::Lobby* lobby_;
 };
 
 
@@ -164,12 +155,12 @@ private:
 // Stack-based menu system. Uses a stack of different menu containers
 // to display the most recently navigated to on the top when draw is called.
 //////////////////////////////////////////////////////
-template<class T> class MenuSystem
+class MenuSystem
 {
 private:
 
   // Pushes a continer to the stack if possible.
-  void pushContainer(Container<T> *c)
+  void pushContainer(Container *c)
   {
     if(stack_.size() > 0)
       stack_.top()->GetSelected().Call();
@@ -199,7 +190,7 @@ public:
     , colorSelected_(RConsole::MAGENTA)
     , colorUnselected_(RConsole::GREY)
   { 
-    Container<T> *c = MenuRegistry::GetContainer(initial);
+    Container *c = MenuRegistry::GetContainer(initial);
     if(c != nullptr)
       stack_.push(c); 
   }
@@ -264,8 +255,8 @@ public:
         auto stackItem = *iter;
         const std::vector<Selectable> &v = stackItem->GetAllItems();
         const ASCIIMenus::Orientation o = stackItem->GetOrientation();
-        size_t xPos = stackItem->GetXPos();
-        size_t yPos = stackItem->GetYPos();
+        const size_t xPos = stackItem->GetXPos();
+        const size_t yPos = stackItem->GetYPos();
 
         // Vertical menus
         if (o == ASCIIMenus::VERTICAL)
@@ -329,7 +320,7 @@ public:
 
 private:
   // Private variables
-  std::stack<Container<T>*> stack_;
+  std::stack<Container *> stack_;
   RConsole::Color colorSelected_;
   RConsole::Color colorUnselected_;
 };

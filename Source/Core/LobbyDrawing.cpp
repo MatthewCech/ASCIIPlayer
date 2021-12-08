@@ -6,83 +6,73 @@
 
 namespace ASCIIPlayer
 {
-  // Static initialization
-  bool Lobby::__menu_navigate_back_next_update = false; // For exiting the menu
-  bool Lobby::__is_displaying_dialog = false;        // For displaying the help menu.
-  DJ* Lobby::__current_dj = nullptr;                    // A pointer to the current DJ exposed.
-  DialogType Lobby::__dialog_type = DialogType::NONE; // For indicating what type of dialog we're displaying.
-
-
   // Given a type of dialog, configure the menus to show.
-  void ShowMenu(DialogType dialog_type)
+  void Lobby::showMenu(DialogType dialog_type)
   {
-    Lobby::__is_displaying_dialog = true;
-    Lobby::__dialog_type = dialog_type;
+    isDisplayingDialog_ = true;
+    displayDialogType_ = dialog_type;
   }
 
-  // Opens the config file with the 
-  void EditConfig()
-  {
-    ShowMenu(DialogType::DIALOG_VISUALIZER_LIST);
-  }
-  /*
-#ifdef OS_WINDOWS
-    std::stringstream sstream;
-    
-    sstream << "notepad ";
-    sstream << ".\\" << CONFIG_FILE_NAME;
-    system(sstream.str().c_str());
-#else
-
-
-#endif
-  }*/
+  // Menu callbacks
+  void Lobby::callback_close() { exit(0); }
+  void Lobby::callback_resetConfig() { }
+  void Lobby::callback_goBack() { menuNavBackNextUpdate_ = true; }
+  void Lobby::callback_forceClear() { RConsole::Canvas::ForceClearEverything(); }
+  void Lobby::callback_hideDialog() { isDisplayingDialog_ = false; }
+  void Lobby::callback_visualizerNext() { if (activeDJ_ != nullptr) activeDJ_->VisualizerNext(); }
+  void Lobby::callback_visualizerPrev() { if (activeDJ_ != nullptr) activeDJ_->VisualizerPrev(); }
+  void Lobby::callback_display_dialogOpen() { showMenu(DialogType::DIALOG_OPEN); }
+  void Lobby::callback_display_editConfig() { showMenu(DialogType::DIALOG_CONFIG); }
+  void Lobby::callback_display_visualizerSelect() { showMenu(DialogType::DIALOG_VISUALIZER_LIST); }
+  void Lobby::callback_display_infoBox() { showMenu(DialogType::HELP_GENERAL); }
+  void Lobby::callback_display_infoCommands() { showMenu(DialogType::HELP_COMMANDS); }
+  void Lobby::callback_display_infoConfig() { showMenu(DialogType::HELP_CONFIG); }
 
   // Creats and configures the menus we can display in the lobby.
   void Lobby::buildMenus()
   {
     // Configure menus
-    Container<Lobby>* mainMenu = Menu::Create<Lobby>(ASCIIMENU_BASE);
+    Container* mainMenu = Container::Create(this, ASCIIMENU_BASE);
     mainMenu->SetOrientation(ASCIIMenus::HORIZONTAL);
     mainMenu->AddItem(" File  ", ASCIIMENU_FILE);
     mainMenu->AddItem(" Edit  ", ASCIIMENU_EDIT);
     mainMenu->AddItem(" Help  ", ASCIIMENU_HELP);
 
-    Container<Lobby>* fileMenu = Container<Lobby>::Create(ASCIIMENU_FILE);
+    Container* fileMenu = Container::Create(this, ASCIIMENU_FILE);
     fileMenu->SetOrientation(ASCIIMenus::VERTICAL);
     fileMenu->SetPosition(2, 1);
-    fileMenu->AddItem("Open", ASCIIMENU_HELP_INFO_BOX, []() { ShowMenu(DialogType::DIALOG_OPEN); });
-    fileMenu->AddItem("Save Settings", ASCIIMENU_NO_CHANGE, []() {}); // TODO(mcech): Allow settings to save off to config
-    fileMenu->AddItem("Hide", ASCIIMENU_NO_CHANGE, []() { __menu_navigate_back_next_update = true; });
-    fileMenu->AddItem("Quit", ASCIIMENU_NO_CHANGE, []() { exit(0); }); // TODO(mcech): Confirmation of Destructive Action - Dialogue that takes lambda for yes.
+    fileMenu->AddItem("Open", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_display_dialogOpen);
+    //fileMenu->AddItem("Save Settings", ASCIIMENU_NO_CHANGE, []() {}); // TODO(mcech): Allow settings to save off to config
+    fileMenu->AddItem("Hide", ASCIIMENU_NO_CHANGE, &Lobby::callback_goBack);
+    fileMenu->AddItem("Quit", ASCIIMENU_NO_CHANGE, &Lobby::callback_close); // TODO(mcech): Confirmation of Destructive Action - Dialogue that takes lambda for yes.
 
-    Container<Lobby>* editMenu = Container<Lobby>::Create(ASCIIMENU_EDIT);
+    Container* editMenu = Container::Create(this, ASCIIMENU_EDIT);
     editMenu->SetOrientation(ASCIIMenus::VERTICAL);
     editMenu->SetPosition(9, 1);
 
-    editMenu->AddItem("Edit Config", ASCIIMENU_NO_CHANGE, EditConfig);
-    editMenu->AddItem("Reset Config", ASCIIMENU_NO_CHANGE, []() { system("del .\\ASCIIPlayer.conf"); });
-    //TODO(mcech): editMenu->AddItem("Set Visualizer", ASCIIMENU_VISUALIZER, []() {  }); // Lets you set the visualizer from a list of them!
-    editMenu->AddItem("Next Visualizer", ASCIIMENU_NO_CHANGE, []() { if (__current_dj != nullptr) __current_dj->VisualizerNext(); });
-    editMenu->AddItem("Prev Visualizer", ASCIIMENU_NO_CHANGE, []() { if (__current_dj != nullptr) __current_dj->VisualizerPrev(); });
-    editMenu->AddItem("Force Clearscreen", ASCIIMENU_NO_CHANGE, []() { RConsole::Canvas::ForceClearEverything(); });
+    editMenu->AddItem("Edit Config", ASCIIMENU_NO_CHANGE, &Lobby::callback_display_editConfig);
+    editMenu->AddItem("Reset Config", ASCIIMENU_NO_CHANGE, &Lobby::callback_resetConfig);
+    editMenu->AddItem("Set Visualizer", ASCIIMENU_SELECT_VISUALIZER, &Lobby::callback_display_visualizerSelect);
+    editMenu->AddItem("Next Visualizer", ASCIIMENU_NO_CHANGE, &Lobby::callback_visualizerNext);
+    editMenu->AddItem("Prev Visualizer", ASCIIMENU_NO_CHANGE, &Lobby::callback_visualizerPrev);
+    editMenu->AddItem("Force Clearscreen", ASCIIMENU_NO_CHANGE, &Lobby::callback_forceClear);
 
-    Container<Lobby>* helpMenu = Container<Lobby>::Create<Lobby>(ASCIIMENU_HELP);
+    Container* helpMenu = Container::Create(this, ASCIIMENU_HELP);
     helpMenu->SetOrientation(ASCIIMenus::VERTICAL);
     helpMenu->SetPosition(16, 1);
-    helpMenu->AddItem("About", ASCIIMENU_HELP_INFO_BOX, []() { ShowMenu(DialogType::HELP_GENERAL); });
-    helpMenu->AddItem("Keyboard Commands", ASCIIMENU_HELP_INFO_BOX, []() { ShowMenu(DialogType::HELP_COMMANDS); });
-    helpMenu->AddItem("Config Info", ASCIIMENU_HELP_INFO_BOX, []() { ShowMenu(DialogType::HELP_CONFIG); });
+    helpMenu->AddItem("About", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_display_infoBox);
+    helpMenu->AddItem("Keyboard Commands", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_display_infoCommands);
+    helpMenu->AddItem("Config Info", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_display_infoConfig);
 
-    Container<Lobby>* helpMenuPopup = Container<Lobby>::Create(ASCIIMENU_HELP_INFO_BOX);
+    Container* helpMenuPopup = Container::Create(this, ASCIIMENU_HELP_INFO_BOX);
     helpMenuPopup->SetOrientation(ASCIIMenus::HORIZONTAL);
-    helpMenuPopup->AddItem("[ Ok ]", "back", []() { __is_displaying_dialog = false; });
+    helpMenuPopup->AddItem("[ Ok ]", ASCIIMENU_BACK, &Lobby::callback_hideDialog);
 
-    Container<Lobby>* visualizerPopup = Container<Lobby>::Create(ASCIIMENU_SELECT_VISUALIZER);
+    Container* visualizerPopup = Container::Create(this, ASCIIMENU_SELECT_VISUALIZER);
     visualizerPopup->SetOrientation(ASCIIMenus::VERTICAL);
     for (DJ::VisualizerInfo info : activeDJ_->GetVisualizerList())
     {
-      visualizerPopup->AddItem(info.Name, ASCIIMENU_NO_CHANGE, [info]() {__current_dj->VisualizerSet(info.Name); });
+      //visualizerPopup->AddItem(info.Name, ASCIIMENU_NO_CHANGE, [info]() {__current_dj->VisualizerSet(info.Name});
     }
 
     //visualizerPopup->AddItem("");
@@ -159,11 +149,11 @@ namespace ASCIIPlayer
   // Displays additional menus with the specified string
   void Lobby::drawDialog()
   {
-    if (__is_displaying_dialog)
+    if (isDisplayingDialog_)
     {
       const size_t width = 40;
 
-      switch (__dialog_type)
+      switch (displayDialogType_)
       {
         case DialogType::HELP_GENERAL:
           displayInfobox(width, ASCIIMENU_HELP_INFO_BOX, Strings::MODAL_HELP_GENERAL);
@@ -293,7 +283,7 @@ namespace ASCIIPlayer
     Rect rect = drawCenteredBox(str_width, str_height + 2);
 
     // Move menu options accordingly
-    Container<Lobby>* c = MenuRegistry<Lobby>::GetContainer(containerName);
+    Container* c = MenuRegistry::GetContainer(containerName);
     c->SetPosition(static_cast<size_t>(rect.rightPadded - c->GetSelected().Label.size() - 1), static_cast<size_t>(rect.bottomPadded - 2));
     
     // Draw the string message
