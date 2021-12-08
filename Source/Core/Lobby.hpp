@@ -17,7 +17,7 @@
 #define ASCIIMENU_BASE "menuDefualt"
   #define ASCIIMENU_FILE "menuFile"
   #define ASCIIMENU_EDIT "menuEdit"
-    #define ASCIIMENU_VISUALIZER "menuVisualizerSelection"
+    #define ASCIIMENU_SELECT_VISUALIZER "menuVisualizerSelection"
   #define ASCIIMENU_HELP "menuHelp"
     #define ASCIIMENU_HELP_INFO_BOX "menuHelpInfoBox"
 
@@ -35,7 +35,8 @@ enum class DialogType
   HELP_COMMANDS,
   HELP_CONFIG,
   DIALOG_OPEN,
-  DIALOG_CONFIG
+  DIALOG_CONFIG,
+  DIALOG_VISUALIZER_LIST
 };
 
 struct Rect
@@ -84,6 +85,7 @@ namespace ASCIIPlayer
     void drawDebug();
     void buildMenus();
     void displayInfobox(size_t maxWidth, std::string containerName, std::string str);
+    void displayVisualizerList();
     Rect drawCenteredBox(size_t width, size_t height, size_t margin_height = 2, size_t margin_width = 2, RConsole::Color color = RConsole::WHITE);
     bool menuMoveCheckRight();
     bool menuMoveCheckLeft();
@@ -94,12 +96,12 @@ namespace ASCIIPlayer
     InputParser keyParser_;
     ArgParser argParser_;
     DJ *activeDJ_;
-    MenuSystem menuSystems_;
+    MenuSystem<Lobby> menuSystems_;
     bool lobbyHosting_;
     bool menuVisible_;
 
     // Menu/Visual Related
-    double idleIndex_; 
+    double idleIndex_;
     size_t timesIndex_;
     std::int64_t times_[TRACKED_TIMES];
     bool showDebug_;

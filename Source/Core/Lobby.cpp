@@ -30,6 +30,10 @@ namespace ASCIIPlayer
     , fpsEnd_(0)
     , appStartTime_(MS_SINCE_EPOCH)
   { 
+    // Update FPS start
+    fpsStart_ = appStartTime_;
+    fpsPrevStart_ = appStartTime_;
+
     // Begin by handling the application opening
     handleApplicationOpen(argc, argv);
 

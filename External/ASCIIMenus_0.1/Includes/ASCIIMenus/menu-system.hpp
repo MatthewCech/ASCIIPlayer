@@ -15,9 +15,6 @@
 
 namespace ASCIIMenus 
 {
-  // Callback Functions
-  typedef void(*CallbackFunction)();
-
   // Enums
   enum ButtonState { SELECTED, NOT_SELECTED };
   enum Orientation { HORIZONTAL, VERTICAL };
@@ -27,18 +24,21 @@ namespace ASCIIMenus
 // Registered series of lookups for menus to interact. Each entry includes the menu in question
 // represented as the name and a pointer to the container in question.
 //////////////////////////////////////////////////////
-class Container;
-class MenuRegistry
+template<class T> class Container;
+template<class T> class MenuRegistry
 {
 public:
+  MenuRegistry()
+    : registry_(std::map<std::string, Container<T> *>)
+
   // Register a specific key/containtainer association. Duplicate keys override eachother.
-  static void Register(std::string str, Container *con) 
+  static void Register(std::string str, T *con)
   { 
     registry_[str] = con;  
   }
   
   // Gets the container associted with the string key, returns null if it does not exist.
-  static Container *GetContainer(std::string str)       
+  static Container<T> *GetContainer(std::string str)
   { 
     auto iter = registry_.find(str); 
     if(iter != registry_.end())
@@ -49,7 +49,7 @@ public:
 
 private:
   // Private variables
-  static std::map<std::string, Container *> registry_;
+  std::map<std::string, Container<T> *> registry_;
 };
 
 
@@ -58,9 +58,12 @@ private:
 // Menu Container and associated struct. The basic idea is that you create a label and a destination
 // that allows menu navigation.
 //////////////////////////////////////////////////////
-struct Selectable
+template<class T> struct Selectable
 {
-  Selectable(std::string label, std::string target, ASCIIMenus::CallbackFunction function = nullptr)
+  // Callback Functions
+  typedef void(T::*CallbackFunc)();
+
+  Selectable(std::string label, std::string target, CallbackFunc function = nullptr)
     : Label(label)
     , Target(target)
     , CallbackFunction(function)
@@ -74,21 +77,32 @@ struct Selectable
 
   std::string Label;
   std::string Target;
-  ASCIIMenus::CallbackFunction CallbackFunction;
+  CallbackFunc CallbackFunction;
 };
-class Container
+
+
+class Menu
 {
 public:
   // Effective ctor, registers the name for you. Deallocation needed after.
-  static Container *Create(std::string menuName) 
-  { 
-    Container *c = new Container(menuName);
-    MenuRegistry::Register(menuName, c); 
+  template<typename T> static Container<T>* Create(std::string menuName)
+  {
+    Container<T>* c = new Container<T>(menuName);
+    MenuRegistry::Register(menuName, c);
     return c;
   }
+};
 
+
+template<class T> class Container
+{
+  // Callback Functions
+  typedef void(T::*CallbackFunc)();
+
+
+public:
   // Member functions
-  void AddItem(std::string label, std::string target, ASCIIMenus::CallbackFunction function = nullptr) 
+  void AddItem(std::string label, std::string target, CallbackFunc function = nullptr)
   { 
     lineItems_.push_back(Selectable(label, target, function)); 
   }
@@ -99,12 +113,12 @@ public:
   void SetSelectedLine(size_t line) { selected_ = line; }
 
   // Accessors
-  std::vector<Selectable> &GetAllItems()   { return lineItems_; }
-  ASCIIMenus::Orientation GetOrientation() { return orientation_; }
-  Selectable GetSelected()                 { return lineItems_[selected_]; }
-  size_t GetSelectedLine()                 { return selected_; }
-  size_t GetXPos()                         { return x_; }
-  size_t GetYPos()                         { return y_; }
+  std::vector<Selectable<T>> &GetAllItems() { return lineItems_; }
+  ASCIIMenus::Orientation GetOrientation()  { return orientation_; }
+  Selectable<T> GetSelected()               { return lineItems_[selected_]; }
+  size_t GetSelectedLine()                  { return selected_; }
+  size_t GetXPos()                          { return x_; }
+  size_t GetYPos()                          { return y_; }
 
 
   // Changes to next selection, with wrapping.
@@ -138,7 +152,7 @@ private:
   // Private variables
   size_t selected_;
   std::string name_;
-  std::vector<Selectable> lineItems_;
+  std::vector<Selectable<T>> lineItems_;
   ASCIIMenus::Orientation orientation_;
   size_t x_;
   size_t y_;
@@ -150,12 +164,12 @@ private:
 // Stack-based menu system. Uses a stack of different menu containers
 // to display the most recently navigated to on the top when draw is called.
 //////////////////////////////////////////////////////
-class MenuSystem
+template<class T> class MenuSystem
 {
 private:
 
   // Pushes a continer to the stack if possible.
-  void pushContainer(Container *c)
+  void pushContainer(Container<T> *c)
   {
     if(stack_.size() > 0)
       stack_.top()->GetSelected().Call();
@@ -185,7 +199,7 @@ public:
     , colorSelected_(RConsole::MAGENTA)
     , colorUnselected_(RConsole::GREY)
   { 
-    Container *c = MenuRegistry::GetContainer(initial);
+    Container<T> *c = MenuRegistry::GetContainer(initial);
     if(c != nullptr)
       stack_.push(c); 
   }
@@ -250,8 +264,8 @@ public:
         auto stackItem = *iter;
         const std::vector<Selectable> &v = stackItem->GetAllItems();
         const ASCIIMenus::Orientation o = stackItem->GetOrientation();
-        const size_t xPos = stackItem->GetXPos();
-        const size_t yPos = stackItem->GetYPos();
+        size_t xPos = stackItem->GetXPos();
+        size_t yPos = stackItem->GetYPos();
 
         // Vertical menus
         if (o == ASCIIMenus::VERTICAL)
@@ -315,7 +329,7 @@ public:
 
 private:
   // Private variables
-  std::stack<Container *> stack_;
+  std::stack<Container<T>*> stack_;
   RConsole::Color colorSelected_;
   RConsole::Color colorUnselected_;
 };

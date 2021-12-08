@@ -458,6 +458,12 @@ namespace ASCIIPlayer
   }
 
 
+  // Returns a vector of visualizer lists
+  std::vector<DJ::VisualizerInfo> DJ::GetVisualizerList()
+  {
+    return visualizers_;
+  }
+
 
     //////////////////////////////
    // Private member funcitons //
