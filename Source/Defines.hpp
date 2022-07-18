@@ -30,6 +30,7 @@ using APUnique      = std::int64_t;
 #define SONG_TIME_SCALE_FOR_SECONDS 1000
 #define MS_SINCE_EPOCH std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()
 #define CONFIG_FILE_NAME ".asciiplayer"
+#define MUTE_THRESHOLD 0.001f
 
   ///////////
  // Enums //

@@ -11,7 +11,7 @@ namespace ASCIIPlayer
 		VisualizerWaveform();// : Visualizer(32, aWaveform, "colorDefault") { };
 
     // DrawBars
-		bool Update(float* data, float volume, bool isActive);
+		bool Update(float* data, bool isActive);
     void OnResize(int newWidth, int newHeight);
     int startingWidth_;
     int width_;

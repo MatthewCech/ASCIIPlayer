@@ -115,9 +115,22 @@ namespace ASCIIPlayer
         // If we've got songs to visualize and a visualizer to do it, then lets show some data!
         if (visualizer_ && playlist_.GetPlaylistLength() > 0)
         {
+          // Collect the volume for scaling operations
+          const float masterVolume = audioSystem_.GetMasterVolume();
+
           // Only fill visualizer data if not paused.
+          // Otherwise, '0' is provided.
           if (!paused_)
-            FillSongData(visualizerDataArray_, visaulizerDataSize_);
+          {
+            if (masterVolume > MUTE_THRESHOLD)
+            {
+              FillSongData(visualizerDataArray_, visaulizerDataSize_);
+              for (size_t i = 0; i < visaulizerDataSize_; ++i)
+              {
+                visualizerDataArray_[i] = visualizerDataArray_[i] / masterVolume;
+              }
+            }
+          }
           
           // Determine if the window size changed at all.
           int width = visualizer_->Width();
@@ -134,7 +147,7 @@ namespace ASCIIPlayer
           if (playlist_.GetPlaylistLength() <= 0)
             status = false;
 
-          visualizer_->Update(visualizerDataArray_, audioSystem_.GetMasterVolume(), status);
+          visualizer_->Update(visualizerDataArray_, status);
           visualizer_->UpdatePost();
         }
 
