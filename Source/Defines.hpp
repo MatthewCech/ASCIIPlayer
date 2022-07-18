@@ -32,6 +32,7 @@ using APUnique      = std::int64_t;
 #define CONFIG_FILE_NAME ".asciiplayer"
 #define MUTE_THRESHOLD 0.001f
 
+
   ///////////
  // Enums //
 ///////////

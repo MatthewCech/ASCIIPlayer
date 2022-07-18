@@ -103,7 +103,6 @@ namespace ASCIIPlayer
       }
       else
       {
-        
         if (!paused_)
         {
           // Smol sleep recommended, someodd like 500. 
@@ -115,23 +114,9 @@ namespace ASCIIPlayer
         // If we've got songs to visualize and a visualizer to do it, then lets show some data!
         if (visualizer_ && playlist_.GetPlaylistLength() > 0)
         {
-          // Collect the volume for scaling operations
-          const float masterVolume = audioSystem_.GetMasterVolume();
-
-          // Only fill visualizer data if not paused.
-          // Otherwise, '0' is provided.
-          if (!paused_)
-          {
-            if (masterVolume > MUTE_THRESHOLD)
-            {
-              FillSongData(visualizerDataArray_, visaulizerDataSize_);
-              for (size_t i = 0; i < visaulizerDataSize_; ++i)
-              {
-                visualizerDataArray_[i] = visualizerDataArray_[i] / masterVolume;
-              }
-            }
-          }
-          
+          // Update song data appropriately 
+          FillSongData(visualizerDataArray_, visaulizerDataSize_);
+ 
           // Determine if the window size changed at all.
           int width = visualizer_->Width();
           int height = visualizer_->Height();
@@ -462,12 +447,34 @@ namespace ASCIIPlayer
 
 
   // Fills the array provided with the active spectrum.
+  // Only fill visualizer data if not paused.
+  // Otherwise, '0' is provided.
   void DJ::FillSongData(float* toFill, unsigned int size)
   {
+    // Collect the volume for scaling operations
+    const float masterVolume = audioSystem_.GetMasterVolume();
+
+    // Make sure we're not paused. If so, skip.
+    if (paused_)
+      return;
+
+    // Ensure there's some audio data present. If no, skip.
+    if (masterVolume < MUTE_THRESHOLD)
+      return;
+
+    // Make sure we have a defined visualizer, otherwise there's a problem
     if (visualizerDataStyle_ == AUDIODATA_NO_STYLE)
       throw "A style is required";
 
+    // Collect the data from FMOD
     audioSystem_.FillWithAudioData(toFill, size, visualizerDataStyle_);
+
+    // Normalize as if we've got a volume of 1, since by default FMOD will
+    // scale the output of the data by the volume internally.
+    for (size_t i = 0; i < visaulizerDataSize_; ++i)
+    {
+      visualizerDataArray_[i] = visualizerDataArray_[i] / masterVolume;
+    }
   }
 
 
