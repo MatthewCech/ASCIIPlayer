@@ -67,9 +67,9 @@ namespace ASCIIPlayer
     Container* visualizerPopup = Container::Create(this, ASCIIMENU_SELECT_VISUALIZER);
     visualizerPopup->SetOrientation(ASCIIMenus::VERTICAL);
     std::vector<DJ::VisualizerInfo> info = activeDJ_->GetVisualizerList();
-    for (int i = 0; i < info.size(); ++i)
+    for (int i = 0; static_cast<size_t>(i) < info.size(); ++i)
     {
-      visualizerPopup->AddItem(info[i].Name, ASCIIMENU_NO_CHANGE, callback_visualizerSet, i);
+      visualizerPopup->AddItem(info[i].Name, ASCIIMENU_NO_CHANGE, &Lobby::callback_visualizerSet, i);
     }
 
     // Set colors
