@@ -7,7 +7,6 @@
 
 #define NAME_STR_LINE(var) #var << ": " << var << "\n"
 #define PARSE_CONTINUE(var, toCompare, func) if(toCompare == #var) { var = func ; break; }
-#define CONFIG_FILE_NAME "ASCIIPlayer.conf"
 
 
 namespace ASCIIPlayer
@@ -72,29 +71,29 @@ namespace ASCIIPlayer
   std::string DJConfig::ToString()
   {
     std::stringstream ss;
-    ss 
-       // Floats
-       << NAME_STR_LINE(VolumeDefault)
-       << NAME_STR_LINE(VolumeChangeAmount)
+    ss
+      // Floats
+      << NAME_STR_LINE(VolumeDefault)
+      << NAME_STR_LINE(VolumeChangeAmount)
 
-       // Bools
-       << NAME_STR_LINE(DJLooping)
-       << NAME_STR_LINE(DJOverlayAlwaysOn)
+      // Bools
+      << NAME_STR_LINE(DJLooping)
+      << NAME_STR_LINE(DJOverlayAlwaysOn)
 
-       // Ints
-       << NAME_STR_LINE(DJCPULoadReductionDelay)
-       << NAME_STR_LINE(SkipForwardSeconds)
-       << NAME_STR_LINE(SkipBackwardSeconds)
-       << NAME_STR_LINE(DJChannelCount)
+      // Ints
+      << NAME_STR_LINE(DJCPULoadReductionDelay)
+      << NAME_STR_LINE(SkipForwardSeconds)
+      << NAME_STR_LINE(SkipBackwardSeconds)
+      << NAME_STR_LINE(DJChannelCount)
 
-       // Strings
-       << NAME_STR_LINE(DJVisualizerID)
-       << NAME_STR_LINE(DJOverlayID)
+      // Strings
+      << NAME_STR_LINE(DJVisualizerID)
+      << NAME_STR_LINE(DJOverlayID)
 
-       // Etc.
-       << "\n\n"
-       << "; ===== Notes:"
-			 << "; Available Visualizers - default, waveform, wisp, spectrum, particle, spotted, pineapple\n";
+      // Etc.
+      << "";// "\n"
+      //<< "; ===== [Notes] =====\n"
+			//<< "; Available Visualizers - default, waveform, wisp, spectrum, particle, spotted, pineapple\n";
 
     return ss.str();
   }

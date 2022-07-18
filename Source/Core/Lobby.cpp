@@ -3,6 +3,7 @@
 #include "Lobby.hpp"
 #include "UserStrings.hpp"
 #include <shoom/shoom.hpp>
+#include "MenuSystem.hpp"
 
 namespace ASCIIPlayer
 {
@@ -11,7 +12,7 @@ namespace ASCIIPlayer
   ////////////
   // Constructor and Destructor
   Lobby::Lobby(int argc, char** argv)
-    
+
     // Operation related
     : keyParser_()
     , argParser_(argc, argv)
@@ -20,6 +21,11 @@ namespace ASCIIPlayer
     , lobbyHosting_(true)
     , menuVisible_(false)
     , idleIndex_(0)
+
+    // Menu
+    , displayDialogType_(DialogType::NONE)
+    , menuNavBackNextUpdate_(false)
+    , isDisplayingDialog_(false)
 
     // Debug
     , timesIndex_(0)
@@ -30,6 +36,10 @@ namespace ASCIIPlayer
     , fpsEnd_(0)
     , appStartTime_(MS_SINCE_EPOCH)
   { 
+    // Update FPS start
+    fpsStart_ = appStartTime_;
+    fpsPrevStart_ = appStartTime_;
+
     // Begin by handling the application opening
     handleApplicationOpen(argc, argv);
 
@@ -123,9 +133,6 @@ namespace ASCIIPlayer
     size_t loops = 0;
     while (lobbyHosting_)
     {
-      // TODO(mcech): Make this line not a thing.
-      __current_dj = activeDJ_; 
-
       // Loop tracking
       fpsPrevStart_ = fpsStart_;
       fpsStart_ = MS_SINCE_EPOCH;
@@ -141,11 +148,11 @@ namespace ASCIIPlayer
         interpretMultiCharInput(str);
       }
      
-      // TODO(mcech): Make this line not a thing.
-      if (__menu_navigate_back_next_update)
+      if (menuNavBackNextUpdate_)
       {
         while (menuSystems_.Back()) {  }
-        __menu_navigate_back_next_update = false;
+
+        menuNavBackNextUpdate_ = false;
         menuVisible_ = menuSystems_.IsVisible();
       }
 
@@ -261,8 +268,8 @@ namespace ASCIIPlayer
         menuSystems_.Select(ASCIIMENU_BASE);
 
       menuVisible_ = menuSystems_.IsVisible();
-      if (__is_displaying_dialog)
-        __is_displaying_dialog = false;
+      if (isDisplayingDialog_)
+        isDisplayingDialog_ = false;
       break;
 
       // Menu Navigation: Up/Left
