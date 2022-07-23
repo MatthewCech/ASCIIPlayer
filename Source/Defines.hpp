@@ -8,7 +8,7 @@
  // OS and Compiler-Specific //
 //////////////////////////////
 #if defined (DEBUG) | (_DEBUG)
-  //#define AP_DEBUG // As in, ascii-player debug
+  // #define AP_DEBUG /* As in, ascii-player debug */
 #endif
 
 #ifdef _WIN32
@@ -23,7 +23,7 @@
 using ChannelHandle = FMOD::Channel*;     // Channel handle for FMOD
 using AudioHandle   = FMOD::Sound;        // Sound object handle for FMOD
 using Channelgroup  = FMOD::ChannelGroup; // Channel object handle for FMOD
-using APUnique      = std::int64_t;
+using APUnique      = std::int64_t;       // Type used for unique IDs related to audio files, etc
 
 // Defines
 #define TRACKED_TIMES 120
