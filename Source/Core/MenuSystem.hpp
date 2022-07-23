@@ -1,11 +1,4 @@
-/*!***************************************************************************
-@file    main.cpp
-@author  mc-w
-@date    2/25/2016
-@brief   Stack-based menu design for navigating in a console.
-
-@copyright (See LICENSE.md)
-*****************************************************************************/
+// Based on https://github.com/MatthewCech/ASCIIMenus
 #pragma once
 #include <stack>
 #include <map>
@@ -13,10 +6,16 @@
 #include <vector>
 #include <ConsoleUtils/console-utils.hpp>
 
+namespace ASCIIPlayer
+{
+  class Lobby;
+}
+
 namespace ASCIIMenus 
 {
   // Callback Functions
-  typedef void(*CallbackFunction)();
+  typedef void(ASCIIPlayer::Lobby::*CallbackFunctionVoid)();
+  typedef void(ASCIIPlayer::Lobby::* CallbackFunctionInt)(int);
 
   // Enums
   enum ButtonState { SELECTED, NOT_SELECTED };
@@ -58,41 +57,84 @@ private:
 // Menu Container and associated struct. The basic idea is that you create a label and a destination
 // that allows menu navigation.
 //////////////////////////////////////////////////////
-struct Selectable
+class Selectable
 {
-  Selectable(std::string label, std::string target, ASCIIMenus::CallbackFunction function = nullptr)
+  enum class ArgType
+  {
+    NONE,
+    INT
+  };
+
+public:
+  Selectable(std::string label, std::string target, ASCIIPlayer::Lobby* lobby, ASCIIMenus::CallbackFunctionVoid function = nullptr)
     : Label(label)
     , Target(target)
-    , CallbackFunction(function)
+    , callbackFunctionVoid_(function)
+    , callbackFunctionInt_(nullptr)
+    , lobby_(lobby)
+    , argType_(ArgType::NONE)
   {  }
+
+  Selectable(std::string label, std::string target, ASCIIPlayer::Lobby* lobby, ASCIIMenus::CallbackFunctionInt function, int arg)
+    : Label(label)
+    , Target(target)
+    , callbackFunctionVoid_(nullptr)
+    , callbackFunctionInt_(function)
+    , lobby_(lobby)
+    , arg_(arg)
+    , argType_(ArgType::INT)
+  {  }
+
 
   void Call()
   {
-    if (CallbackFunction != nullptr)
-      CallbackFunction();
+      switch (argType_)
+      {
+        case ArgType::NONE:
+          if(callbackFunctionVoid_ != nullptr)
+            (lobby_->*callbackFunctionVoid_)();
+          break;
+        case ArgType::INT:
+          (lobby_->*callbackFunctionInt_)(arg_);
+          break;
+      }
   }
 
   std::string Label;
   std::string Target;
-  ASCIIMenus::CallbackFunction CallbackFunction;
+
+private:
+  ASCIIPlayer::Lobby *lobby_;
+  ArgType argType_;
+  
+  ASCIIMenus::CallbackFunctionVoid callbackFunctionVoid_;
+
+  ASCIIMenus::CallbackFunctionInt callbackFunctionInt_;
+  int arg_;
 };
 class Container
 {
 public:
   // Effective ctor, registers the name for you. Deallocation needed after.
-  static Container *Create(std::string menuName) 
+  static Container *Create(ASCIIPlayer::Lobby* lobby, std::string menuName)
   { 
-    Container *c = new Container(menuName);
+    Container *c = new Container(menuName, lobby);
     MenuRegistry::Register(menuName, c); 
     return c;
   }
 
   // Member functions
-  void AddItem(std::string label, std::string target, ASCIIMenus::CallbackFunction function = nullptr) 
+  void AddItem(std::string label, std::string target, ASCIIMenus::CallbackFunctionVoid function = nullptr) 
   { 
-    lineItems_.push_back(Selectable(label, target, function)); 
+    lineItems_.push_back(Selectable(label, target, lobby_, function));
   }
-  
+
+  // Member functions
+  void AddItem(std::string label, std::string target, ASCIIMenus::CallbackFunctionInt function, int arg)
+  {
+    lineItems_.push_back(Selectable(label, target, lobby_, function, arg));
+  }
+
   // Setter
   void SetOrientation(ASCIIMenus::Orientation o)   { orientation_ = o;  }
   void SetPosition(size_t x, size_t y) { x_ = x; y_ = y;    }
@@ -126,13 +168,14 @@ public:
 
 private:
   // Private ctor
-    Container(std::string menuName) 
-    : selected_(0)
-    , name_(menuName)
-    , lineItems_()
-    , orientation_(ASCIIMenus::Orientation::VERTICAL)
-    , x_(0)
-    , y_(0)
+  Container(std::string menuName, ASCIIPlayer::Lobby *lobby)
+  : selected_(0)
+  , name_(menuName)
+  , lineItems_()
+  , orientation_(ASCIIMenus::Orientation::VERTICAL)
+  , x_(0)
+  , y_(0)
+  , lobby_(lobby)
   {  }
 
   // Private variables
@@ -142,6 +185,7 @@ private:
   ASCIIMenus::Orientation orientation_;
   size_t x_;
   size_t y_;
+  ASCIIPlayer::Lobby* lobby_;
 };
 
 

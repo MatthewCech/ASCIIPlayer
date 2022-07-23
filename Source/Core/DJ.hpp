@@ -17,6 +17,13 @@ namespace ASCIIPlayer
   class DJ
   {
   public:
+    // Keeps track of a given visualizer
+    struct VisualizerInfo
+    {
+      std::string Name;
+      std::function<void(DJ&)> Func;
+    };
+
     // Constructor
     DJ(DJConfig config = DJConfig(), bool startPaused = true);
     ~DJ();
@@ -44,16 +51,11 @@ namespace ASCIIPlayer
     std::string VisualizerName();
     std::int64_t GetLastVolumeChange();
     unsigned int GetPlaylistSize();
+    std::vector<VisualizerInfo> GetVisualizerList();
     void FillSongData(float* toFill, unsigned int size);
 
   private:
-    // Keeps track of a given visualizer
-    struct VisualizerInfo
-    {
-      std::string Name;
-      std::function<void(DJ&)> Func;
-    };  
-	  
+
     // Callback
     void playlistUpdatedCallback();
     void updateLastVolumeChange();
@@ -75,7 +77,7 @@ namespace ASCIIPlayer
     unsigned int visaulizerDataSize_;         // The size of the array for the audio visualizer.
     AudioDataStyle visualizerDataStyle_;      // The style of data for the audio visualizer
     float *visualizerDataArray_;              // Data used for the visualizer;
-    std::int64_t lastVolumeChange_;              // The last time the volume was changed, in ms
+    std::int64_t lastVolumeChange_;           // The last time the volume was changed, in ms
     int windowWidth_;                         // Width of the display window the DJ is operating in
     int windowHeight_;                        // Height of the display window the DJ is operating in
     std::vector<VisualizerInfo> visualizers_; // Holds visualizer information

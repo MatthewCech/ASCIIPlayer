@@ -27,7 +27,7 @@ namespace ASCIIPlayer
     , visualizer_(nullptr)
     , overlay_(nullptr)
     , visaulizerDataSize_(128) // Not magic number, just default width
-    , visualizerDataStyle_(AUDIODATA_NO_STYLE)
+    , visualizerDataStyle_(AudioDataStyle::AUDIODATA_NO_STYLE)
     , visualizerDataArray_(nullptr)
     , config_(config)
     , hasShutdown_(false)
@@ -59,10 +59,7 @@ namespace ASCIIPlayer
     VisualizerSet(config_.DJVisualizerID);
 
     // Looping?
-    if (config_.DJLooping)
-      playlist_.SetLooping(true);
-    else
-      playlist_.SetLooping(false);
+    playlist_.SetLooping(config_.DJLooping);
 
     // Set volume
     VolumeSet(config_.VolumeDefault);
@@ -74,8 +71,7 @@ namespace ASCIIPlayer
       windowHeight_ = visualizer_->Height();
     }
 
-    // Done!
-    DEBUG_PRINT("== DJ done with setup- Ready to accept song requests! ==");
+    DEBUG_PRINT("DJ done with setup and ready to accept song requests");
   }
 
 
@@ -83,89 +79,91 @@ namespace ASCIIPlayer
   DJ::~DJ()
   {
     if (!hasShutdown_)
+    {
       Shutdown();
+    }
   }
 
-
-  // Member Functons
+  // Primary update function that's tasked with handling playlist management
+  // along with drawing the current visualizer + overlay.
   bool DJ::Update()
   {
-    if (!hasShutdown_)
+    if (hasShutdown_)
     {
-      // Update the song and proceed if necessary
-      if (currSong_ && !audioSystem_.IsActive(*currSong_))
-      {
-        playlist_.Next();
+      return false;
+    }
 
-        // if playlist is not looping, gets called.
-        if (playlist_.GetPlaylistPos() == playlist_.GetPlaylistLength())
-          return false;
-      }
-      else
-      {
-        
-        if (!paused_)
-        {
-          // Smol sleep recommended, someodd like 500. 
-          // just half a millisecond makes most OSs extremely happy and reduces CPU load by like 30%.
-          if(config_.DJCPULoadReductionDelay > 0)
-            std::this_thread::sleep_for(std::chrono::microseconds(config_.DJCPULoadReductionDelay));
-        }
-
-        // If we've got songs to visualize and a visualizer to do it, then lets show some data!
-        if (visualizer_ && playlist_.GetPlaylistLength() > 0)
-        {
-          // Only fill visualizer data if not paused.
-          if (!paused_)
-            FillSongData(visualizerDataArray_, visaulizerDataSize_);
-          
-          // Determine if the window size changed at all.
-          int width = visualizer_->Width();
-          int height = visualizer_->Height();
-          if (windowWidth_ != width || windowHeight_ != height)
-          {
-            windowWidth_ = width;
-            windowHeight_ = height;
-            visualizer_->OnResize(width, height);
-          }
-
-          // Update and post-update functions
-          bool status = !paused_;
-          if (playlist_.GetPlaylistLength() <= 0)
-            status = false;
-
-          visualizer_->Update(visualizerDataArray_, audioSystem_.GetMasterVolume(), status);
-          visualizer_->UpdatePost();
-        }
-
-        // Draw overlay after visualizer so it's "On top"
-        if (currSong_ && overlay_)
-        {
-          overlay_->Update(
-            UIInfo(requestUIActive_
-              , !audioSystem_.IsPaused(*currSong_)
-              , isJumpingPos_
-              , audioSystem_.GetMasterVolume()
-              , audioSystem_.GetFilename(*currSong_)
-              , audioSystem_.GetCurrentPosition(*currSong_)
-              , audioSystem_.GetLength(*currSong_)));
-
-          overlay_->UpdatePost();
-        }
-      }
-
-      // Update our audio system at the very end.
-      isJumpingPos_ = false;
-      audioSystem_.Update();
-
-      // Everything's runnin', It's all gravy~
-      return true;
+    // We want to honor any user specified sleep times so there's CPU control. 
+    // If nothing is specified though, at minimum we want to give up our current time slice
+    if (config_.DJPerLoopSleepMS > 0)
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(config_.DJPerLoopSleepMS));
     }
     else
     {
-      // Shutdown or something else in progress. No update was performed.
-      return false;
+      std::this_thread::yield();
     }
+
+    // Update the song and proceed if necessary
+    if (currSong_ && !audioSystem_.IsActive(*currSong_))
+    {
+      playlist_.Next();
+
+      // if playlist is not looping, gets called.
+      if (playlist_.GetPlaylistPos() == playlist_.GetPlaylistLength())
+        return false;
+    }
+    else
+    {
+      // If we've got songs to visualize and a visualizer to do it, then lets show some data!
+      if (visualizer_ && playlist_.GetPlaylistLength() > 0)
+      {
+        // Update song data appropriately 
+        FillSongData(visualizerDataArray_, visaulizerDataSize_);
+ 
+        // Determine if the window size changed at all.
+        int width = visualizer_->Width();
+        int height = visualizer_->Height();
+        if (windowWidth_ != width || windowHeight_ != height)
+        {
+          windowWidth_ = width;
+          windowHeight_ = height;
+          visualizer_->OnResize(width, height);
+        }
+
+        // Update and post-update functions
+        bool status = !paused_;
+        if (playlist_.GetPlaylistLength() <= 0)
+        {
+          status = false;
+        }
+
+        visualizer_->Update(visualizerDataArray_, status);
+        visualizer_->UpdatePost();
+      }
+
+      // Draw overlay after visualizer so it's "On top"
+      if (currSong_ && overlay_)
+      {
+        overlay_->Update(
+          UIInfo(requestUIActive_
+            , !audioSystem_.IsPaused(*currSong_)
+            , isJumpingPos_
+            , audioSystem_.GetMasterVolume()
+            , audioSystem_.GetFilename(*currSong_)
+            , audioSystem_.GetCurrentPosition(*currSong_)
+            , audioSystem_.GetLength(*currSong_)));
+
+        overlay_->UpdatePost();
+      }
+    }
+
+    // Update our audio system at the very end.
+    isJumpingPos_ = false;
+    audioSystem_.Update();
+
+    // Everything's runnin', It's all gravy~
+    return true;
   }
 
 
@@ -303,7 +301,7 @@ namespace ASCIIPlayer
       return;
 
     const unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
-    audioSystem_.SetCurrentPosition(*currSong_, posMS + config_.SkipForwardSeconds * SONG_TIME_SCALE_FOR_SECONDS);
+    audioSystem_.SetCurrentPosition(*currSong_, posMS + config_.SkipForwardSeconds * MS_PER_SECOND_INT);
     isJumpingPos_ = true;
   }
 
@@ -316,7 +314,7 @@ namespace ASCIIPlayer
 
     const unsigned int posMS = audioSystem_.GetCurrentPosition(*currSong_);
 
-    int location = static_cast<int>(posMS) - config_.SkipForwardSeconds * SONG_TIME_SCALE_FOR_SECONDS;
+    int location = static_cast<int>(posMS) - config_.SkipForwardSeconds * MS_PER_SECOND_INT;
     if (location < 0)
       location = 0;
 
@@ -348,7 +346,7 @@ namespace ASCIIPlayer
   {
     //config_ = newVolume
     audioSystem_.SetMasterVolume(newVolume);
-	updateLastVolumeChange();
+	  updateLastVolumeChange();
   }
 
 
@@ -449,14 +447,42 @@ namespace ASCIIPlayer
 
 
   // Fills the array provided with the active spectrum.
+  // Only fill visualizer data if not paused.
+  // Otherwise, '0' is provided.
   void DJ::FillSongData(float* toFill, unsigned int size)
   {
-    if (visualizerDataStyle_ == AUDIODATA_NO_STYLE)
+    // Collect the volume for scaling operations
+    const float masterVolume = audioSystem_.GetMasterVolume();
+
+    // Make sure we're not paused. If so, skip.
+    if (paused_)
+      return;
+
+    // Ensure there's some audio data present. If no, skip.
+    if (masterVolume < MUTE_THRESHOLD)
+      return;
+
+    // Make sure we have a defined visualizer, otherwise there's a problem
+    if (visualizerDataStyle_ == AudioDataStyle::AUDIODATA_NO_STYLE)
       throw "A style is required";
 
+    // Collect the data from FMOD
     audioSystem_.FillWithAudioData(toFill, size, visualizerDataStyle_);
+
+    // Normalize as if we've got a volume of 1, since by default FMOD will
+    // scale the output of the data by the volume internally.
+    for (size_t i = 0; i < visaulizerDataSize_; ++i)
+    {
+      visualizerDataArray_[i] = visualizerDataArray_[i] / masterVolume;
+    }
   }
 
+
+  // Returns a vector of visualizer lists
+  std::vector<DJ::VisualizerInfo> DJ::GetVisualizerList()
+  {
+    return visualizers_;
+  }
 
 
     //////////////////////////////

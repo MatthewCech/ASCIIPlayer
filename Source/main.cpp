@@ -8,9 +8,6 @@ namespace ASCIIPlayer
 {
   int Run(int argc, char** argv)
   {
-    // Stop logging
-    //FMOD::Debug_SetLevel(FMOD_DEBUG_LEVEL_NONE);
-
     // Run program
     ASCIIPlayer::Lobby lounge(argc, argv);
     lounge.Run();

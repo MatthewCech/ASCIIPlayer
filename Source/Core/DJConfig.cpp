@@ -7,7 +7,6 @@
 
 #define NAME_STR_LINE(var) #var << ": " << var << "\n"
 #define PARSE_CONTINUE(var, toCompare, func) if(toCompare == #var) { var = func ; break; }
-#define CONFIG_FILE_NAME "ASCIIPlayer.conf"
 
 
 namespace ASCIIPlayer
@@ -31,7 +30,7 @@ namespace ASCIIPlayer
     std::string name;
     std::string val;
 
-    size_t pos = line.find_first_of(":");
+    size_t pos = line.find_first_of("=");
     if (pos == std::string::npos)
       return;
 
@@ -51,7 +50,6 @@ namespace ASCIIPlayer
         PARSE_CONTINUE(DJOverlayAlwaysOn, name, stoi(val) > 0 ? true : false)
 
         // Ints
-        PARSE_CONTINUE(DJCPULoadReductionDelay, name, stoi(val))
         PARSE_CONTINUE(SkipForwardSeconds, name, stoi(val))
         PARSE_CONTINUE(SkipBackwardSeconds, name, stoi(val))
         PARSE_CONTINUE(DJChannelCount, name, stoi(val))
@@ -72,37 +70,49 @@ namespace ASCIIPlayer
   std::string DJConfig::ToString()
   {
     std::stringstream ss;
-    ss 
-       // Floats
-       << NAME_STR_LINE(VolumeDefault)
-       << NAME_STR_LINE(VolumeChangeAmount)
+    ss
+      // Floats
+      << NAME_STR_LINE(VolumeDefault)
+      << NAME_STR_LINE(VolumeChangeAmount)
 
-       // Bools
-       << NAME_STR_LINE(DJLooping)
-       << NAME_STR_LINE(DJOverlayAlwaysOn)
+      // Bools
+      << NAME_STR_LINE(DJLooping)
+      << NAME_STR_LINE(DJOverlayAlwaysOn)
 
-       // Ints
-       << NAME_STR_LINE(DJCPULoadReductionDelay)
-       << NAME_STR_LINE(SkipForwardSeconds)
-       << NAME_STR_LINE(SkipBackwardSeconds)
-       << NAME_STR_LINE(DJChannelCount)
+      // Ints
+      << NAME_STR_LINE(DJPerLoopSleepMS)
+      << NAME_STR_LINE(SkipForwardSeconds)
+      << NAME_STR_LINE(SkipBackwardSeconds)
+      << NAME_STR_LINE(DJChannelCount)
 
-       // Strings
-       << NAME_STR_LINE(DJVisualizerID)
-       << NAME_STR_LINE(DJOverlayID)
+      // Strings
+      << NAME_STR_LINE(DJVisualizerID)
+      << NAME_STR_LINE(DJOverlayID)
 
-       // Etc.
-       << "\n\n"
-       << "===[ Notes ]===\n"
-			 << "Available Visualizers - default, waveform, wisp, spectrum, particle, spotted, pineapple\n";
+      // Etc.
+      << "";// "\n"
+      //<< "; ===== [Notes] =====\n"
+			//<< "; Available Visualizers - default, waveform, wisp, spectrum, particle, spotted, pineapple\n";
 
     return ss.str();
   }
 
 
+  // Tries to read a string that represents a valid config file
+  DJConfig DJConfig::ReadString(std::string string)
+  {
+    DJConfig newConf;
+    std::stringstream stream = std::stringstream(string);
+
+    for (std::string line; std::getline(stream, line, '\n');)
+      newConf.ParseLine(line);
+
+    return newConf;
+  }
+
   // Tries to open config file for the visualizer, generates one otherwise.
   // Uses the specified path to do so.
-  DJConfig DJConfig::Read(std::string path)
+  DJConfig DJConfig::ReadFile(std::string path)
   {
     std::string arg0 = path;
     size_t loc = arg0.find_last_of('\\');

@@ -12,7 +12,7 @@ namespace ASCIIPlayer
     float        VolumeChangeAmount      = 0.1f;       // By how much we change the volume every time.
     bool         DJLooping               = true;       // Does it loop?
     bool         DJOverlayAlwaysOn       = false;      // A request for having the UI on all the time.
-    unsigned int DJCPULoadReductionDelay = 200;        // Specifies number of microseconds to sleep each loop.
+    unsigned int DJPerLoopSleepMS        = 1;          // Specifies number of milliseconds to sleep each loop while not paused. Not more granular because it's just not worth it, and may as well use 'yield' at that point (which we do)
     unsigned int SkipForwardSeconds      = 15;         // Seconds to go forwards when skipping. 
     unsigned int SkipBackwardSeconds     = 15;         // Seconds to go backwards when skipping.
     unsigned int DJChannelCount          = 10;         // The number of channels for the DJ to have.
@@ -26,7 +26,8 @@ namespace ASCIIPlayer
     std::string ToString();
 
     // Static member funcs
-    static DJConfig Read(std::string path);
+    static DJConfig ReadString(std::string string);
+    static DJConfig ReadFile(std::string path);
     static void Write(DJConfig d, std::string path);
   };
 }

@@ -10,7 +10,7 @@ namespace ASCIIPlayer
 {
   // Constructor
   VisualizerSpectrum::VisualizerSpectrum() 
-    : ASCIIVisualizer(VISUALIZER_SPECTRUM_DATA_SIZE, AUDIODATA_SPECTRUM_ALT)
+    : ASCIIVisualizer(VISUALIZER_SPECTRUM_DATA_SIZE, AudioDataStyle::AUDIODATA_SPECTRUM)
     , width_(RConsole::Canvas::GetConsoleWidth())
     , height_(RConsole::Canvas::GetConsoleHeight())
     , lastTimeMS_(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count())

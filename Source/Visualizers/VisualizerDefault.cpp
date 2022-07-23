@@ -9,7 +9,7 @@ namespace ASCIIPlayer
 {
   // Constructor
   VisualizerDefault::VisualizerDefault()
-    : ASCIIVisualizer(DATA_SIZE, AUDIODATA_SPECTRUM)
+    : ASCIIVisualizer(DATA_SIZE, AudioDataStyle::AUDIODATA_WAVEFORM)
     , height_(RConsole::Canvas::GetConsoleHeight())
     , width_(RConsole::Canvas::GetConsoleWidth())
   {
