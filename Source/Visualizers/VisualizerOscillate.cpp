@@ -11,7 +11,7 @@ namespace ASCIIPlayer
 {
   // Constructor
   VisualizerOscillate::VisualizerOscillate()
-    : ASCIIVisualizer(DATA_SIZE, AUDIODATA_SPECTRUM)
+    : ASCIIVisualizer(DATA_SIZE, AudioDataStyle::AUDIODATA_SPECTRUM)
     , width_(RConsole::Canvas::GetConsoleWidth())
     , height_(RConsole::Canvas::GetConsoleHeight())
     , side_offset_(2)

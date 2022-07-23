@@ -17,6 +17,7 @@ namespace ASCIIPlayer
     : keyParser_()
     , argParser_(argc, argv)
     , activeDJ_(nullptr)
+    , activeDJConfig_()
     , menuSystems_("")
     , lobbyHosting_(true)
     , menuVisible_(false)
@@ -29,6 +30,7 @@ namespace ASCIIPlayer
 
     // Debug
     , timesIndex_(0)
+    , timesSoFar_(0)
     , times_()
     , showDebug_(false)
     , fpsStart_(0)
@@ -44,7 +46,8 @@ namespace ASCIIPlayer
     handleApplicationOpen(argc, argv);
 
     // Make DJ, don't autoplay. Read in the argument!
-    DJ *Dj = new DJ(DJConfig::ReadFile(argParser_[0]), false);
+    activeDJConfig_ = DJConfig::ReadFile(argParser_[0]);
+    DJ *Dj = new DJ(activeDJConfig_, false);
 
     // Just loop through and see if anything happens to be a song to load.
     std::vector<std::string> args = argParser_.GetAllArgs();
@@ -191,16 +194,25 @@ namespace ASCIIPlayer
   // Calculates average framerate based on the start and stop provided. 
   int Lobby::calculateUpdateRate(std::int64_t start, std::int64_t end)
   {
-    size_t size = TRACKED_TIMES;
+    size_t size = TRACKED_TIMES < timesSoFar_ ? TRACKED_TIMES : timesSoFar_;
     times_[timesIndex_++] = end - start;
     if (timesIndex_ >= size)
+    {
       timesIndex_ = 0;
+    }
 
     float total = 0;
     for (size_t i = 0; i < size; ++i)
+    {
       total += times_[i];
+    }
 
-    return static_cast<int>(1000.0f / (total / size));
+    if (timesSoFar_ < TRACKED_TIMES)
+    {
+      ++timesSoFar_;
+    }
+
+    return static_cast<int>(MS_PER_SECOND_FLOAT / (total / size));
   }
 
 

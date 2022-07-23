@@ -15,25 +15,22 @@ namespace ASCIIPlayer
     int   channels;
   } mydsp_data_t;
 
-  unsigned int __wave_data_size = 10;
-  float        __wave_data[DATA_SIZE];
-  FMOD::DSP    *__wave_data_dsp;
+  unsigned int __wave_data_size = 0;   // This gets resized based on the DSP callback
+  float        __wave_data[DATA_SIZE]; // This gets populated as necessary.
+  FMOD::DSP    *__wave_data_dsp;       // Pointer to the waveform extracting DSP.
 
-
-  FMOD_RESULT F_CALLBACK myDSPCallback(FMOD_DSP_STATE *dsp_state, float *inbuffer, float *outbuffer, unsigned int length, int inchannels, int *outchannels)
+  FMOD_RESULT F_CALLBACK OnDSPRead(FMOD_DSP_STATE *dsp_state, float *inbuffer, float *outbuffer, unsigned int length, int inchannels, int *outchannels)
   {
     mydsp_data_t *data = (mydsp_data_t *)dsp_state->plugindata;
     __wave_data_size = length;
 
-    /*
-        This loop assumes inchannels = outchannels, which it will be if the DSP is created with '0'
-        as the number of channels in FMOD_DSP_DESCRIPTION.
-        Specifying an actual channel count will mean you have to take care of any number of channels coming in,
-        but outputting the number of channels specified. Generally it is best to keep the channel
-        count at 0 for maximum compatibility.
-    */
+    // This loop assumes inchannels = outchannels, which it will be if the DSP is created with '0'
+    // as the number of channels in FMOD_DSP_DESCRIPTION.
+    // Specifying an actual channel count will mean you have to take care of any number of channels coming in,
+    // but outputting the number of channels specified. Generally it is best to keep the channel
+    // count at 0 for maximum compatibility.
     
-    //Input is not modified, but is copied over to the outbuffer.
+    // Input is not modified, but is copied over to the outbuffer.
     for (unsigned int samp = 0; samp < length; samp++)
     {
       const int numChannels = *outchannels;
@@ -55,10 +52,9 @@ namespace ASCIIPlayer
     return FMOD_OK;
   }
 
-  /*
-      Callback called when DSP is created.   This implementation creates a structure which is attached to the dsp state's 'plugindata' member.
-  */
-  FMOD_RESULT F_CALLBACK myDSPCreateCallback(FMOD_DSP_STATE *dsp_state)
+
+  // Callback called when DSP is created.   This implementation creates a structure which is attached to the dsp state's 'plugindata' member.
+  FMOD_RESULT F_CALLBACK OnDSPCreate(FMOD_DSP_STATE *dsp_state)
   {
     unsigned int blocksize;
     FMOD_RESULT result;
@@ -84,10 +80,9 @@ namespace ASCIIPlayer
     return FMOD_OK;
   }
 
-  /*
-      Callback called when DSP is destroyed.   The memory allocated in the create callback can be freed here.
-  */
-  FMOD_RESULT F_CALLBACK myDSPReleaseCallback(FMOD_DSP_STATE *dsp_state)
+
+  // Callback called when DSP is destroyed. The memory allocated in the create callback can be freed here.
+  FMOD_RESULT F_CALLBACK OnDSPRelease(FMOD_DSP_STATE *dsp_state)
   {
     if (dsp_state->plugindata)
     {
@@ -104,11 +99,10 @@ namespace ASCIIPlayer
     return FMOD_OK;
   }
 
-  /*
-      Callback called when DSP::getParameterData is called.   This returns a pointer to the raw floating point PCM data.
-      We have set up 'parameter 0' to be the data parameter, so it checks to make sure the passed in index is 0, and nothing else.
-  */
-  FMOD_RESULT F_CALLBACK myDSPGetParameterDataCallback(FMOD_DSP_STATE *dsp_state, int index, void **data, unsigned int *length, char *)
+
+  // Callback called when DSP::getParameterData is called.   This returns a pointer to the raw floating point PCM data.
+  //  We have set up 'parameter 0' to be the data parameter, so it checks to make sure the passed in index is 0, and nothing else.
+  FMOD_RESULT F_CALLBACK OnDSPGetParameterData(FMOD_DSP_STATE *dsp_state, int index, void **data, unsigned int *length, char *)
   {
     if (index == 0)
     {
@@ -128,11 +122,10 @@ namespace ASCIIPlayer
     return FMOD_ERR_INVALID_PARAM;
   }
 
-  /*
-      Callback called when DSP::setParameterFloat is called.   This accepts a floating point 0 to 1 volume value, and stores it.
-      We have set up 'parameter 1' to be the volume parameter, so it checks to make sure the passed in index is 1, and nothing else.
-  */
-  FMOD_RESULT F_CALLBACK myDSPSetParameterFloatCallback(FMOD_DSP_STATE *dsp_state, int index, float value)
+
+  // Callback called when DSP::setParameterFloat is called.   This accepts a floating point 0 to 1 volume value, and stores it.
+  // We have set up 'parameter 1' to be the volume parameter, so it checks to make sure the passed in index is 1, and nothing else.
+  FMOD_RESULT F_CALLBACK OnDSPSetParameterFloat(FMOD_DSP_STATE *dsp_state, int index, float value)
   {
     if (index == 1)
     {
@@ -146,12 +139,11 @@ namespace ASCIIPlayer
     return FMOD_ERR_INVALID_PARAM;
   }
 
-  /*
-      Callback called when DSP::getParameterFloat is called.   This returns a floating point 0 to 1 volume value.
-      We have set up 'parameter 1' to be the volume parameter, so it checks to make sure the passed in index is 1, and nothing else.
-      An alternate way of displaying the data is provided, as a string, so the main app can use it.
-  */
-  FMOD_RESULT F_CALLBACK myDSPGetParameterFloatCallback(FMOD_DSP_STATE *dsp_state, int index, float *value, char *valstr)
+
+  // Callback called when DSP::getParameterFloat is called. This returns a floating point 0 to 1 volume value.
+  // We have set up 'parameter 1' to be the volume parameter, so it checks to make sure the passed in index is 1, and nothing else.
+  // An alternate way of displaying the data is provided, as a string, so the main app can use it.
+  FMOD_RESULT F_CALLBACK OnDSPGetParameterFloat(FMOD_DSP_STATE *dsp_state, int index, float *value, char *valstr)
   {
     if (index == 1)
     {
@@ -182,12 +174,6 @@ namespace ASCIIPlayer
     , masterChannel_(nullptr)
     , ID_(AudioSystemIDIncrement++)
   {
-    // Initialize spectrum structure and set values to 0. Lock is required.
-    //__wave_data_mutex.lock();
-    //__wave_data = new float[DATA_SIZE];
-    //memset(__wave_data, 0, DATA_SIZE);
-    //__wave_data_mutex.unlock();
-
     FCheck(FMOD::System_Create(&fmodSystem_));
     FCheck(fmodSystem_->getVersion(&version_));
 
@@ -213,19 +199,19 @@ namespace ASCIIPlayer
     FMOD_DSP_INIT_PARAMDESC_DATA(wavedata_desc, "wave data", "", "wave data", FMOD_DSP_PARAMETER_DATA_TYPE_USER);
     FMOD_DSP_INIT_PARAMDESC_FLOAT(volume_desc, "volume", "%", "linear volume in percent", 0, 1, 1);
 
-    strncpy(dspdesc.name, "My first DSP unit", sizeof(dspdesc.name));
+    strncpy(dspdesc.name, "wave data collector DSP", sizeof(dspdesc.name));
     dspdesc.version = 0x00010000;
     dspdesc.numinputbuffers = 1;
     dspdesc.numoutputbuffers = 1;
-    dspdesc.read = myDSPCallback;
-    dspdesc.create = myDSPCreateCallback;
-    dspdesc.release = myDSPReleaseCallback;
-    dspdesc.getparameterdata = myDSPGetParameterDataCallback;
-    dspdesc.setparameterfloat = myDSPSetParameterFloatCallback;
-    dspdesc.getparameterfloat = myDSPGetParameterFloatCallback;
+    dspdesc.read = OnDSPRead;
+    dspdesc.create = OnDSPCreate;
+    dspdesc.release = OnDSPRelease;
+    dspdesc.getparameterdata = OnDSPGetParameterData;
+    dspdesc.setparameterfloat = OnDSPSetParameterFloat;
+    dspdesc.getparameterfloat = OnDSPGetParameterFloat;
     dspdesc.numparameters = 2;
     dspdesc.paramdesc = paramdesc;
-
+    
     FCheck(fmodSystem_->createDSP(&dspdesc, &__wave_data_dsp));
     FCheck(masterChannel_->addDSP(0, __wave_data_dsp));
   }
@@ -241,8 +227,6 @@ namespace ASCIIPlayer
 
     // Releases all assests.
     FCheck(fmodSystem_->release());
-
-    //delete[] __wave_data;
   }
 
 
@@ -382,23 +366,13 @@ namespace ASCIIPlayer
   // Fills a provided array of floats with the spectrum in question.
   void AudioSystem::FillWithAudioData(float *arr, int numVals, AudioDataStyle style)
   {
-    for(unsigned int i = 0; i < __wave_data_size && i < static_cast<unsigned int>(numVals) && i < DATA_SIZE; ++i)
-      arr[i] = __wave_data[i];
-    
     switch (style)
     {
-      case AUDIODATA_WAVEFORM:
-        //arr = spectrum;
-        //numVals = 1024;
-        //FCheck(fmodSystem_->get(arr, numVals, channelOffset));
-        break;
-
-      case AUDIODATA_SPECTRUM:
-        //FCheck(fmodSystem_->getSpectrum(arr, numVals, channelOffset, FMOD_DSP_FFT_WINDOW_RECT));
-        break;
-       
-      case AUDIODATA_SPECTRUM_ALT:
-        //FCheck(fmodSystem_->getSpectrum(arr, numVals, channelOffset, FMOD_DSP_FFT_WINDOW_BLACKMAN));
+      case AudioDataStyle::AUDIODATA_WAVEFORM:
+        for (unsigned int i = 0; i < __wave_data_size && i < static_cast<unsigned int>(numVals) && i < DATA_SIZE; ++i)
+        {
+          arr[i] = __wave_data[i];
+        }    
         break;
 
       default:

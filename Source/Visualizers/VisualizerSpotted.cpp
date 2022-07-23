@@ -7,7 +7,7 @@ namespace ASCIIPlayer
 {
   // Constructor
   VisaulizerSpotted::VisaulizerSpotted()
-    : ASCIIVisualizer(SPOTTED_SIZE, AUDIODATA_SPECTRUM)
+    : ASCIIVisualizer(SPOTTED_SIZE, AudioDataStyle::AUDIODATA_SPECTRUM)
     , width_(CONSOLE_WIDTH_FUNC)
     , height_(CONSOLE_HEIGHT_FUNC)
     , runningStart_(0)

@@ -3,12 +3,13 @@
 
 #define STR_TYPE static const std::string
 
-
 namespace Strings
 {
   STR_TYPE STARTUP_PRIMARY_TEXT = "Waiting for songs";
+  STR_TYPE STARTUP_SUBTEXT_LINE_SPACER = { static_cast<char>(250), ' ', static_cast<char>(250), ' ', static_cast<char>(250) };
   STR_TYPE STARTUP_SUBTEXT_LINE_1 = "Drag in a music file or";
-  STR_TYPE STARTUP_SUBTEXT_LINE_2 = "press ESC for menu!";
+  STR_TYPE STARTUP_SUBTEXT_LINE_2 = "press ESC for the menu!";
+  STR_TYPE STARTUP_FMOD_ATTRIBUTION = "Made with FMOD by Firelight Technologies Pty Ltd.";
 
   STR_TYPE MODAL_HELP_DEFAULT = "Hmm, no message was set for this menu. You shouldn't see this!";
   STR_TYPE MODAL_HELP_GENERAL = "ASCIIPlayer is a command-line program navigated exclusively by keyboard. If you want to play a song, you can drag it in to add it to the playlist, or select multiple and pass them as command line aguments!";
@@ -20,6 +21,8 @@ namespace Strings
   STR_TYPE ERROR_VISUALIZER_CONFIG_INVALID = "Invalid/incorrect visualizer config provided!";
 
   STR_TYPE DEBUG_PER_SECOND = "per second";
+  STR_TYPE DEBUG_DELAY = "delay";
+  STR_TYPE DEBUG_YIELDING = "yield";
 }
   
 

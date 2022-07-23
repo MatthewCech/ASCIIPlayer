@@ -8,7 +8,7 @@
 namespace ASCIIPlayer
 {
   VisualizerPineapple::VisualizerPineapple()
-    : ASCIIVisualizer(PINEAPPLE_SIZE, AUDIODATA_WAVEFORM)
+    : ASCIIVisualizer(PINEAPPLE_SIZE, AudioDataStyle::AUDIODATA_WAVEFORM)
     , width_(CONSOLE_WIDTH_FUNC)
     , height_(CONSOLE_HEIGHT_FUNC)
     , radius_(PINEAPPLE_SIZE / 4)

@@ -91,6 +91,7 @@ namespace ASCIIPlayer
     const size_t index = static_cast<size_t>(idleIndex_);
     const size_t mod = (sizeof(osc) / sizeof(*osc));
     const RConsole::Color color = RConsole::WHITE;
+    const RConsole::Color colorSecondary = RConsole::DARKGREY;
 
     // Wrap the index
     if (idleIndex_ > (sizeof(osc) / sizeof(int)))
@@ -108,7 +109,13 @@ namespace ASCIIPlayer
       + static_cast<char>(osc[(index + 3) % mod])
       + static_cast<char>(osc[(index + 4) % mod])).c_str()
       , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>((msg.size() + 5)) / 2)
-      , verticalOffset++
+      , verticalOffset
+      , color);
+
+    std::string spacer = Strings::STARTUP_SUBTEXT_LINE_SPACER;
+    RConsole::Canvas::DrawString(spacer.c_str()
+      , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>(spacer.size()) / 2)
+      , ++verticalOffset
       , color);
 
     std::string submsg = Strings::STARTUP_SUBTEXT_LINE_1;
@@ -122,6 +129,13 @@ namespace ASCIIPlayer
       , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>(escMenu.size()) / 2)
       , ++verticalOffset
       , color);
+
+    // Footer
+    std::string fmodCredit = Strings::STARTUP_FMOD_ATTRIBUTION;
+    RConsole::Canvas::DrawString(fmodCredit.c_str()
+      , static_cast<int>(RConsole::Canvas::GetConsoleWidth() / 2) - (static_cast<unsigned int>(fmodCredit.size()) / 2)
+      , (verticalOffset + 3)
+      , colorSecondary);
   }
 
 
@@ -133,10 +147,12 @@ namespace ASCIIPlayer
     const size_t minutes = seconds / 60;
     const size_t hours = minutes / 60;
     const RConsole::Color color = RConsole::DARKGREY;
+    const size_t perFrameMSDelay = activeDJConfig_.DJPerLoopSleepMS;
+    std::string delayText = perFrameMSDelay > 0 ? std::to_string(perFrameMSDelay) + "ms" : std::string(Strings::DEBUG_YIELDING);
 
     RConsole::Canvas::DrawString(("[ argv0: " + argParser_[0]).c_str(), 0.0f, loc++, color);
     RConsole::Canvas::DrawString(("[ utime: " + std::to_string(hours) + "h " + std::to_string(minutes % 60) + "m " + std::to_string(seconds % 60) + "s").c_str(), 0.0f, loc++, color);
-    RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(calculateUpdateRate(fpsPrevStart_, fpsEnd_)) + " " + Strings::DEBUG_PER_SECOND).c_str(), 0.0f, loc++, color);
+    RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(calculateUpdateRate(fpsPrevStart_, fpsEnd_)) + " " + Strings::DEBUG_PER_SECOND + " (" + Strings::DEBUG_DELAY + " " + delayText + "/c)").c_str(), 0.0f, loc++, color);
     RConsole::Canvas::DrawString(("[ vname: " + activeDJ_->VisualizerName()).c_str(), 0.0f, loc++, color);
   }
 
@@ -313,11 +329,8 @@ namespace ASCIIPlayer
   // Draws the visualizer list menu
   void Lobby::displayVisualizerList()
   {
-    
-
     // Draw the box. Use returned rect as buffer.
     Rect rect = drawCenteredBox(12, 12 + 2);
-
   }
 
   // Move to the right in the menu

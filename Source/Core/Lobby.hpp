@@ -7,9 +7,6 @@
 #include "DJ.hpp"
 #include "MenuSystem.hpp"
 
-// Number of frame time entries tracked
-#define TRACKED_TIMES 200
-
 // Menu No-option or relative nav
 #define ASCIIMENU_NO_CHANGE ""
 #define ASCIIMENU_BACK "back"
@@ -110,6 +107,7 @@ namespace ASCIIPlayer
     InputParser keyParser_;
     ArgParser argParser_;
     DJ *activeDJ_;
+    DJConfig activeDJConfig_;
     MenuSystem menuSystems_;
     bool lobbyHosting_;
     bool menuVisible_;
@@ -117,6 +115,7 @@ namespace ASCIIPlayer
     // Menu/Visual Related
     double idleIndex_;
     size_t timesIndex_;
+    size_t timesSoFar_;
     std::int64_t times_[TRACKED_TIMES];
     bool showDebug_;
     std::int64_t fpsStart_;

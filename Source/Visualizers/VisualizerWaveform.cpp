@@ -6,7 +6,7 @@ namespace ASCIIPlayer
 {
   // Constructor
   VisualizerWaveform::VisualizerWaveform()
-    : ASCIIVisualizer(CONSOLE_WIDTH_FUNC, AUDIODATA_WAVEFORM)
+    : ASCIIVisualizer(CONSOLE_WIDTH_FUNC, AudioDataStyle::AUDIODATA_WAVEFORM)
     , startingWidth_(CONSOLE_WIDTH_FUNC)
     , width_(startingWidth_)
     , height_(CONSOLE_HEIGHT_FUNC)
