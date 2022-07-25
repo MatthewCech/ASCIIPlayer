@@ -14,11 +14,23 @@ Want to provide feedback or feature suggestions? Feel free to file a request or 
 Suggested for Windows Development:
 - Visual Studio 2017/2019 - editor and debugging: https://visualstudio.microsoft.com/vs/
 - Inno Installer - Building the installer: https://www.jrsoftware.org/isinfo.php
-- 7zip, for zipping up portable version: https://www.7-zip.org
+- 7zip, for zipping up portable version: https://www.7-zip.org (and added to path)
 
 Suggested for \*nix Development
 - GNU Compiler Collection - editor and debugging: `sudo apt install build-essential`
 - Valgrind - memory debugging: `sudo apt install valgrind`
+
+Once set up, you can build for your selected platform by running the `_build` prefixed script associated with your platform located in the repo root. This should output a folder for the platform.
+
+You'll then want to compile the project. Relevant settings and resources should have been installed by the build script, but if not there's limited configuration or flags. Here's the recommended \*nix configuration:  `g++ -pthread -m32 main.cpp -L./lib/x86 -lfmodL -I./inc -o output`. For windows, the visual studio solution file should be automatically configured.
+
+Once compiled, to package you can use the scripts within the platform specific dist folders. 
+
+Windows:
+- Ensure `ASCIIPlayer.exe` exists in a `bin_` folder in the repo root.
+- Run `_build_win_resources.bat` in the repo root to assign the executable (icon, etc).
+- Copy `ASCIIPlayer.exe` will need to be copied from whichever build folder you with to use into the `DistWindows` folder,
+- Run the .iss script (with inno) to collect and package up the executable in the `Output` folder.
 
 ## License
 
@@ -33,3 +45,5 @@ Human Readable Version:
 ASCIIPlayer is based on FMOD's low level API, and FMOD itself requires per-project licensing. For more information, head over to https://www.fmod.com/ and https://www.fmod.com/licensing
 
 Made with FMOD Studio by Firelight Technologies Pty Ltd.
+
+## How to package
