@@ -1,8 +1,6 @@
 #include <cmath>
 #include "VisualizerParticle.hpp"
 
-#define FMOD_DATA_SIZE 128
-
 
 namespace ASCIIPlayer
 {
@@ -43,7 +41,7 @@ namespace ASCIIPlayer
 
   // Constructor
   VisualizerParticle::VisualizerParticle()
-    : ASCIIVisualizer(FMOD_DATA_SIZE, AudioDataStyle::AUDIODATA_SPECTRUM)
+    : ASCIIVisualizer(FMOD_DATA_SIZE, AudioDataStyle::AUDIODATA_WAVEFORM)
     , width_(RConsole::Canvas::GetConsoleWidth())
     , height_(RConsole::Canvas::GetConsoleHeight())
     , vs1_(width_ / 2.0f, height_ / 4.0f)
@@ -65,23 +63,18 @@ namespace ASCIIPlayer
   }
 
   // Primary update loop for particle
-  bool VisualizerParticle::Update(float* data, float volume, bool isActive)
+  bool VisualizerParticle::Update(float* data, bool isActive)
   {
-
-    if (data[0] + data[10] + data[20] == 0)
-      return true;
-    
-    float data_avg = (data[0] + data[1]) / 2.0f;
-    if (data_avg < 0)
-      data_avg = 0;
-
-    float index_0 = data_avg * (width_ / 2.1f);
+    const float data_avg = (data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7]) / 8.0f;
+    const float position = data_avg * (width_ / 2.3f);
+    const float intensity = data_avg * 8*50;
+    const float defaultSpawnDelay = 100;
 
     // Offset systems
-    vs1_.SetPosX(width_ / 2.0f + index_0);
-    vs2_.SetPosX(width_ / 2.0f - index_0);
-    vs1_.SetSpawnDelay(static_cast<int>((width_ / 2) - index_0 * 1.7f));
-    vs2_.SetSpawnDelay(static_cast<int>((width_ / 2) - index_0 * 1.7f));
+    vs1_.SetPosX(width_ / 2.0f + position);
+    vs2_.SetPosX(width_ / 2.0f - position);
+    vs1_.SetSpawnDelay(static_cast<int>(defaultSpawnDelay - intensity));
+    vs2_.SetSpawnDelay(static_cast<int>(defaultSpawnDelay - intensity));
 
     // Update and return we're good!
     vs1_.Update();
