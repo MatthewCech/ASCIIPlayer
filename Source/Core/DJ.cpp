@@ -5,14 +5,11 @@
 #include "Defines.hpp"
 #include "UserStrings.hpp"
 #include "Overlays/DefaultOverlay.hpp"
-#include "Visualizers/VisualizerDefault.hpp"
 #include "Visualizers/VisualizerWaveform.hpp"
-#include "Visualizers/VisualizerWisp.hpp"
-#include "Visualizers/VisualizerOscillate.hpp"
+#include "Visualizers/VisualizerWaveformLite.hpp"
+
+// Currently defunct
 #include "Visualizers/VisualizerParticle.hpp"
-#include "Visualizers/VisualizerSpotted.hpp"
-#include "Visualizers/VisualizerPineapple.hpp"
-#include "Visualizers/VisualizerSpectrum.hpp"
 
 // Constructs a VisualizerInfo object containing the visualizer name and a 'set' callback, adding it to the visualizer list.
 #define REGISTER_VISUALIZER(n, t) do{ visualizers_.push_back({ n, [](DJ& dj) { dj.setVisualizer<t>(); } }); } while(0)
@@ -46,14 +43,9 @@ namespace ASCIIPlayer
       overlay_ = new DefaultOverlay();
 
     // Register Visualizers
-    //REGISTER_VISUALIZER("default", VisualizerDefault);
     REGISTER_VISUALIZER("waveform", VisualizerWaveform);
-    //REGISTER_VISUALIZER("wisp", VisualizerWisp);
-    //REGISTER_VISUALIZER("oscillate", VisualizerOscillate);
-    //REGISTER_VISUALIZER("particle", VisualizerParticle);
-    //REGISTER_VISUALIZER("spotted", VisaulizerSpotted);
-	  //REGISTER_VISUALIZER("pineapple", VisualizerPineapple);
-    //REGISTER_VISUALIZER("spectrum", VisualizerSpectrum);
+    REGISTER_VISUALIZER("waveform lite", VisualizerWaveformLite);
+    REGISTER_VISUALIZER("particle", VisualizerParticle);
 
     // Set visualizer
     VisualizerSet(config_.DJVisualizerID);

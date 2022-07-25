@@ -2,8 +2,7 @@
 #include <RTest/RTest.hpp>
 #include "AudioSystem.hpp"
 #include <ConsoleUtils/console-utils.hpp>
-
-#define DATA_SIZE 512
+#include <Defines.hpp>
 
 namespace ASCIIPlayer
 {
@@ -16,7 +15,7 @@ namespace ASCIIPlayer
   } mydsp_data_t;
 
   unsigned int __wave_data_size = 0;   // This gets resized based on the DSP callback
-  float        __wave_data[DATA_SIZE]; // This gets populated as necessary.
+  float        __wave_data[FMOD_DATA_SIZE]; // This gets populated as necessary.
   FMOD::DSP    *__wave_data_dsp;       // Pointer to the waveform extracting DSP.
 
   FMOD_RESULT F_CALLBACK OnDSPRead(FMOD_DSP_STATE *dsp_state, float *inbuffer, float *outbuffer, unsigned int length, int inchannels, int *outchannels)
@@ -40,7 +39,7 @@ namespace ASCIIPlayer
         data->buffer[(samp * numChannels) + chan] = outbuffer[(samp * inchannels) + chan] = inVal;
         
         int index = (samp * numChannels) + chan;
-        if (samp < __wave_data_size && index < DATA_SIZE)
+        if (samp < __wave_data_size && index < FMOD_DATA_SIZE)
         {
           __wave_data[index] = inVal;
         }
@@ -369,7 +368,7 @@ namespace ASCIIPlayer
     switch (style)
     {
       case AudioDataStyle::AUDIODATA_WAVEFORM:
-        for (unsigned int i = 0; i < __wave_data_size && i < static_cast<unsigned int>(numVals) && i < DATA_SIZE; ++i)
+        for (unsigned int i = 0; i < __wave_data_size && i < static_cast<unsigned int>(numVals) && i < FMOD_DATA_SIZE; ++i)
         {
           arr[i] = __wave_data[i];
         }    
