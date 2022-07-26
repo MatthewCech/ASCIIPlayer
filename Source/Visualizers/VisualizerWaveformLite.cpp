@@ -4,12 +4,13 @@
 
 namespace ASCIIPlayer
 {
-  // Constructor
+  /// <summary>
+  /// Construct and initialize relevant variables. Allocate memory.
+  /// </summary>
   VisualizerWaveformLite::VisualizerWaveformLite()
-    : ASCIIVisualizer(CONSOLE_WIDTH_FUNC * SCALE_FACTOR, AudioDataStyle::AUDIODATA_WAVEFORM)
-    , startingWidth_(CONSOLE_WIDTH_FUNC * SCALE_FACTOR)
-    , width_(startingWidth_)
-    , height_(CONSOLE_HEIGHT_FUNC)
+    : ASCIIVisualizer(FMOD_DATA_SIZE, AudioDataStyle::AUDIODATA_WAVEFORM)
+    , width_(Width())
+    , height_(Height())
     , workspace_(nullptr)
   {
     RConsole::Canvas::SetCursorVisible(false);
@@ -54,7 +55,6 @@ namespace ASCIIPlayer
     width_ = newWidth;
     height_ = newHeight;
     RConsole::Canvas::SetCursorVisible(false);
-    initializeWorkspace();
   }
 
   // Draw Bars in traditional waveform style.
@@ -69,15 +69,16 @@ namespace ASCIIPlayer
     const float heightMinimum = 0;                  // Arbitrary value determining smallest vertical offset. Chosen for visual appeal - creates 2 bottom and 1 top line.
     const char symbol = 'o';
 
+    // Calcualte some sizing
+    const int halfDataWidth = (FMOD_DATA_SIZE / SCALE_FACTOR) / 2;
+    const int halfWindowWidth = width_ / 2;
+    const int xStart = halfWindowWidth - halfDataWidth;
+
     // clear the workspace
     memset(workspace_, 0, workspaceCount_ * sizeof(workspace_[0]));
 
-    int offset = (width_ - startingWidth_) / 2;
-    if (offset < 0)
-      offset = 0;
-
     // Only using half the workspace really
-    for (int i = 0; i < width_ && i < startingWidth_; ++i)
+    for (int i = 0; i < FMOD_DATA_SIZE; ++i)
     {
       int bin = i / SCALE_FACTOR;
 
@@ -90,9 +91,12 @@ namespace ASCIIPlayer
     {
       const float binVal = workspace_[i];
       const float yPos = halfHeight - binVal;
-      const int xPos = i + offset;
+      const int xPos = xStart + i;
 
-      RConsole::Canvas::Draw(symbol, xPos, static_cast<int>(yPos), RConsole::LIGHTBLUE);
+      if (xPos > 0 && xPos < width_)
+      {
+        RConsole::Canvas::Draw(symbol, xPos, static_cast<int>(yPos), RConsole::LIGHTBLUE);
+      }
     }
 
     return true;

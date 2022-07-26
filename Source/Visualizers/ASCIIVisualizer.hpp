@@ -13,14 +13,12 @@ namespace ASCIIPlayer
   {
   public:
     // Constructor
-    ASCIIVisualizer(unsigned int audioDataSize, AudioDataStyle style)
-      : Visualizer(audioDataSize, style)
-    {  }
+    ASCIIVisualizer(unsigned int audioDataSize, AudioDataStyle style);
 
     // Destructor
-    virtual ~ASCIIVisualizer() {  };
+    virtual ~ASCIIVisualizer();
 
-    int Width() { return CONSOLE_WIDTH_FUNC; }
-    int Height() { return CONSOLE_HEIGHT_FUNC; }
+    int Width();
+    int Height();
   };
 }

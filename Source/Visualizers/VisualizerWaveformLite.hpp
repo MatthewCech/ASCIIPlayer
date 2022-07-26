@@ -17,7 +17,8 @@ namespace ASCIIPlayer
 
   private:
     void initializeWorkspace();
-    int startingWidth_;
+
+    // Current width and height of console
     int width_;
     int height_;
 
