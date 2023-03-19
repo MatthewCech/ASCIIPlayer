@@ -37,7 +37,7 @@ namespace ASCIIPlayer
     }
   };
 
-  Complex buffer[FMOD_DATA_SIZE] = {}; // Scratch workspace. We are assuming we're using stereo settings, so we only care about one channel at a time.
+  Complex buffer[FMOD_DATA_SIZE / 2] = {}; // Scratch workspace. We are assuming we're using stereo settings, so we only care about one channel at a time.
 
   /// <summary>
   /// Reverse the specified number of bits
@@ -97,7 +97,7 @@ namespace ASCIIPlayer
   /// <param name="to_transform">a vector that MUST have a size that's a multiple of 2</param>
   void FFTInPlace(Complex* to_transform, int size)
   {
-    const int bits = static_cast<int>(log2f(size));
+    const int bits = static_cast<int>(log2(size));
 
     for (int i = 1; i < size; ++i)
     {
@@ -123,7 +123,7 @@ namespace ASCIIPlayer
           Complex odd{ to_transform[index_odd].real, to_transform[index_odd].imag };
 
           const double term = -2 * M_PI * k / n;
-          Complex exp{ std::cos(term), std::sin(term) };
+          Complex exp{ static_cast<float>(std::cos(term)), static_cast<float>(std::sin(term)) };
           exp = Complex::ComplexMul(exp, odd);
 
           to_transform[index_even] = Complex::ComplexAdd(even, exp);
