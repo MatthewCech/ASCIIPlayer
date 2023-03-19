@@ -80,7 +80,7 @@ float ComplexMagnitude(Complex to_evaluate)
 {
   const float real = to_evaluate.real;
   const float imaginary = to_evaluate.imag;
-  return real * real + imaginary * imaginary;
+  return sqrt(real * real + imaginary * imaginary);
 }
 
 /// <summary>
