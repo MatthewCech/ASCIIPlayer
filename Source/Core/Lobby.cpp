@@ -31,16 +31,16 @@ namespace ASCIIPlayer
     // Debug
     , timesIndex_(0)
     , timesSoFar_(0)
-    , times_()
+    , dtHistory_()
     , showDebug_(false)
-    , fpsStart_(0)
-    , fpsPrevStart_(0)
-    , fpsEnd_(0)
-    , appStartTime_(MS_SINCE_EPOCH)
+    , frameStart_()
+    , previousFrameStart_()
+    , frameEnd_()
+    , appStartTime_(std::chrono::high_resolution_clock::now())
   { 
     // Update FPS start
-    fpsStart_ = appStartTime_;
-    fpsPrevStart_ = appStartTime_;
+    frameStart_ = appStartTime_;
+    previousFrameStart_ = appStartTime_;
 
     // Begin by handling the application opening
     handleApplicationOpen(argc, argv);
@@ -137,8 +137,9 @@ namespace ASCIIPlayer
     while (lobbyHosting_)
     {
       // Loop tracking
-      fpsPrevStart_ = fpsStart_;
-      fpsStart_ = MS_SINCE_EPOCH;
+      previousFrameStart_ = frameStart_;
+      frameStart_ = std::chrono::high_resolution_clock::now();
+      double dtSeconds = std::chrono::duration_cast<std::chrono::microseconds>(frameStart_ - previousFrameStart_).count() / 1000000.0f;
 
       // ============================ Start primary loop ============================
 
@@ -161,18 +162,18 @@ namespace ASCIIPlayer
 
       // Draw the splash/idle screen if we have nothing to lpay
       if (activeDJ_->GetPlaylistSize() == 0)
-        drawSplash(fpsStart_, fpsPrevStart_);
+        drawSplash(dtSeconds);
 
       // Actively run the current DJ
       if (activeDJ_)
-        activeDJ_->Update();
+        activeDJ_->Update(dtSeconds);
 
       // Parse input
       keyParser_.HandleInput(this, &Lobby::interpretChar, &Lobby::interpretMultiCharInput);
 
       // Finalize drawing for debug
       if (showDebug_)
-        drawDebug();
+        drawDebug(dtSeconds);
 
       // Draw menus and finalize drawing for menu overlay.
       drawDialog();
@@ -182,7 +183,7 @@ namespace ASCIIPlayer
       RConsole::Canvas::Update();
       
       // ============================ End primary loop ============================
-      fpsEnd_ = MS_SINCE_EPOCH;
+      frameEnd_ = std::chrono::high_resolution_clock::now();
       ++loops;
     }
   }
@@ -192,19 +193,19 @@ namespace ASCIIPlayer
    // Private //
   /////////////
   // Calculates average framerate based on the start and stop provided. 
-  int Lobby::calculateUpdateRate(std::int64_t start, std::int64_t end)
+  int Lobby::calculateUpdateRate(double dt)
   {
-    size_t size = TRACKED_TIMES < timesSoFar_ ? TRACKED_TIMES : timesSoFar_;
-    times_[timesIndex_++] = end - start;
+    int size = TRACKED_TIMES < timesSoFar_ ? TRACKED_TIMES : timesSoFar_;
+    dtHistory_[timesIndex_++] = dt;
     if (timesIndex_ >= size)
     {
       timesIndex_ = 0;
     }
 
-    float total = 0;
-    for (size_t i = 0; i < size; ++i)
+    double total = 0;
+    for (int i = 0; i < size; ++i)
     {
-      total += times_[i];
+      total += dtHistory_[i];
     }
 
     if (timesSoFar_ < TRACKED_TIMES)
@@ -212,7 +213,9 @@ namespace ASCIIPlayer
       ++timesSoFar_;
     }
 
-    return static_cast<int>(MS_PER_SECOND_FLOAT / (total / size));
+    double avgFrametimeSeconds = total / size;
+
+    return static_cast<int>(1.0 / avgFrametimeSeconds);
   }
 
 

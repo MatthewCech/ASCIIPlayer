@@ -78,12 +78,12 @@ namespace ASCIIPlayer
 
 
   // Displays a splash screen with little bouncing image in the center of the console and some idle text.
-  void Lobby::drawSplash(std::int64_t curr_frametime, std::int64_t last_frametime)
+  void Lobby::drawSplash(double dt)
   {
     // Advance index value
     const double numIndexesPerSecond = 18; // fps of this little bounce graphic
-    std::int64_t difference = (curr_frametime) - last_frametime;
-    double indexOffset = difference / 1000.0f * numIndexesPerSecond;
+    //std::int64_t difference = (curr_frametime) - last_frametime;
+    double indexOffset = dt;// difference / 1000.0f * numIndexesPerSecond;
     idleIndex_ += indexOffset;
 
     // Calculate index in array and mod value.
@@ -140,19 +140,19 @@ namespace ASCIIPlayer
 
 
   // Displays a debug overlay on the player
-  void Lobby::drawDebug()
+  void Lobby::drawDebug(double dt)
   {
     float loc = 0;
-    const size_t seconds = static_cast<size_t>((fpsStart_ - appStartTime_) / 1000);
-    const size_t minutes = seconds / 60;
-    const size_t hours = minutes / 60;
-    const RConsole::Color color = RConsole::DARKGREY;
-    const size_t perFrameMSDelay = activeDJConfig_.DJPerLoopSleepMS;
+    long long seconds = std::chrono::duration_cast<std::chrono::seconds>(frameStart_ - appStartTime_).count();
+    long long minutes = seconds / 60;
+    long long hours = minutes / 60;
+    RConsole::Color color = RConsole::DARKGREY;
+    long long perFrameMSDelay = activeDJConfig_.DJPerLoopSleepMS;
     std::string delayText = perFrameMSDelay > 0 ? std::to_string(perFrameMSDelay) + "ms" : std::string(Strings::DEBUG_YIELDING);
 
     RConsole::Canvas::DrawString(("[ argv0: " + argParser_[0]).c_str(), 0.0f, loc++, color);
     RConsole::Canvas::DrawString(("[ utime: " + std::to_string(hours) + "h " + std::to_string(minutes % 60) + "m " + std::to_string(seconds % 60) + "s").c_str(), 0.0f, loc++, color);
-    RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(calculateUpdateRate(fpsPrevStart_, fpsEnd_)) + " " + Strings::DEBUG_PER_SECOND + " (" + Strings::DEBUG_DELAY + " " + delayText + "/c)").c_str(), 0.0f, loc++, color);
+    RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(calculateUpdateRate(dt)) + " " + Strings::DEBUG_PER_SECOND + " (" + Strings::DEBUG_DELAY + " " + delayText + "/c)").c_str(), 0.0f, loc++, color);
     RConsole::Canvas::DrawString(("[ vname: " + activeDJ_->VisualizerName()).c_str(), 0.0f, loc++, color);
   }
 

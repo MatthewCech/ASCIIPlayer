@@ -27,7 +27,7 @@ using APUnique      = std::int64_t;       // Type used for unique IDs related to
 
 // Defines
 #define FMOD_DATA_SIZE 1024
-#define TRACKED_TIMES 120
+#define TRACKED_TIMES 512 
 #define ABSTRACT =0
 #define MS_PER_SECOND_FLOAT 1000.0f
 #define MS_PER_SECOND_INT 1000

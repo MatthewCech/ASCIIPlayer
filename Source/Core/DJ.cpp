@@ -78,7 +78,7 @@ namespace ASCIIPlayer
 
   // Primary update function that's tasked with handling playlist management
   // along with drawing the current visualizer + overlay.
-  bool DJ::Update()
+  bool DJ::Update(double dt)
   {
     if (hasShutdown_)
     {

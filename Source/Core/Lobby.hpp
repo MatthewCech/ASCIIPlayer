@@ -78,17 +78,17 @@ namespace ASCIIPlayer
     void startDJ();
     void stopDj();
     void setDJ(DJ *newDJ);
-    int calculateUpdateRate(std::int64_t start, std::int64_t end);
+    int calculateUpdateRate(double dt);
 
     // Private methods - Menus
-    void drawDebug();
+    void drawDebug(double dt);
     void buildMenus();
     void displayInfobox(size_t maxWidth, std::string containerName, std::string str);
     void displayVisualizerList();
     Rect drawCenteredBox(size_t width, size_t height, size_t margin_height = 2, size_t margin_width = 2, RConsole::Color color = RConsole::WHITE);
     bool menuMoveCheckRight();
     bool menuMoveCheckLeft();
-    void drawSplash(std::int64_t curr_frametime, std::int64_t last_frametime);
+    void drawSplash(double dt);
     void drawDialog();
     void showMenu(DialogType dialog_type);
 
@@ -114,20 +114,19 @@ namespace ASCIIPlayer
 
     // Menu/Visual Related
     double idleIndex_;
-    size_t timesIndex_;
-    size_t timesSoFar_;
-    std::int64_t times_[TRACKED_TIMES];
+    int timesIndex_;
+    int timesSoFar_;
+    double dtHistory_[TRACKED_TIMES];
     bool showDebug_;
-    std::int64_t fpsStart_;
-    std::int64_t fpsPrevStart_;
-    std::int64_t fpsEnd_;
-    std::int64_t appStartTime_;
+    std::chrono::steady_clock::time_point frameStart_;
+    std::chrono::steady_clock::time_point previousFrameStart_;
+    std::chrono::steady_clock::time_point frameEnd_;
+    std::chrono::steady_clock::time_point appStartTime_;
 
     // Menu management
     bool menuNavBackNextUpdate_;   // For exiting the menu
     bool isDisplayingDialog_;      // For displaying the help menu.
     DialogType displayDialogType_; // For indicating what type of dialog we're displaying.
-
 
     // Shared memory locations
     shoom::Shm *sharedStatus;
