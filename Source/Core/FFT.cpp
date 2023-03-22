@@ -1,6 +1,6 @@
-#define _USE_MATH_DEFINES // Flag that we want the defines in the C math header
-#include <math.h>
-#include "Defines.hpp"
+#define _USE_MATH_DEFINES // enables defines like M_PI
+#include <math.h>         // sin, cos
+#include "Defines.hpp"    // data size
 #include "Core\FFT.hpp"
 
 
@@ -37,7 +37,8 @@ namespace ASCIIPlayer
     }
   };
 
-  Complex buffer[FMOD_DATA_SIZE / 2] = {}; // Scratch workspace. We are assuming we're using stereo settings, so we only care about one channel at a time.
+  // Scratch workspace. We are assuming we're using stereo settings, so we only care about one channel at a time.
+  Complex buffer[FMOD_DATA_SIZE / 2] = {}; 
 
   /// <summary>
   /// Reverse the specified number of bits
@@ -133,3 +134,5 @@ namespace ASCIIPlayer
     }
   }
 }
+
+#undef _USE_MATH_DEFINES

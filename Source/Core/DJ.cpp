@@ -7,8 +7,7 @@
 #include "Overlays/DefaultOverlay.hpp"
 #include "Visualizers/VisualizerWaveform.hpp"
 #include "Visualizers/VisualizerWaveformLite.hpp"
-
-// Currently defunct
+#include "Visualizers/VisualizerSpectrum.hpp"
 #include "Visualizers/VisualizerParticle.hpp"
 
 // Constructs a VisualizerInfo object containing the visualizer name and a 'set' callback, adding it to the visualizer list.
@@ -42,12 +41,13 @@ namespace ASCIIPlayer
     else // default
       overlay_ = new DefaultOverlay();
 
-    // Register Visualizers
+    // Register Visualizers. Order of list determines cycle order, but not the default.
+    REGISTER_VISUALIZER("spectrum", VisualizerSpectrum);
     REGISTER_VISUALIZER("waveform", VisualizerWaveform);
     REGISTER_VISUALIZER("waveform lite", VisualizerWaveformLite);
     REGISTER_VISUALIZER("particle", VisualizerParticle);
 
-    // Set visualizer
+    // Set visualizer. This applies the DJVisualizerID as the default.
     VisualizerSet(config_.DJVisualizerID);
 
     // Looping?

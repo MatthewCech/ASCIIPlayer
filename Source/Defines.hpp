@@ -43,7 +43,7 @@ enum class AudioDataStyle
   AUDIODATA_NO_STYLE = 0,
 
   AUDIODATA_WAVEFORM = 1, // Raw data collected from the file
-  AUDIODATA_SPECTRUM = 2, // Waveform with FFT and windowing
+  AUDIODATA_SPECTRUM = 2, // raw waveform data with FFT applied. Averaged between left and right channel.
 };
 
 
