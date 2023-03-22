@@ -81,9 +81,8 @@ namespace ASCIIPlayer
   void Lobby::drawSplash(double dt)
   {
     // Advance index value
-    const double numIndexesPerSecond = 18; // fps of this little bounce graphic
-    //std::int64_t difference = (curr_frametime) - last_frametime;
-    double indexOffset = dt;// difference / 1000.0f * numIndexesPerSecond;
+    const double splashFPS = 18; 
+    double indexOffset = splashFPS * dt;
     idleIndex_ += indexOffset;
 
     // Calculate index in array and mod value.
