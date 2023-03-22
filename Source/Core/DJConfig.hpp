@@ -16,8 +16,8 @@ namespace ASCIIPlayer
     unsigned int SkipForwardSeconds      = 15;         // Seconds to go forwards when skipping. 
     unsigned int SkipBackwardSeconds     = 15;         // Seconds to go backwards when skipping.
     unsigned int DJChannelCount          = 10;         // The number of channels for the DJ to have.
-    std::string  DJVisualizerID          = "spectrum"; // ID of the visualizer to use.
     std::string  DJOverlayID             = "default";  // ID of the info overlay to use.
+    std::string  DJVisualizerID          = "waveform lite"; // ID of the visualizer to use.
 
     //std::string DefaultFolder; // Default folder to load music from.
 
