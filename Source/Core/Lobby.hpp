@@ -11,7 +11,7 @@
 #define ASCIIMENU_NO_CHANGE ""
 #define ASCIIMENU_BACK "back"
 
-// Menu heiarchy overview and defines
+// Menu hierarchy overview and defines
 #define ASCIIMENU_BASE "menuDefualt"
   #define ASCIIMENU_FILE "menuFile"
   #define ASCIIMENU_EDIT "menuEdit"
@@ -20,7 +20,7 @@
     #define ASCIIMENU_HELP_INFO_BOX "menuHelpInfoBox"
 
 
-// Shared memory class defintiion
+// Shared memory class definition
 namespace shoom
 {
   class Shm;
@@ -84,15 +84,15 @@ namespace ASCIIPlayer
     void drawDebug(double dt);
     void buildMenus();
     void displayInfobox(size_t maxWidth, std::string containerName, std::string str);
-    void displayVisualizerList();
+    void displayVisualizerList(std::string containerName);
     Rect drawCenteredBox(size_t width, size_t height, size_t margin_height = 2, size_t margin_width = 2, RConsole::Color color = RConsole::WHITE);
     bool menuMoveCheckRight();
     bool menuMoveCheckLeft();
     void drawSplash(double dt);
     void drawDialog();
     void showMenu(DialogType dialog_type);
-
-    // Menu associated
+    
+    // Menu callbacks
     void callback_close();
     void callback_resetConfig();
     void callback_goBack();
