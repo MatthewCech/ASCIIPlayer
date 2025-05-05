@@ -11,7 +11,7 @@ namespace ASCIIPlayer
   struct UIInfo
   {
     // Constructors
-    UIInfo() : Volume(0), IsPlaying(false), Song("") {  }
+    UIInfo() : IsRequestedActive(false), Volume(0), IsPlaying(false), IsJumpingPos(false), Song(""), SongPos(0), SongLength(0) { }
     UIInfo(bool requestedActive, bool isPlaying, bool justSkipped, float vol, std::string song, size_t current_pos, size_t length)
       : IsRequestedActive(requestedActive)
       , Volume(vol)

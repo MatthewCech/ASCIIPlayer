@@ -25,7 +25,7 @@ namespace ASCIIPlayer
   void Lobby::callback_visualizerSet(int arg) {if (activeDJ_ != nullptr) activeDJ_->VisualizerSet(activeDJ_->GetVisualizerList()[arg].Name); isDisplayingDialog_ = false; menuNavBackNextUpdate_ = true; }
   void Lobby::callback_showMenu(int arg) { showMenu(static_cast<DialogType>(arg)); }
 
-  // Creats and configures the menus we can display in the lobby.
+  // Creates and configures the menus we can display in the lobby.
   void Lobby::buildMenus()
   {
     // Configure menus
@@ -178,7 +178,7 @@ namespace ASCIIPlayer
           displayInfobox(width, ASCIIMENU_HELP_INFO_BOX, Strings::MODAL_HELP_OPEN);
           break;
         case DialogType::DIALOG_VISUALIZER_LIST:
-            displayVisualizerList(ASCIIMENU_SELECT_VISUALIZER);
+          displayVisualizerList(ASCIIMENU_SELECT_VISUALIZER);
           break;
 
         default:
@@ -227,7 +227,9 @@ namespace ASCIIPlayer
     for (int i = rect.leftPadded; i < rect.rightPadded; ++i)
     {
       for (int j = rect.topPadded; j < rect.bottomPadded; ++j)
+      {
         RConsole::Canvas::Draw(' ', i, j, RConsole::DARKGREY);
+      }
     }
 
     // Draw sides of the box - horizontal sides
@@ -270,7 +272,9 @@ namespace ASCIIPlayer
     {
       ++current;
       if (current > longest)
+      {
         ++longest;
+      }
 
       if (c == '\n')
       {
@@ -283,7 +287,9 @@ namespace ASCIIPlayer
     if (manualFormat)
     {
       if (longest < static_cast<int>(max_width))
+      {
         max_width = longest;
+      }
     }
 
     // Determine expected box size
@@ -305,7 +311,9 @@ namespace ASCIIPlayer
       if (!manualFormat)
       {
         if (*(infoboxText.c_str() + offset) == ' ')
+        {
           offset += 1;
+        }
       }
 
       std::string toWrite = std::string(infoboxText.c_str() + offset, str_width);
@@ -329,17 +337,17 @@ namespace ASCIIPlayer
   // Handle utility calls required to configure both container and outline positioning
   void Lobby::displayVisualizerList(std::string containerName)
   {
-    Container* c{ MenuRegistry::GetContainer(containerName) };
-    std::vector<Selectable>& allItems{ c->GetAllItems() };
-    int widestLabel{ -1 };
+    Container* c = MenuRegistry::GetContainer(containerName);
+    std::vector<Selectable>& allItems = c->GetAllItems();
+    int widestLabel = -1;
 
     for (const Selectable& selectable : allItems)
     {
-        const int labelLength = selectable.Label.length();
-        if (labelLength > widestLabel)
-        {
-            widestLabel = labelLength;
-        }
+      const int labelLength = selectable.Label.length();
+      if (labelLength > widestLabel)
+      {
+        widestLabel = labelLength;
+      }
     }
 
     Rect rect = drawCenteredBox(widestLabel, allItems.size());

@@ -9,6 +9,7 @@
 #include "Visualizers/VisualizerWaveformLite.hpp"
 #include "Visualizers/VisualizerSpectrum.hpp"
 #include "Visualizers/VisualizerParticle.hpp"
+#include "Visualizers/VisualizerCirrus.hpp"
 
 // Constructs a VisualizerInfo object containing the visualizer name and a 'set' callback, adding it to the visualizer list.
 #define REGISTER_VISUALIZER(n, t) do{ visualizers_.push_back({ n, [](DJ& dj) { dj.setVisualizer<t>(); } }); } while(0)
@@ -46,6 +47,7 @@ namespace ASCIIPlayer
     REGISTER_VISUALIZER("waveform", VisualizerWaveform);
     REGISTER_VISUALIZER("waveform lite", VisualizerWaveformLite);
     REGISTER_VISUALIZER("particle", VisualizerParticle);
+    REGISTER_VISUALIZER("cirrus", VisualizerCirrus);
 
     // Set visualizer. This applies the DJVisualizerID as the default.
     VisualizerSet(config_.DJVisualizerID);
@@ -130,7 +132,7 @@ namespace ASCIIPlayer
           status = false;
         }
 
-        visualizer_->Update(visualizerDataArray_, status);
+        visualizer_->Update(dt, visualizerDataArray_, status);
         visualizer_->UpdatePost();
       }
 

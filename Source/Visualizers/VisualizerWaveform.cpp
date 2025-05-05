@@ -28,7 +28,7 @@ namespace ASCIIPlayer
   // Returns if it succeeded or not. Note that when isActive is true, we aren't 
   // paused. If isActive is false, we're using the data from the previous run
   // and we don't see that scale by volume.
-  bool VisualizerWaveform::Update(float* normalizedData, bool isActive)
+  bool VisualizerWaveform::Update(double dt, float* normalizedData, bool isActive)
   {
     // Set up some sweet numbers
     const char symbol = static_cast<unsigned char>(219);      // Solid box character on windows. This doesn't really work well on different OSs.

@@ -22,7 +22,7 @@ namespace ASCIIPlayer
 
   // The maximum data size for a spectrum is going to be 1 since it represents a 0 to 1 occurrence of the frequency (% appearing at.)
   // No negatives present. Not currently scaling buckets down for width.
-  bool VisualizerSpectrum::Update(float* data, bool isActive)
+  bool VisualizerSpectrum::Update(double dt, float* data, bool isActive)
   {
     const int minHeight = 55;         // Pure magic number for "GoodFeel" minimum height (where detail actually matters)
     const float overallScalar = 1.5f; // Pure magic number. Probably good to not make it greater than 2.

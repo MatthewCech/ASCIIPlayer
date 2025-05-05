@@ -13,7 +13,7 @@ namespace ASCIIPlayer
     ~VisualizerWaveformLite();
 
     void OnResize(int newWidth, int newHeight);
-		bool Update(float* data, bool isActive);
+		bool Update(double dt, float* data, bool isActive);
 
   private:
     void initializeWorkspace();

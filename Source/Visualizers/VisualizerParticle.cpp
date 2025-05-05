@@ -63,7 +63,7 @@ namespace ASCIIPlayer
   }
 
   // Primary update loop for particle
-  bool VisualizerParticle::Update(float* data, bool isActive)
+  bool VisualizerParticle::Update(double dt, float* data, bool isActive)
   {
     const float data_avg = (data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7]) / 8.0f;
     const float position = data_avg * (width_ / 2.3f);
