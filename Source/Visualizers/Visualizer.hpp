@@ -23,7 +23,7 @@ namespace ASCIIPlayer
     {  }
 
     // Member Functions
-    virtual bool Update(float* data, bool isActive) ABSTRACT;
+    virtual bool Update(double dt, float* data, bool isActive) ABSTRACT;
     virtual int Width() ABSTRACT;
     virtual int Height() ABSTRACT;
 

@@ -1,21 +1,20 @@
 #pragma once
 #include "ASCIIVisualizer.hpp"
-
+#include "Defines.hpp"
 
 namespace ASCIIPlayer
 {
-  class VisualizerWaveform : public ASCIIVisualizer
+  class VisualizerSpectrum : public ASCIIVisualizer
   {
   public:
     // Constructor
-		VisualizerWaveform();
+    VisualizerSpectrum();
 
     // DrawBars
-		bool Update(double dt, float* data, bool isActive);
+    bool Update(double dt, float* data, bool isActive);
     void OnResize(int newWidth, int newHeight);
 
   private:
-    int startingWidth_;
     int width_;
     int height_;
   };

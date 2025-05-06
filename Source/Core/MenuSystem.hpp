@@ -72,6 +72,7 @@ public:
     , callbackFunctionVoid_(function)
     , callbackFunctionInt_(nullptr)
     , lobby_(lobby)
+    , arg_(0)
     , argType_(ArgType::NONE)
   {  }
 

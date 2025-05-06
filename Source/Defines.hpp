@@ -27,7 +27,7 @@ using APUnique      = std::int64_t;       // Type used for unique IDs related to
 
 // Defines
 #define FMOD_DATA_SIZE 1024
-#define TRACKED_TIMES 120
+#define TRACKED_TIMES 128 
 #define ABSTRACT =0
 #define MS_PER_SECOND_FLOAT 1000.0f
 #define MS_PER_SECOND_INT 1000
@@ -43,7 +43,7 @@ enum class AudioDataStyle
   AUDIODATA_NO_STYLE = 0,
 
   AUDIODATA_WAVEFORM = 1, // Raw data collected from the file
-  AUDIODATA_SPECTRUM = 2, // Waveform with FFT and windowing
+  AUDIODATA_SPECTRUM = 2, // raw waveform data with FFT applied. Averaged between left and right channel.
 };
 
 

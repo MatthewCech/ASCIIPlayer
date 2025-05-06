@@ -7,9 +7,9 @@
 #include "Overlays/DefaultOverlay.hpp"
 #include "Visualizers/VisualizerWaveform.hpp"
 #include "Visualizers/VisualizerWaveformLite.hpp"
-
-// Currently defunct
+#include "Visualizers/VisualizerSpectrum.hpp"
 #include "Visualizers/VisualizerParticle.hpp"
+#include "Visualizers/VisualizerCirrus.hpp"
 
 // Constructs a VisualizerInfo object containing the visualizer name and a 'set' callback, adding it to the visualizer list.
 #define REGISTER_VISUALIZER(n, t) do{ visualizers_.push_back({ n, [](DJ& dj) { dj.setVisualizer<t>(); } }); } while(0)
@@ -42,12 +42,14 @@ namespace ASCIIPlayer
     else // default
       overlay_ = new DefaultOverlay();
 
-    // Register Visualizers
+    // Register Visualizers. Order of list determines cycle order, but not the default.
+    REGISTER_VISUALIZER("spectrum", VisualizerSpectrum);
     REGISTER_VISUALIZER("waveform", VisualizerWaveform);
     REGISTER_VISUALIZER("waveform lite", VisualizerWaveformLite);
     REGISTER_VISUALIZER("particle", VisualizerParticle);
+    REGISTER_VISUALIZER("cirrus", VisualizerCirrus);
 
-    // Set visualizer
+    // Set visualizer. This applies the DJVisualizerID as the default.
     VisualizerSet(config_.DJVisualizerID);
 
     // Looping?
@@ -78,7 +80,7 @@ namespace ASCIIPlayer
 
   // Primary update function that's tasked with handling playlist management
   // along with drawing the current visualizer + overlay.
-  bool DJ::Update()
+  bool DJ::Update(double dt)
   {
     if (hasShutdown_)
     {
@@ -130,7 +132,7 @@ namespace ASCIIPlayer
           status = false;
         }
 
-        visualizer_->Update(visualizerDataArray_, status);
+        visualizer_->Update(dt, visualizerDataArray_, status);
         visualizer_->UpdatePost();
       }
 

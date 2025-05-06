@@ -1,9 +1,11 @@
 #include <FMOD/fmod_errors.h>
 #include <RTest/RTest.hpp>
 #include "AudioSystem.hpp"
+#include "FFT.hpp"
 #include <ConsoleUtils/console-utils.hpp>
 #include <Defines.hpp>
 
+// FMOD docs: https://www.fmod.com/docs/2.02/
 namespace ASCIIPlayer
 {
   typedef struct
@@ -17,6 +19,9 @@ namespace ASCIIPlayer
   unsigned int __wave_data_size = 0;   // This gets resized based on the DSP callback
   float        __wave_data[FMOD_DATA_SIZE]; // This gets populated as necessary.
   FMOD::DSP    *__wave_data_dsp;       // Pointer to the waveform extracting DSP.
+  FMOD::DSP    *__fft_dsp;
+  float* __fft_data; // array
+  unsigned int __fft_data_size;
 
   FMOD_RESULT F_CALLBACK OnDSPRead(FMOD_DSP_STATE *dsp_state, float *inbuffer, float *outbuffer, unsigned int length, int inchannels, int *outchannels)
   {
@@ -30,6 +35,7 @@ namespace ASCIIPlayer
     // count at 0 for maximum compatibility.
     
     // Input is not modified, but is copied over to the outbuffer.
+    // Parase out the number of channels with each step
     for (unsigned int samp = 0; samp < length; samp++)
     {
       const int numChannels = *outchannels;
@@ -69,7 +75,7 @@ namespace ASCIIPlayer
     dsp_state->plugindata = data;
     data->volume_linear = 1.0f;
     data->length_samples = blocksize;
-
+    
     data->buffer = (float *)malloc(blocksize * 8 * sizeof(float));      // *8 = maximum size allowing room for 7.1.   Could ask dsp_state->functions->getspeakermode for the right speakermode to get real speaker count.
     if (!data->buffer)
     {
@@ -131,7 +137,7 @@ namespace ASCIIPlayer
       mydsp_data_t *mydata = (mydsp_data_t *)dsp_state->plugindata;
 
       mydata->volume_linear = value;
-
+      
       return FMOD_OK;
     }
 
@@ -210,9 +216,16 @@ namespace ASCIIPlayer
     dspdesc.getparameterfloat = OnDSPGetParameterFloat;
     dspdesc.numparameters = 2;
     dspdesc.paramdesc = paramdesc;
-    
+
     FCheck(fmodSystem_->createDSP(&dspdesc, &__wave_data_dsp));
     FCheck(masterChannel_->addDSP(0, __wave_data_dsp));
+
+    // FFT DSP
+    FCheck(fmodSystem_->createDSPByType(FMOD_DSP_TYPE_FFT, &__fft_dsp));
+    FCheck(__fft_dsp->setParameterInt((int)FMOD_DSP_FFT_WINDOWTYPE, (int)FMOD_DSP_FFT_WINDOW_HAMMING));
+    FCheck(__fft_dsp->setParameterInt((int)FMOD_DSP_FFT_WINDOWSIZE, FMOD_DATA_SIZE * 2));
+
+    masterChannel_->addDSP(1, __fft_dsp);
   }
 
 
@@ -220,6 +233,7 @@ namespace ASCIIPlayer
   AudioSystem::~AudioSystem()
   {
     FCheck(masterChannel_->removeDSP(__wave_data_dsp));
+    FCheck(masterChannel_->removeDSP(__fft_dsp));
 
     // Close the system
     FCheck(fmodSystem_->close());
@@ -233,6 +247,17 @@ namespace ASCIIPlayer
   bool AudioSystem::Update()
   {
     FCheck(fmodSystem_->update());
+    
+    // Refer to https://www.fmod.com/docs/2.02/unity/examples-spectrum-analysis.html for usage (different language)
+    void *data;           // out
+    unsigned int dataLen; // out
+    char valueStr[1024];       // out
+    int valueStrLen = 1024;
+    __fft_dsp->getParameterData((int)FMOD_DSP_FFT_SPECTRUMDATA, &data, &dataLen, valueStr, valueStrLen);
+    FMOD_DSP_PARAMETER_FFT *fftData = static_cast<FMOD_DSP_PARAMETER_FFT*>(data);
+    __fft_data = fftData->spectrum[0];
+    __fft_data_size = fftData->length; // [r] Number of entries in this spectrum window.Divide this by the output rate to get the hz per entry.
+
     return true;
   }
 
@@ -373,6 +398,13 @@ namespace ASCIIPlayer
           arr[i] = __wave_data[i];
         }    
         break;
+
+      case AudioDataStyle::AUDIODATA_SPECTRUM:
+        for(unsigned int i = 0; i < __fft_data_size && i < static_cast<unsigned int>(numVals) && i < FMOD_DATA_SIZE; ++i)
+        {
+          arr[i] = __fft_data[i];
+        }
+      break;
 
       default:
         throw "Unsupported Style";

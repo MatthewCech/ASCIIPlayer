@@ -35,7 +35,7 @@ namespace ASCIIPlayer
   }
 }
 
-// Run main, catching dumping any errors.
+// Run main, catching and dumping any errors.
 int main(int argc, char** argv) try
 {
   return ASCIIPlayer::Run(argc, argv);

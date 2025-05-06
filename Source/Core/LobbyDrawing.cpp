@@ -2,7 +2,8 @@
 #include "Lobby.hpp"
 #include "UserStrings.hpp"
 
-
+#define SLUG(str) (std::string("") + static_cast<char>(195) + " " + std::string(str)).c_str() /* Mid line slug to prefix a branch character */
+#define SLUG_E(str) (std::string("") + static_cast<char>(192) + " " + std::string(str)).c_str() /* End line slug to prefix a terminating branch character*/
 
 namespace ASCIIPlayer
 {
@@ -21,44 +22,43 @@ namespace ASCIIPlayer
   void Lobby::callback_hideDialog() { isDisplayingDialog_ = false; }
   void Lobby::callback_visualizerNext() { if (activeDJ_ != nullptr) activeDJ_->VisualizerNext(); }
   void Lobby::callback_visualizerPrev() { if (activeDJ_ != nullptr) activeDJ_->VisualizerPrev(); }
-  void Lobby::callback_visualizerSet(int arg) { if (activeDJ_ != nullptr) activeDJ_->VisualizerSet(activeDJ_->GetVisualizerList()[arg].Name); }
+  void Lobby::callback_visualizerSet(int arg) {if (activeDJ_ != nullptr) activeDJ_->VisualizerSet(activeDJ_->GetVisualizerList()[arg].Name); isDisplayingDialog_ = false; menuNavBackNextUpdate_ = true; }
   void Lobby::callback_showMenu(int arg) { showMenu(static_cast<DialogType>(arg)); }
 
-  // Creats and configures the menus we can display in the lobby.
+  // Creates and configures the menus we can display in the lobby.
   void Lobby::buildMenus()
   {
     // Configure menus
     Container* mainMenu = Container::Create(this, ASCIIMENU_BASE);
     mainMenu->SetOrientation(ASCIIMenus::HORIZONTAL);
-    mainMenu->AddItem(" File  ", ASCIIMENU_FILE);
-    mainMenu->AddItem(" Edit  ", ASCIIMENU_EDIT);
-    mainMenu->AddItem(" Help  ", ASCIIMENU_HELP);
+    mainMenu->AddItem("[ File ]", ASCIIMENU_FILE);
+    mainMenu->AddItem("[ Edit ]", ASCIIMENU_EDIT);
+    mainMenu->AddItem("[ Help ]", ASCIIMENU_HELP);
 
     Container* fileMenu = Container::Create(this, ASCIIMENU_FILE);
     fileMenu->SetOrientation(ASCIIMenus::VERTICAL);
-    fileMenu->SetPosition(2, 1);
-    fileMenu->AddItem("Open", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_showMenu, static_cast<int>(DialogType::DIALOG_OPEN));
+    fileMenu->SetPosition(0, 1);
+    fileMenu->AddItem(SLUG("Open"), ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_showMenu, static_cast<int>(DialogType::DIALOG_OPEN));
     //fileMenu->AddItem("Save Settings", ASCIIMENU_NO_CHANGE, []() {}); // TODO(mcech): Allow settings to save off to config
-    fileMenu->AddItem("Hide", ASCIIMENU_NO_CHANGE, &Lobby::callback_goBack);
-    fileMenu->AddItem("Quit", ASCIIMENU_NO_CHANGE, &Lobby::callback_close); // TODO(mcech): Confirmation of Destructive Action - Dialogue that takes lambda for yes.
+    fileMenu->AddItem(SLUG("Hide"), ASCIIMENU_NO_CHANGE, &Lobby::callback_goBack);
+    fileMenu->AddItem(SLUG_E("Quit"), ASCIIMENU_NO_CHANGE, &Lobby::callback_close); // TODO(mcech): Confirmation of Destructive Action - Dialogue that takes lambda for yes.
 
     Container* editMenu = Container::Create(this, ASCIIMENU_EDIT);
     editMenu->SetOrientation(ASCIIMenus::VERTICAL);
-    editMenu->SetPosition(9, 1);
-
-    editMenu->AddItem("Edit Config", ASCIIMENU_NO_CHANGE, &Lobby::callback_showMenu, static_cast<int>(DialogType::DIALOG_CONFIG));
-    editMenu->AddItem("Reset Config", ASCIIMENU_NO_CHANGE, &Lobby::callback_resetConfig);
-    editMenu->AddItem("Set Visualizer", ASCIIMENU_SELECT_VISUALIZER, &Lobby::callback_showMenu, static_cast<int>(DialogType::DIALOG_VISUALIZER_LIST));
-    editMenu->AddItem("Next Visualizer", ASCIIMENU_NO_CHANGE, &Lobby::callback_visualizerNext);
-    editMenu->AddItem("Prev Visualizer", ASCIIMENU_NO_CHANGE, &Lobby::callback_visualizerPrev);
-    editMenu->AddItem("Force Clearscreen", ASCIIMENU_NO_CHANGE, &Lobby::callback_forceClear);
+    editMenu->SetPosition(8, 1);
+    editMenu->AddItem(SLUG("Edit Config"), ASCIIMENU_NO_CHANGE, &Lobby::callback_showMenu, static_cast<int>(DialogType::DIALOG_CONFIG));
+    editMenu->AddItem(SLUG("Reset Config"), ASCIIMENU_NO_CHANGE, &Lobby::callback_resetConfig);
+    editMenu->AddItem(SLUG("Set Visualizer"), ASCIIMENU_SELECT_VISUALIZER, &Lobby::callback_showMenu, static_cast<int>(DialogType::DIALOG_VISUALIZER_LIST));
+    editMenu->AddItem(SLUG("Next Visualizer"), ASCIIMENU_NO_CHANGE, &Lobby::callback_visualizerNext);
+    editMenu->AddItem(SLUG("Prev Visualizer"), ASCIIMENU_NO_CHANGE, &Lobby::callback_visualizerPrev);
+    editMenu->AddItem(SLUG_E("Force Clearscreen"), ASCIIMENU_NO_CHANGE, &Lobby::callback_forceClear);
 
     Container* helpMenu = Container::Create(this, ASCIIMENU_HELP);
     helpMenu->SetOrientation(ASCIIMenus::VERTICAL);
     helpMenu->SetPosition(16, 1);
-    helpMenu->AddItem("About", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_showMenu, static_cast<int>(DialogType::HELP_GENERAL));
-    helpMenu->AddItem("Keyboard Commands", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_showMenu, static_cast<int>(DialogType::HELP_COMMANDS));
-    helpMenu->AddItem("Config Info", ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_showMenu, static_cast<int>(DialogType::HELP_CONFIG));
+    helpMenu->AddItem(SLUG("About"), ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_showMenu, static_cast<int>(DialogType::HELP_GENERAL));
+    helpMenu->AddItem(SLUG("Keyboard Commands"), ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_showMenu, static_cast<int>(DialogType::HELP_COMMANDS));
+    helpMenu->AddItem(SLUG_E("Config Info"), ASCIIMENU_HELP_INFO_BOX, &Lobby::callback_showMenu, static_cast<int>(DialogType::HELP_CONFIG));
 
     Container* helpMenuPopup = Container::Create(this, ASCIIMENU_HELP_INFO_BOX);
     helpMenuPopup->SetOrientation(ASCIIMenus::HORIZONTAL);
@@ -78,12 +78,11 @@ namespace ASCIIPlayer
 
 
   // Displays a splash screen with little bouncing image in the center of the console and some idle text.
-  void Lobby::drawSplash(std::int64_t curr_frametime, std::int64_t last_frametime)
+  void Lobby::drawSplash(double dt)
   {
     // Advance index value
-    const double numIndexesPerSecond = 18; // fps of this little bounce graphic
-    std::int64_t difference = (curr_frametime) - last_frametime;
-    double indexOffset = difference / 1000.0f * numIndexesPerSecond;
+    const double splashFPS = 18; 
+    double indexOffset = splashFPS * dt;
     idleIndex_ += indexOffset;
 
     // Calculate index in array and mod value.
@@ -99,7 +98,7 @@ namespace ASCIIPlayer
       idleIndex_ = 0;
     }
 
-    // Calcualte and wrap offsets for idle bar
+    // Calculate and wrap offsets for idle bar
     int verticalOffset = static_cast<int>(RConsole::Canvas::GetConsoleHeight() / 2 - 2);
     std::string msg = Strings::STARTUP_PRIMARY_TEXT + " ";
     RConsole::Canvas::DrawString((msg
@@ -140,19 +139,19 @@ namespace ASCIIPlayer
 
 
   // Displays a debug overlay on the player
-  void Lobby::drawDebug()
+  void Lobby::drawDebug(double dt)
   {
     float loc = 0;
-    const size_t seconds = static_cast<size_t>((fpsStart_ - appStartTime_) / 1000);
-    const size_t minutes = seconds / 60;
-    const size_t hours = minutes / 60;
-    const RConsole::Color color = RConsole::DARKGREY;
-    const size_t perFrameMSDelay = activeDJConfig_.DJPerLoopSleepMS;
+    long long seconds = std::chrono::duration_cast<std::chrono::seconds>(frameStart_ - appStartTime_).count();
+    long long minutes = seconds / 60;
+    long long hours = minutes / 60;
+    RConsole::Color color = RConsole::DARKGREY;
+    long long perFrameMSDelay = activeDJConfig_.DJPerLoopSleepMS;
     std::string delayText = perFrameMSDelay > 0 ? std::to_string(perFrameMSDelay) + "ms" : std::string(Strings::DEBUG_YIELDING);
 
     RConsole::Canvas::DrawString(("[ argv0: " + argParser_[0]).c_str(), 0.0f, loc++, color);
     RConsole::Canvas::DrawString(("[ utime: " + std::to_string(hours) + "h " + std::to_string(minutes % 60) + "m " + std::to_string(seconds % 60) + "s").c_str(), 0.0f, loc++, color);
-    RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(calculateUpdateRate(fpsPrevStart_, fpsEnd_)) + " " + Strings::DEBUG_PER_SECOND + " (" + Strings::DEBUG_DELAY + " " + delayText + "/c)").c_str(), 0.0f, loc++, color);
+    RConsole::Canvas::DrawString(("[ c/sec: " + std::to_string(calculateUpdateRate(dt)) + " " + Strings::DEBUG_PER_SECOND + " (" + Strings::DEBUG_DELAY + " " + delayText + "/c)").c_str(), 0.0f, loc++, color);
     RConsole::Canvas::DrawString(("[ vname: " + activeDJ_->VisualizerName()).c_str(), 0.0f, loc++, color);
   }
 
@@ -179,7 +178,7 @@ namespace ASCIIPlayer
           displayInfobox(width, ASCIIMENU_HELP_INFO_BOX, Strings::MODAL_HELP_OPEN);
           break;
         case DialogType::DIALOG_VISUALIZER_LIST:
-          displayVisualizerList();
+          displayVisualizerList(ASCIIMENU_SELECT_VISUALIZER);
           break;
 
         default:
@@ -190,7 +189,7 @@ namespace ASCIIPlayer
   }
 
   // Draws a box with the specified size and returns the box size in a Rect struct.
-  // The information about the caluclated rect is returned in a Rect struct.
+  // The information about the calculated rect is returned in a Rect struct.
   Rect Lobby::drawCenteredBox(size_t width, size_t height, size_t margin_height, size_t margin_width, RConsole::Color color)
   {
     // Define sizes
@@ -228,7 +227,9 @@ namespace ASCIIPlayer
     for (int i = rect.leftPadded; i < rect.rightPadded; ++i)
     {
       for (int j = rect.topPadded; j < rect.bottomPadded; ++j)
+      {
         RConsole::Canvas::Draw(' ', i, j, RConsole::DARKGREY);
+      }
     }
 
     // Draw sides of the box - horizontal sides
@@ -257,7 +258,8 @@ namespace ASCIIPlayer
 
 
   // Global popups using drawing system
-  void Lobby::displayInfobox(size_t max_width, std::string containerName, std::string str)
+  // This assumes that the provided container has only one option
+  void Lobby::displayInfobox(size_t max_width, std::string containerName, std::string infoboxText)
   {
     // Determine two potential heights...
     // Note that when we make str_height later, we check 
@@ -266,11 +268,13 @@ namespace ASCIIPlayer
     int longest = 0;
     int current = 0;
 
-    for (char c : str)
+    for (char c : infoboxText)
     {
       ++current;
       if (current > longest)
+      {
         ++longest;
+      }
 
       if (c == '\n')
       {
@@ -283,12 +287,14 @@ namespace ASCIIPlayer
     if (manualFormat)
     {
       if (longest < static_cast<int>(max_width))
+      {
         max_width = longest;
+      }
     }
 
     // Determine expected box size
     const size_t str_width = static_cast<unsigned int>(max_width);
-    const size_t str_height = manualFormat ? newlines + 1: static_cast<unsigned int>(std::ceilf(str.size() / static_cast<float>(str_width)));
+    const size_t str_height = manualFormat ? newlines + 1: static_cast<unsigned int>(std::ceilf(infoboxText.size() / static_cast<float>(str_width)));
 
     // Draw the box. Use returned rect as buffer.
     Rect rect = drawCenteredBox(str_width, str_height + 2);
@@ -300,15 +306,17 @@ namespace ASCIIPlayer
     // Draw the string message
     unsigned int offset = 0;
     unsigned int cycles = 0;
-    while (offset < str.size())
+    while (offset < infoboxText.size())
     {
       if (!manualFormat)
       {
-        if (*(str.c_str() + offset) == ' ')
+        if (*(infoboxText.c_str() + offset) == ' ')
+        {
           offset += 1;
+        }
       }
 
-      std::string toWrite = std::string(str.c_str() + offset, str_width);
+      std::string toWrite = std::string(infoboxText.c_str() + offset, str_width);
       size_t loc = toWrite.find_first_of('\n');
       if (loc != std::string::npos)
       {
@@ -326,14 +334,27 @@ namespace ASCIIPlayer
     }
   }
 
-  // Draws the visualizer list menu
-  void Lobby::displayVisualizerList()
+  // Handle utility calls required to configure both container and outline positioning
+  void Lobby::displayVisualizerList(std::string containerName)
   {
-    // Draw the box. Use returned rect as buffer.
-    Rect rect = drawCenteredBox(12, 12 + 2);
+    Container* c = MenuRegistry::GetContainer(containerName);
+    std::vector<Selectable>& allItems = c->GetAllItems();
+    int widestLabel = -1;
+
+    for (const Selectable& selectable : allItems)
+    {
+      const int labelLength = selectable.Label.length();
+      if (labelLength > widestLabel)
+      {
+        widestLabel = labelLength;
+      }
+    }
+
+    Rect rect = drawCenteredBox(widestLabel, allItems.size());
+    c->SetPosition(static_cast<size_t>(rect.left), static_cast<size_t>(rect.top));
   }
 
-  // Move to the right in the menu
+  // Move to the right in a submenu by closing then opening the primary menu.
   bool Lobby::menuMoveCheckRight()
   {
     if (menuSystems_.MenuDepth() == 2)
@@ -349,7 +370,7 @@ namespace ASCIIPlayer
   }
 
 
-  // Move to the left in the menu, wrapps the actions assoicated with it
+  // Move to the left in a submenu by closing then opening the primary menu.
   bool Lobby::menuMoveCheckLeft()
   {
     if (menuSystems_.MenuDepth() == 2)
@@ -364,3 +385,6 @@ namespace ASCIIPlayer
     return false;
   }
 }
+
+#undef SLUG
+#undef SLUG_E

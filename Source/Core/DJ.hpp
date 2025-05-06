@@ -29,7 +29,7 @@ namespace ASCIIPlayer
     ~DJ();
 
     // Member Functons
-    bool Update();
+    bool Update(double dt);
     void Play();
     void Pause();
     bool IsPaused();

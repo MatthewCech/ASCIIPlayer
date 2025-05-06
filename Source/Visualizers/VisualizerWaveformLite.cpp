@@ -61,7 +61,7 @@ namespace ASCIIPlayer
   // Returns if it succeeded or not. Note that when isActive is true, we aren't 
   // paused. If isActive is false, we're using the data from the previous run
   // and we don't see that scale by volume.
-  bool VisualizerWaveformLite::Update(float* normalizedData, bool isActive)
+  bool VisualizerWaveformLite::Update(double dt, float* normalizedData, bool isActive)
   {
     // Set up some sweet numbers
     const int halfHeight = height_ / 2;             // Half-way point on the console visually
@@ -69,7 +69,7 @@ namespace ASCIIPlayer
     const float heightMinimum = 0;                  // Arbitrary value determining smallest vertical offset. Chosen for visual appeal - creates 2 bottom and 1 top line.
     const char symbol = 'o';
 
-    // Calcualte some sizing
+    // Calculate some sizing
     const int halfDataWidth = (FMOD_DATA_SIZE / SCALE_FACTOR) / 2;
     const int halfWindowWidth = width_ / 2;
     const int xStart = halfWindowWidth - halfDataWidth;
