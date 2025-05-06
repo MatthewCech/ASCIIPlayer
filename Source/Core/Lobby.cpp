@@ -1,9 +1,10 @@
 #include <thread>
 #include <exception>
+#include <shoom/shoom.hpp>
 #include "Lobby.hpp"
 #include "UserStrings.hpp"
-#include <shoom/shoom.hpp>
 #include "MenuSystem.hpp"
+
 
 namespace ASCIIPlayer
 {
@@ -12,7 +13,6 @@ namespace ASCIIPlayer
   ////////////
   // Constructor and Destructor
   Lobby::Lobby(int argc, char** argv)
-
     // Operation related
     : keyParser_()
     , argParser_(argc, argv)
@@ -22,6 +22,8 @@ namespace ASCIIPlayer
     , lobbyHosting_(true)
     , menuVisible_(false)
     , idleIndex_(0)
+    , isOneshot_(false)
+    , updateLoopCount_(0)
 
     // Menu
     , displayDialogType_(DialogType::NONE)
@@ -45,7 +47,7 @@ namespace ASCIIPlayer
     // Begin by handling the application opening
     handleApplicationOpen(argc, argv);
 
-    // Make DJ, don't autoplay. Read in the argument!
+    // Make DJ, don't auto-play. Read in the argument!
     activeDJConfig_ = DJConfig::ReadFile(argParser_[0]);
     DJ *Dj = new DJ(activeDJConfig_, false);
 
@@ -107,7 +109,6 @@ namespace ASCIIPlayer
   {
     if (activeDJ_)
     {
-      activeDJ_->Pause();
       activeDJ_->Shutdown();
 
       delete activeDJ_;
@@ -118,7 +119,21 @@ namespace ASCIIPlayer
   }
 
 
-  // Has while loop and STD::Cin every loop to ensure it's running correctly. 
+  // Flag that we want to play one sound once, and then leave.
+  // Should be called before run along with adding a song via input
+  void Lobby::EnableOneshotPlayback()
+  {
+    isOneshot_ = true;
+  }
+
+
+  DJ* Lobby::GetDJ()
+  {
+    return activeDJ_;
+  }
+
+
+  // Has while loop and std::cin every loop to ensure it's running correctly. 
   // Loop sits until DJ starts with proper command, at which point we get to "lobbyHosting".
   void Lobby::Run()
   {
@@ -127,13 +142,16 @@ namespace ASCIIPlayer
     if (activeDJ_)
       DEBUG_PRINT("DJ Has prepped " << activeDJ_->GetPlaylistSize() << " songs!");
 
+    // Configure one-shot
+    if (isOneshot_)
+      activeDJ_->SetLooping(false);
+
     // Set up to start entering the primary loop
     RConsole::Canvas::ForceClearEverything();
     if (activeDJ_->GetPlaylistSize() > 0)
       activeDJ_->Play();
 
     // While we're hosting stuff in the lobby
-    size_t loops = 0;
     while (lobbyHosting_)
     {
       // Loop tracking
@@ -148,9 +166,10 @@ namespace ASCIIPlayer
         sharedArguments->Data()[sharedArguments->Size() - 1] = 0;
         std::string str = std::string(reinterpret_cast<char*>(sharedArguments->Data()));
         memset(sharedArguments->Data(), 0, sharedArguments->Size());
-        interpretMultiCharInput(str);
+        InterpretMultiCharInput(str);
       }
-     
+      
+      // Sub-menu navigation and updating
       if (menuNavBackNextUpdate_)
       {
         while (menuSystems_.Back()) {  }
@@ -159,7 +178,7 @@ namespace ASCIIPlayer
         menuVisible_ = menuSystems_.IsVisible();
       }
 
-      // Draw the splash/idle screen if we have nothing to lpay
+      // Draw the splash/idle screen if we have nothing to play
       if (activeDJ_->GetPlaylistSize() == 0)
         drawSplash(fpsStart_, fpsPrevStart_);
 
@@ -168,7 +187,7 @@ namespace ASCIIPlayer
         activeDJ_->Update();
 
       // Parse input
-      keyParser_.HandleInput(this, &Lobby::interpretChar, &Lobby::interpretMultiCharInput);
+      keyParser_.HandleInput(this, &Lobby::InterpretCharInput, &Lobby::InterpretMultiCharInput);
 
       // Finalize drawing for debug
       if (showDebug_)
@@ -183,8 +202,18 @@ namespace ASCIIPlayer
       
       // ============================ End primary loop ============================
       fpsEnd_ = MS_SINCE_EPOCH;
-      ++loops;
+      ++updateLoopCount_;
+
+      // Exit if we're done playing our one-shot
+      if (isOneshot_ && !activeDJ_->IsPlaying())
+        lobbyHosting_ = false;
     }
+  }
+
+  // Get information on number of loops so far
+  std::uint64_t Lobby::GetUpdateLoopCount()
+  {
+    return updateLoopCount_;
   }
 
 
@@ -245,7 +274,7 @@ namespace ASCIIPlayer
 
 
   // Interpret specific paths
-  void Lobby::interpretMultiCharInput(const std::string str)
+  void Lobby::InterpretMultiCharInput(const std::string str)
   {
     std::string input = str;
     if (str[0] == '"' && str[str.size() - 1] == '"')
@@ -255,7 +284,7 @@ namespace ASCIIPlayer
 
 #pragma warning (disable: 4309)
     if (str[0] == static_cast<signed char>(224))
-      interpretChar(str[1]);
+      InterpretCharInput(str[1]);
 
     AudioFile *new_song = new ASCIIPlayer::AudioFile(input);
     activeDJ_->AddSong(new_song);
@@ -263,7 +292,7 @@ namespace ASCIIPlayer
 
 
   // Interprets a single-character piece of input
-  void Lobby::interpretChar(char c)
+  void Lobby::InterpretCharInput(char c)
   {
     // Ensure we have a DJ active before any character commands are parsed!
     if (activeDJ_ == nullptr)

@@ -62,18 +62,21 @@ namespace ASCIIPlayer
 
     // Public Member Functions
     void Run(); 
+    void InterpretCharInput(char key);
+    void InterpretMultiCharInput(const std::string str);
+    void EnableOneshotPlayback();
+    DJ* GetDJ();
+    std::uint64_t GetUpdateLoopCount();
 
     // NOTE(mcech): Refactor the menu system so we can capture a class with the menu lambdas
     // Static local variables for this class only.
     static bool __menu_navigate_back_next_update; // For exiting the menu
-    static bool __is_displaying_dialog;        // For displaying the help menu.
+    static bool __is_displaying_dialog;           // For displaying the help menu.
     static DJ* __current_dj;                      // A pointer to the current DJ exposed.
-    static DialogType __dialog_type;            // The current type of dialog being displayed
+    static DialogType __dialog_type;              // The current type of dialog being displayed
 
   private:
     // Private methods
-    void interpretMultiCharInput(const std::string str);
-    void interpretChar(char key);
     void handleApplicationOpen(int argc, char** argv);
     void startDJ();
     void stopDj();
@@ -111,6 +114,8 @@ namespace ASCIIPlayer
     MenuSystem menuSystems_;
     bool lobbyHosting_;
     bool menuVisible_;
+    bool isOneshot_;
+    std::uint64_t updateLoopCount_;
 
     // Menu/Visual Related
     double idleIndex_;
@@ -127,7 +132,6 @@ namespace ASCIIPlayer
     bool menuNavBackNextUpdate_;   // For exiting the menu
     bool isDisplayingDialog_;      // For displaying the help menu.
     DialogType displayDialogType_; // For indicating what type of dialog we're displaying.
-
 
     // Shared memory locations
     shoom::Shm *sharedStatus;

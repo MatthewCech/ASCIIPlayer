@@ -1,7 +1,8 @@
 #include <iostream>
+#include <vector>
 #include <FileIO/fileio.hpp>
 #include "Core/Lobby.hpp"
-
+#include "Utils/Benchmark.hpp"
 
 
 namespace ASCIIPlayer
@@ -9,8 +10,25 @@ namespace ASCIIPlayer
   int Run(int argc, char** argv)
   {
     // Run program
-    ASCIIPlayer::Lobby lounge(argc, argv);
-    lounge.Run();
+    bool benchmark = IsBenchmark(argc, argv);
+
+    // Benchmark conditions
+    if (!benchmark)
+    {
+      Lobby lounge(argc, argv);
+      lounge.Run();
+    }
+    else
+    {
+      constexpr int benchmarkRuns = 20;
+      std::vector<std::uint64_t> benchmarkResults;
+      benchmarkResults.resize(benchmarkRuns);
+
+      RunBenchmark(argc, argv, benchmarkResults);
+      DrawBenchmarkOutput(benchmarkResults);
+
+      std::system("pause");
+    }
 
     // Return normally
     return 0;

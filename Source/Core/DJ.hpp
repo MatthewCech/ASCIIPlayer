@@ -33,9 +33,11 @@ namespace ASCIIPlayer
     void Play();
     void Pause();
     bool IsPaused();
+    bool IsPlaying();
     void TogglePause();
     void ToggleRequestUIActive();
     void Shutdown();
+    void SetLooping(bool isLooping);
     void ShufflePlaylist();
     void AddSong(AudioFile *toAdd);
     void SongNext();
@@ -44,7 +46,7 @@ namespace ASCIIPlayer
     void MoveBackward();
     void VolumeUp();
     void VolumeDown();
-    void VolumeSet(const float newVolume);
+    void VolumeSet(float newVolume);
     void VisualizerSet(const std::string &name);
     void VisualizerNext();
     void VisualizerPrev();
@@ -66,12 +68,12 @@ namespace ASCIIPlayer
     std::string visualizerName_;  // The name of the current visualizer.
     Visualizer *visualizer_;      // The visualizer to display the playing data.
     ASCIIOverlay *overlay_;       // The overlay for the visualizer
-    DJConfig config_;             // The proivded config for the DJ.
+    DJConfig config_;             // The provided config for the DJ.
 
     // Internal Tracking
     bool hasShutdown_;                        // Whether or not we have shut down.
     bool paused_;                             // Is the JD paused or not?
-    bool requestUIActive_;                    // Wether or not the user requested the UI be visible by default.
+    bool requestUIActive_;                    // Whether or not the user requested the UI be visible by default.
     bool isJumpingPos_;                       // Are we using this update loop to update our song position with a manual jump?
     AudioFile *currSong_;                     // What is the current song?
     unsigned int visaulizerDataSize_;         // The size of the array for the audio visualizer.

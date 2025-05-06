@@ -194,6 +194,18 @@ namespace ASCIIPlayer
   }
 
 
+  // Returns if we could consider a song playing still
+  bool DJ::IsPlaying()
+  {
+    if (!currSong_ || paused_)
+    {
+      return false;
+    }
+      
+    return audioSystem_.IsActive(*currSong_);
+  }
+
+
   // Toggles if it's paused or not
   void DJ::TogglePause()
   {
@@ -219,6 +231,13 @@ namespace ASCIIPlayer
       delete visualizer_;
 	  
     hasShutdown_ = true;
+  }
+
+
+  // Set playlist loop parameters
+  void DJ::SetLooping(bool isLooping)
+  {
+    playlist_.SetLooping(isLooping);
   }
 
 
