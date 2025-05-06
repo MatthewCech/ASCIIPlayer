@@ -8,6 +8,7 @@
 
 namespace ASCIIPlayer
 {
+  // Sloppily determine if we have the benchmark argument
   bool IsBenchmark(int argc, char **argv)
   {
     for (int i = 0; i < argc; ++i)
@@ -25,6 +26,8 @@ namespace ASCIIPlayer
     return false;
   }
 
+  // Spin up and down lobbies enough times to fill the provided vector with loop counts.
+  // Assumes vector is appropriately sized already with something like vector.resize(...)
   void RunBenchmark(int argc, char** argv, std::vector<std::uint64_t>& outputResults)
   {
     for (size_t i = 0; i < outputResults.size(); ++i)
@@ -39,10 +42,16 @@ namespace ASCIIPlayer
     }
   }
 
+  // Attempt to draw out all the content of a benchmark result
   void DrawBenchmarkOutput(const std::vector<std::uint64_t>& loops)
   {
+    if (loops.empty())
+    {
+      return;
+    }
+
     const int iterations = loops.size();
-    const int average = static_cast<int>(std::accumulate(loops.begin(), loops.end(), 0.0) / iterations);
+    const int average = static_cast<int>(std::accumulate(loops.begin(), loops.end(), static_cast<std::uint64_t>(0)) / static_cast<double>(iterations));
     int yOffset = 1;
 
     RConsole::Canvas::ForceClearEverything();

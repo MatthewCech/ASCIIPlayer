@@ -2,6 +2,7 @@
 #include <vector>
 
 
+// Static benchmarking utility functions
 namespace ASCIIPlayer
 {
   bool IsBenchmark(int argc, char** argv);
