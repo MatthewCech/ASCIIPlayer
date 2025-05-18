@@ -596,7 +596,7 @@ namespace RConsole
   template <typename T>
   class Field2D
   {
-    // Friensd can see ALL!
+    // Friends can see ALL!
     friend Field2DProxy<T>;
 
   public:
@@ -1077,7 +1077,7 @@ namespace RConsole
   {  }
 
 
-  // Overloaded comparision operator that checks all fields.
+  // Overloaded comparison operator that checks all fields.
   inline bool RasterInfo::operator ==(const RasterInfo &rhs) const
   {
     if (rhs.C == C && rhs.Value == Value)
@@ -1443,18 +1443,19 @@ namespace RConsole
   {
     // Walk through, write over only what was modified.
     modified_.SetIndex(0);
+    RasterInfo* headCur = r_.data_.GetHead();
+    RasterInfo* headPrev = prev_.data_.GetHead();
+
     unsigned int maxIndex = width_ * height_;
     unsigned int index = 0;
     while (index < maxIndex)
     {
       index = modified_.GetIndex();
-      const RasterInfo &curr = r_.GetRasterData().Peek(index);
-      const RasterInfo &prev = prev_.GetRasterData().Peek(index);
 
       // If we have not modified the space,
       // and we don't have the same character as last time,
       // and we don't have the same color.
-      if (!modified_.Get() && curr != prev)
+      if (!modified_.Get() && headCur[index] != headPrev[index])
       {
         // Compute X and Y location
         unsigned int xLoc = (index % width_) + 1;
@@ -1465,6 +1466,7 @@ namespace RConsole
 
         putC(' ', stdout);
       }
+
       modified_.IncrementX();
     }
 
@@ -1492,15 +1494,18 @@ namespace RConsole
   inline bool Canvas::writeRaster(CanvasRaster &r)
   {
     // Set initial position.
-    unsigned int maxIndex = width_ * height_;
     r.GetRasterData().SetIndex(0);
+    RasterInfo* headCur = r.data_.GetHead();
+    RasterInfo* headPrev = prev_.data_.GetHead();
+
     unsigned int index = 0;
+    unsigned int maxIndex = width_ * height_;
     while(index < maxIndex)
     {
-      index = r.GetRasterData().GetIndex();
-      const RasterInfo& ri = r.GetRasterData().Get();
+      index = r.data_.GetIndex();
+      const RasterInfo& ri = headCur[index];
 
-      if (ri.Value != 0 && prev_.GetRasterData().Peek(index) != ri)
+      if (ri.Value != 0 && headPrev[index] != ri)
       {
         unsigned int xLoc = (index % width_) + 1;
         unsigned int yLoc = (index / width_) + 1;
@@ -1533,7 +1538,7 @@ namespace RConsole
       }
 
       // Increment X location
-      r.GetRasterData().IncrementX();
+      r.data_.IncrementX();
     }
 
     // Return we successfully printed the raster!

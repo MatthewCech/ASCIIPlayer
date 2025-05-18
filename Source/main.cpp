@@ -20,10 +20,10 @@ namespace ASCIIPlayer
     }
     else
     {
-      constexpr int benchmarkRuns = 20;
+      constexpr int benchmarkRuns = 10;
       std::vector<std::uint64_t> benchmarkResults;
       benchmarkResults.resize(benchmarkRuns);
-
+      
       RunBenchmark(argc, argv, benchmarkResults);
       DrawBenchmarkOutput(benchmarkResults);
 

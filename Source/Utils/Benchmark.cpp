@@ -28,13 +28,14 @@ namespace ASCIIPlayer
 
   // Spin up and down lobbies enough times to fill the provided vector with loop counts.
   // Assumes vector is appropriately sized already with something like vector.resize(...)
-  void RunBenchmark(int argc, char** argv, std::vector<std::uint64_t>& outputResults)
+  void RunBenchmark(int argc, char** argv, std::vector<std::uint64_t>& outputResults, std::string visualizer)
   {
     for (size_t i = 0; i < outputResults.size(); ++i)
     {
       Lobby benchmarkLobby(argc, argv);
       benchmarkLobby.GetDJ()->VolumeSet(0.05f); // Hard-code to impact scaling and also not detonate ears.
       benchmarkLobby.InterpretMultiCharInput("benchmark5s.mp3");
+      benchmarkLobby.GetDJ()->VisualizerSet(visualizer);
       benchmarkLobby.EnableOneshotPlayback();
       benchmarkLobby.Run();
 
