@@ -12,7 +12,7 @@ namespace ASCIIPlayer
     // Run program
     bool benchmark = IsBenchmark(argc, argv);
 
-    // Benchmark conditions
+    // Benchmark conditions (has benchmark arg)
     if (!benchmark)
     {
       Lobby lounge(argc, argv);

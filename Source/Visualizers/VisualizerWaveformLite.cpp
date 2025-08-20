@@ -64,17 +64,15 @@ namespace ASCIIPlayer
   bool VisualizerWaveformLite::Update(double dt, float* normalizedData, bool isActive)
   {
     // Set up some sweet numbers
-    const int halfHeight = height_ / 2;             // Half-way point on the console visually
-    const float heightScalar = 5.0f * SCALE_FACTOR; // Arbitrary value determining the max vertical offset. Used to be 6, but was scaled for volume of .9 by default.
-    const float heightMinimum = 0;                  // Arbitrary value determining smallest vertical offset. Chosen for visual appeal - creates 2 bottom and 1 top line.
+    const int halfHeight = height_ / 2; // Half-way point on the console visually
+    const float heightScalar = 40;      // Arbitrary value determining the max vertical offset. Used to be 6, but was scaled for volume of .9 by default.
+    const float heightMinimum = 0;      // Arbitrary value determining smallest vertical offset. Chosen for visual appeal - creates 2 bottom and 1 top line.
     const char symbol = 'o';
 
-    // Calculate some sizing
     const int halfDataWidth = (FMOD_DATA_SIZE / SCALE_FACTOR) / 2;
     const int halfWindowWidth = width_ / 2;
     const int xStart = halfWindowWidth - halfDataWidth;
 
-    // clear the workspace
     memset(workspace_, 0, workspaceCount_ * sizeof(workspace_[0]));
 
     // Only using half the workspace really
@@ -86,7 +84,6 @@ namespace ASCIIPlayer
       workspace_[bin] = yHeight / static_cast<float>(SCALE_FACTOR);
     }
 
-    // For every X position, calculate the Y position based on waveform data and variables above.
     for (int i = 0; i < workspaceCount_; ++i)
     {
       const float binVal = workspace_[i];
