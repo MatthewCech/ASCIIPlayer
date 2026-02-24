@@ -8,7 +8,7 @@
 
 namespace ASCIIPlayer
 {
-  // Sloppily determine if we have the benchmark argument
+  // Sloppily determine if we have the --benchmark argument
   bool IsBenchmark(int argc, char **argv)
   {
     for (int i = 0; i < argc; ++i)

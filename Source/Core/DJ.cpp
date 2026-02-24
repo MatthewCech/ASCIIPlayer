@@ -8,6 +8,7 @@
 #include "Visualizers/VisualizerWaveform.hpp"
 #include "Visualizers/VisualizerWaveformLite.hpp"
 #include "Visualizers/VisualizerSpectrum.hpp"
+#include "Visualizers/VisualizerSpectrumLog.hpp"
 #include "Visualizers/VisualizerParticle.hpp"
 #include "Visualizers/VisualizerCirrus.hpp"
 
@@ -44,6 +45,7 @@ namespace ASCIIPlayer
 
     // Register Visualizers. Order of list determines cycle order, but not the default.
     REGISTER_VISUALIZER("spectrum", VisualizerSpectrum);
+    REGISTER_VISUALIZER("spectrum log", VisualizerSpectrumLog);
     REGISTER_VISUALIZER("waveform", VisualizerWaveform);
     REGISTER_VISUALIZER("waveform lite", VisualizerWaveformLite);
     REGISTER_VISUALIZER("particle", VisualizerParticle);

@@ -42,7 +42,8 @@ namespace ASCIIPlayer
       for (int chan = 0; chan < numChannels; chan++)
       {
         float inVal = inbuffer[(samp * inchannels) + chan];
-        data->buffer[(samp * numChannels) + chan] = outbuffer[(samp * inchannels) + chan] = inVal;
+        outbuffer[(samp * inchannels) + chan] = inVal;
+        data->buffer[(samp * numChannels) + chan] = inVal;
         
         int index = (samp * numChannels) + chan;
         if (samp < __wave_data_size && index < FMOD_DATA_SIZE)
@@ -72,6 +73,7 @@ namespace ASCIIPlayer
     {
       return FMOD_ERR_MEMORY;
     }
+
     dsp_state->plugindata = data;
     data->volume_linear = 1.0f;
     data->length_samples = blocksize;
@@ -256,7 +258,7 @@ namespace ASCIIPlayer
     __fft_dsp->getParameterData((int)FMOD_DSP_FFT_SPECTRUMDATA, &data, &dataLen, valueStr, valueStrLen);
     FMOD_DSP_PARAMETER_FFT *fftData = static_cast<FMOD_DSP_PARAMETER_FFT*>(data);
     __fft_data = fftData->spectrum[0];
-    __fft_data_size = fftData->length; // [r] Number of entries in this spectrum window.Divide this by the output rate to get the hz per entry.
+    __fft_data_size = fftData->length; // [r] Number of entries in this spectrum window. Divide this by the output rate to get the hz per entry.
 
     return true;
   }

@@ -12,7 +12,7 @@ namespace ASCIIPlayer
     // Run program
     bool benchmark = IsBenchmark(argc, argv);
 
-    // Benchmark conditions (has benchmark arg)
+    // Benchmark conditions (has '--benchmark' arg)
     if (!benchmark)
     {
       Lobby lounge(argc, argv);
@@ -21,10 +21,12 @@ namespace ASCIIPlayer
     else
     {
       constexpr int benchmarkRuns = 10;
+      const std::string benchmarkName = "spectrum log";
+
       std::vector<std::uint64_t> benchmarkResults;
       benchmarkResults.resize(benchmarkRuns);
       
-      RunBenchmark(argc, argv, benchmarkResults);
+      RunBenchmark(argc, argv, benchmarkResults, benchmarkName);
       DrawBenchmarkOutput(benchmarkResults);
 
       std::system("pause");
