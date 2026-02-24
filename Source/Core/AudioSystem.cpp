@@ -17,7 +17,7 @@ namespace ASCIIPlayer
   } mydsp_data_t;
 
   unsigned int __wave_data_size = 0;   // This gets resized based on the DSP callback
-  float        __wave_data[FMOD_DATA_SIZE]; // This gets populated as necessary.
+  float        __wave_data[FMOD_DATA_WAVEFORM_SIZE]; // This gets populated as necessary.
   FMOD::DSP    *__wave_data_dsp;       // Pointer to the waveform extracting DSP.
   FMOD::DSP    *__fft_dsp;
   float* __fft_data; // array
@@ -46,7 +46,7 @@ namespace ASCIIPlayer
         data->buffer[(samp * numChannels) + chan] = inVal;
         
         int index = (samp * numChannels) + chan;
-        if (samp < __wave_data_size && index < FMOD_DATA_SIZE)
+        if (samp < __wave_data_size && index < FMOD_DATA_WAVEFORM_SIZE)
         {
           __wave_data[index] = inVal;
         }
@@ -219,15 +219,19 @@ namespace ASCIIPlayer
     dspdesc.numparameters = 2;
     dspdesc.paramdesc = paramdesc;
 
+    // Wave DSP
     FCheck(fmodSystem_->createDSP(&dspdesc, &__wave_data_dsp));
     FCheck(masterChannel_->addDSP(0, __wave_data_dsp));
 
     // FFT DSP
+    // https://www.fmod.com/docs/2.03/api/core-api-common-dsp-effects.html
     FCheck(fmodSystem_->createDSPByType(FMOD_DSP_TYPE_FFT, &__fft_dsp));
     FCheck(__fft_dsp->setParameterInt((int)FMOD_DSP_FFT_WINDOWTYPE, (int)FMOD_DSP_FFT_WINDOW_HAMMING));
-    FCheck(__fft_dsp->setParameterInt((int)FMOD_DSP_FFT_WINDOWSIZE, FMOD_DATA_SIZE * 2));
-
+    FCheck(__fft_dsp->setParameterInt((int)FMOD_DSP_FFT_WINDOWSIZE, FMOD_DATA_SPECTRUM_SIZE));
     masterChannel_->addDSP(1, __fft_dsp);
+    // FMOD_DSP_FFT_BAND_START_FREQ default is 0
+    // FMOD_DSP_FFT_BAND_STOP_FREQ default is 22000
+    
   }
 
 
@@ -253,13 +257,13 @@ namespace ASCIIPlayer
     // Refer to https://www.fmod.com/docs/2.02/unity/examples-spectrum-analysis.html for usage (different language)
     void *data;           // out
     unsigned int dataLen; // out
-    char valueStr[1024];       // out
+    char valueStr[1024];  // out
     int valueStrLen = 1024;
     __fft_dsp->getParameterData((int)FMOD_DSP_FFT_SPECTRUMDATA, &data, &dataLen, valueStr, valueStrLen);
     FMOD_DSP_PARAMETER_FFT *fftData = static_cast<FMOD_DSP_PARAMETER_FFT*>(data);
     __fft_data = fftData->spectrum[0];
     __fft_data_size = fftData->length; // [r] Number of entries in this spectrum window. Divide this by the output rate to get the hz per entry.
-
+    
     return true;
   }
 
@@ -395,14 +399,14 @@ namespace ASCIIPlayer
     switch (style)
     {
       case AudioDataStyle::AUDIODATA_WAVEFORM:
-        for (unsigned int i = 0; i < __wave_data_size && i < static_cast<unsigned int>(numVals) && i < FMOD_DATA_SIZE; ++i)
+        for (unsigned int i = 0; i < __wave_data_size && i < static_cast<unsigned int>(numVals) && i < FMOD_DATA_WAVEFORM_SIZE; ++i)
         {
           arr[i] = __wave_data[i];
         }    
         break;
 
       case AudioDataStyle::AUDIODATA_SPECTRUM:
-        for(unsigned int i = 0; i < __fft_data_size && i < static_cast<unsigned int>(numVals) && i < FMOD_DATA_SIZE; ++i)
+        for(unsigned int i = 0; i < __fft_data_size && i < static_cast<unsigned int>(numVals) && i < FMOD_DATA_SPECTRUM_SIZE; ++i)
         {
           arr[i] = __fft_data[i];
         }

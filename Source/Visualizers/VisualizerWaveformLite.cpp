@@ -8,7 +8,7 @@ namespace ASCIIPlayer
   /// Construct and initialize relevant variables. Allocate memory.
   /// </summary>
   VisualizerWaveformLite::VisualizerWaveformLite()
-    : ASCIIVisualizer(FMOD_DATA_SIZE, AudioDataStyle::AUDIODATA_WAVEFORM)
+    : ASCIIVisualizer(CUSTOM_SIZE, AudioDataStyle::AUDIODATA_WAVEFORM)
     , width_(Width())
     , height_(Height())
     , workspace_(nullptr)
@@ -38,7 +38,7 @@ namespace ASCIIPlayer
       delete[] workspace_;
     }
 
-    workspaceCount_ = FMOD_DATA_SIZE / SCALE_FACTOR;
+    workspaceCount_ = CUSTOM_SIZE / SCALE_FACTOR;
     workspace_ = new float[workspaceCount_];
     memset(workspace_, 0, workspaceCount_ * sizeof(workspace_[0]));
   }
@@ -69,14 +69,14 @@ namespace ASCIIPlayer
     const float heightMinimum = 0;      // Arbitrary value determining smallest vertical offset. Chosen for visual appeal - creates 2 bottom and 1 top line.
     const char symbol = 'o';
 
-    const int halfDataWidth = (FMOD_DATA_SIZE / SCALE_FACTOR) / 2;
+    const int halfDataWidth = (CUSTOM_SIZE / SCALE_FACTOR) / 2;
     const int halfWindowWidth = width_ / 2;
     const int xStart = halfWindowWidth - halfDataWidth;
 
-    memset(workspace_, 0, workspaceCount_ * sizeof(workspace_[0]));
+    memset(workspace_, 0, workspaceCount_ * sizeof(float));
 
     // Only using half the workspace really
-    for (int i = 0; i < FMOD_DATA_SIZE; ++i)
+    for (int i = 0; i < CUSTOM_SIZE; ++i)
     {
       int bin = i / SCALE_FACTOR;
 

@@ -38,7 +38,7 @@ namespace ASCIIPlayer
   };
 
   // Scratch workspace. We are assuming we're using stereo settings, so we only care about one channel at a time.
-  Complex buffer[FMOD_DATA_SIZE / 2] = {}; 
+  Complex buffer[FMOD_DATA_WAVEFORM_SIZE / 2] = {}; 
 
   /// <summary>
   /// Reverse the specified number of bits

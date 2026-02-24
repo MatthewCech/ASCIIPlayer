@@ -26,7 +26,8 @@ using Channelgroup  = FMOD::ChannelGroup; // Channel object handle for FMOD
 using APUnique      = std::int64_t;       // Type used for unique IDs related to audio files, etc
 
 // Defines
-#define FMOD_DATA_SIZE 1024
+#define FMOD_DATA_WAVEFORM_SIZE 1024
+#define FMOD_DATA_SPECTRUM_SIZE 4096
 #define TRACKED_TIMES 128 
 #define ABSTRACT =0
 #define MS_PER_SECOND_FLOAT 1000.0f

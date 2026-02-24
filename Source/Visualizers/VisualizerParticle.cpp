@@ -41,7 +41,7 @@ namespace ASCIIPlayer
 
   // Constructor
   VisualizerParticle::VisualizerParticle()
-    : ASCIIVisualizer(FMOD_DATA_SIZE, AudioDataStyle::AUDIODATA_WAVEFORM)
+    : ASCIIVisualizer(FMOD_DATA_WAVEFORM_SIZE, AudioDataStyle::AUDIODATA_WAVEFORM)
     , width_(RConsole::Canvas::GetConsoleWidth())
     , height_(RConsole::Canvas::GetConsoleHeight())
     , vs1_(width_ / 2.0f, height_ / 4.0f)
