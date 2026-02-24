@@ -3,8 +3,7 @@
 
 #define NYQUIST (44100.0f / 2.0f)
 #define ROUND_INT(f) (static_cast<int>(f < 0.0f ? (f - 0.5f) : (f + 0.5f)))
-#define FREQ_TO_BIN(freq, size) std::pair<int, float>(ROUND_INT(freq * 2), freq / NYQUIST * size)
-                                                                   // ^for display? using generated tones, this needs to be *2?
+#define FREQ_TO_BIN(freq, size) std::pair<int, float>(ROUND_INT(freq), freq / NYQUIST * size)
 
 namespace ASCIIPlayer
 {
@@ -34,7 +33,7 @@ namespace ASCIIPlayer
   // No negatives present. Not currently scaling buckets down for width.
   bool VisualizerSpectrumLog::Update(double dt, float* spectrum_data, bool isActive)
   {
-    const int combinedDataSize = FMOD_DATA_SPECTRUM_SIZE;
+    const int combinedDataSize = FMOD_DATA_SPECTRUM_SIZE / 2;
     const float binSizeHz = NYQUIST / FMOD_DATA_SPECTRUM_SIZE;
 
     // I'm basically fudging 1/3rd octaves in order to make sure they're relevant.
@@ -44,11 +43,11 @@ namespace ASCIIPlayer
     const std::pair<int, float> binLimits[] =
     {
       FREQ_TO_BIN(0.0f, combinedDataSize), // Used in place of smallest bin to catch all.
-      //FREQ_TO_BIN(11.2f, combinedDataSize), //(not used as it's the smallest bin)
-      // FREQ_TO_BIN(14.1f, combinedDataSize), //(data isn't granular enough to support this)
-      FREQ_TO_BIN(17.8f, combinedDataSize),
+      //FREQ_TO_BIN(11.2f, combinedDataSize), // not used as it's the smallest bin, also granularity issue with next bin.
+      FREQ_TO_BIN(14.1f, combinedDataSize), 
+      //FREQ_TO_BIN(17.8f, combinedDataSize), // data isn't granular enough to support this.
       FREQ_TO_BIN(22.4f, combinedDataSize),
-      FREQ_TO_BIN(28.2f, combinedDataSize),
+      //FREQ_TO_BIN(28.2f, combinedDataSize), // data isn't granular enough to support this.
       FREQ_TO_BIN(35.5f, combinedDataSize),
       FREQ_TO_BIN(44.7f, combinedDataSize),
       FREQ_TO_BIN(56.2f, combinedDataSize),
@@ -179,15 +178,13 @@ namespace ASCIIPlayer
 
     }
     
-    AnnotateFrequency(binLimits, 3, binWidth, leftOffset, startHeight + 4);
-    AnnotateFrequency(binLimits, 6, binWidth, leftOffset, startHeight + 4);
-    AnnotateFrequency(binLimits, 9, binWidth, leftOffset, startHeight + 4);
+    AnnotateFrequency(binLimits, 4, binWidth, leftOffset, startHeight + 4);
+    AnnotateFrequency(binLimits, 8, binWidth, leftOffset, startHeight + 4);
     AnnotateFrequency(binLimits, 12, binWidth, leftOffset, startHeight + 4);
-    AnnotateFrequency(binLimits, 15, binWidth, leftOffset, startHeight + 4);
-    AnnotateFrequency(binLimits, 18, binWidth, leftOffset, startHeight + 4);
-    AnnotateFrequency(binLimits, 21, binWidth, leftOffset, startHeight + 4);
+    AnnotateFrequency(binLimits, 16, binWidth, leftOffset, startHeight + 4);
+    AnnotateFrequency(binLimits, 20, binWidth, leftOffset, startHeight + 4);
     AnnotateFrequency(binLimits, 24, binWidth, leftOffset, startHeight + 4);
-    AnnotateFrequency(binLimits, 27, binWidth, leftOffset, startHeight + 4);
+    AnnotateFrequency(binLimits, 28, binWidth, leftOffset, startHeight + 4);
 
     return true;
   }
