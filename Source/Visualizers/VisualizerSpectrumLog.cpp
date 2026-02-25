@@ -45,9 +45,9 @@ namespace ASCIIPlayer
       FREQ_TO_BIN(0.0f, combinedDataSize), // Used in place of smallest bin to catch all.
       //FREQ_TO_BIN(11.2f, combinedDataSize), // not used as it's the smallest bin, also granularity issue with next bin.
       FREQ_TO_BIN(14.1f, combinedDataSize), 
-      //FREQ_TO_BIN(17.8f, combinedDataSize), // data isn't granular enough to support this.
+      //FREQ_TO_BIN(17.8f, combinedDataSize), // data isn't granular enough to support this
       FREQ_TO_BIN(22.4f, combinedDataSize),
-      //FREQ_TO_BIN(28.2f, combinedDataSize), // data isn't granular enough to support this.
+      //FREQ_TO_BIN(28.2f, combinedDataSize), // data isn't granular enough to support this
       FREQ_TO_BIN(35.5f, combinedDataSize),
       FREQ_TO_BIN(44.7f, combinedDataSize),
       FREQ_TO_BIN(56.2f, combinedDataSize),
@@ -76,7 +76,8 @@ namespace ASCIIPlayer
       FREQ_TO_BIN(11220.0f, combinedDataSize),
       FREQ_TO_BIN(14130.0f, combinedDataSize),
       FREQ_TO_BIN(17780.0f, combinedDataSize),
-      FREQ_TO_BIN(NYQUIST, combinedDataSize) // Catch the remains
+      FREQ_TO_BIN(NYQUIST, combinedDataSize),
+      FREQ_TO_BIN(NYQUIST * 2, combinedDataSize) // Catch odd remains or file noise, this won't contain valid data but it's still data.
     };
 
     const int binCount = sizeof(binLimits) / sizeof(std::pair<int, float>) - 1;
