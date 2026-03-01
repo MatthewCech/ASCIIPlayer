@@ -121,7 +121,7 @@ inline int KeyHit(void) { return _kbhit(); }
 inline int GetChar(void) { return _getch(); }
 
 // For when you want access to the extended ascii table but don't want to rewrite things
-inline int GetWCharAsChar(void) { return static_cast<char>(_getwch()); }
+inline int GetWChar(void) { return _getwch(); }
 
 #endif
 
@@ -134,37 +134,24 @@ inline int GetWCharAsChar(void) { return static_cast<char>(_getwch()); }
 class InputParser
 {
 public:
-  // Handle the input parsing and separation. This requires 
-  // references as inputs for keeping track of keypresses.
-  void HandleInput(std::function<void(char)> callbackSingleChar, std::function<void(std::string) > callbackMultiChar)
-  {
-    while (KeyHit())
-    {
-      int character = GetWCharAsChar();
-      if (character != NoInput) // Character input for a looks like: 97 0
-        buffer_ += character;
-    }
-
-    if (buffer_.size() > 0)
-    {
-      if (buffer_.size() > 1)
-        callbackMultiChar(buffer_);
-      else
-        callbackSingleChar(buffer_[0]);
-
-      buffer_.clear();
-    }
-  }
-
   // A member-function supported version of the previous function.
   // Uses the same variables as the other HandleInput function.
   template <class T> void HandleInput(T *thisClass, void(T::*callbackSingleChar)(char), void(T::*callbackMultiChar)(std::string))
   {
     while (KeyHit())
     {
-      char character = GetWCharAsChar();
+      int character = GetChar();
+
+      // map some extended ascii to utf-16 I guess.
+      switch (character)
+      {
+        case 128: character = static_cast<char>(199); break;
+        case 130: character = static_cast<char>(233); break;
+        case 144: character = static_cast<char>(201); break;
+      }
+
       if (character != NoInput) // Character input for a looks like: 97 0
-        buffer_ += character;
+        buffer_.push_back(character);
     }
 
     if (buffer_.size() > 0)
@@ -182,7 +169,7 @@ public:
 private:
   // Variables
   const int NoInput = 0;    // A constant for defining a lack of input. 
-  std::string buffer_ = ""; // So long as we recieve input without a break, we continue to store it here.
+  std::string buffer_ = std::string(); // So long as we recieve input without a break, we continue to store it here.
 };
 #endif // LANGUAGE_CPP
 
