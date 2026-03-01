@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=ASCIIPlayer
-AppVersion=0.3.4
+AppVersion=0.4.0a
 SetupIconFile=ASCIIPlayer.ico
 DefaultDirName={pf}\ASCIIPlayer
 DefaultGroupName=ASCIIPlayer

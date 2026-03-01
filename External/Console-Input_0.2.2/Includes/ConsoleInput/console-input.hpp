@@ -106,9 +106,6 @@ inline int KeyHit(void);
 inline int GetChar(void);
 
 
-
-
-
 ////////////////////////////
 // Windows Implementation //
 ////////////////////////////
@@ -121,8 +118,10 @@ inline int GetChar(void);
 inline int KeyHit(void) { return _kbhit(); }
 
 // Uses getch as a sandard, supporting commonly typed console characters.
-// Use wch to handle additional cases if you wish, tho know it changes codes.
 inline int GetChar(void) { return _getch(); }
+
+// For when you want access to the extended ascii table but don't want to rewrite things
+inline int GetWCharAsChar(void) { return static_cast<char>(_getwch()); }
 
 #endif
 
@@ -141,7 +140,7 @@ public:
   {
     while (KeyHit())
     {
-      int character = GetChar();
+      int character = GetWCharAsChar();
       if (character != NoInput) // Character input for a looks like: 97 0
         buffer_ += character;
     }
@@ -163,7 +162,7 @@ public:
   {
     while (KeyHit())
     {
-      int character = GetChar();
+      char character = GetWCharAsChar();
       if (character != NoInput) // Character input for a looks like: 97 0
         buffer_ += character;
     }
@@ -184,7 +183,6 @@ private:
   // Variables
   const int NoInput = 0;    // A constant for defining a lack of input. 
   std::string buffer_ = ""; // So long as we recieve input without a break, we continue to store it here.
-
 };
 #endif // LANGUAGE_CPP
 
