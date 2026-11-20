@@ -134,6 +134,17 @@ inline int GetWChar(void) { return _getwch(); }
 class InputParser
 {
 public:
+  inline int MapExtendedASCII(int characterToMap)
+  {
+    switch(characterToMap)
+    {
+      case 128: return 199;
+      case 130: return 233;
+      case 144: return 201;
+      default: return characterToMap;
+    }
+  }
+
   // A member-function supported version of the previous function.
   // Uses the same variables as the other HandleInput function.
   template <class T> void HandleInput(T *thisClass, void(T::*callbackSingleChar)(char), void(T::*callbackMultiChar)(std::string))
@@ -141,14 +152,7 @@ public:
     while (KeyHit())
     {
       int character = GetChar();
-
-      // map some extended ascii to utf-16 I guess.
-      switch (character)
-      {
-        case 128: character = static_cast<char>(199); break;
-        case 130: character = static_cast<char>(233); break;
-        case 144: character = static_cast<char>(201); break;
-      }
+      character = MapExtendedASCII(character);
 
       if (character != NoInput) // Character input for a looks like: 97 0
         buffer_.push_back(character);
